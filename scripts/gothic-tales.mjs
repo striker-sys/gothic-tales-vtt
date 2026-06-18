@@ -1,5 +1,5 @@
 const GT = {};
-GT.SYSTEM_VERSION = "0.3.9";
+GT.SYSTEM_VERSION = "0.4.0";
 
 const mergeObject = foundry.utils.mergeObject;
 const deepClone = foundry.utils.deepClone ?? (obj => JSON.parse(JSON.stringify(obj ?? {})));
@@ -61,6 +61,14 @@ GT.CONFIG = {
   },
   defaultActorImg: "icons/svg/mystery-man.svg",
   defaultItemImg: "icons/svg/item-bag.svg"
+};
+
+GT.localize = function(key, fallback = key) {
+  return game?.i18n?.localize?.(key) || fallback;
+};
+
+GT.format = function(key, data = {}, fallback = key) {
+  return game?.i18n?.format?.(key, data) || fallback;
 };
 
 GT.LEVEL_RESOURCES = {
@@ -373,7 +381,8 @@ GT.cloneSourceItemForActor = function(entry, quantity = 1, nameOverride = null) 
     quantity,
     description: GT.formatItemDescription(data),
     sourceText: data.sourceText || GT.formatItemDescription(data),
-    uses: data.uses || {value: 0, max: 0}
+    uses: data.uses || {value: 0, max: 0},
+    equipped: false
   };
   delete system.name;
   delete system.type;
@@ -555,7 +564,29 @@ GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null
   return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content});
 };
 
-GT.recalculateSystem = function(system, type = "character") {
+GT.equippedArmorBonusFromItems = function(items = []) {
+  const bonus = {rk: 0, ele: 0, ma: 0};
+  for (const item of items ?? []) {
+    if (!item?.system?.equipped) continue;
+    if (!["armor", "shield"].includes(item.type)) continue;
+    bonus.rk += Number(item.system.rk || 0);
+    bonus.ele += Number(item.system.ele || 0);
+    bonus.ma += Number(item.system.ma || 0);
+  }
+  return bonus;
+};
+
+GT.makeItemActiveEffects = function(entry = {}) {
+  const changes = [];
+  for (const key of ["rk", "ele", "ma"]) {
+    const value = Number(entry[key] || 0);
+    if (value) changes.push({key: `system.armorBonus.${key}`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: String(value), priority: 20});
+  }
+  if (!changes.length) return [];
+  return [{name: `${entry.name || "Gegenstand"} ausgerüstet`, icon: GT.CONFIG.defaultItemImg, disabled: true, transfer: false, changes, flags: {"gothic-tales": {equipmentEffect: true}}}];
+};
+
+GT.recalculateSystem = function(system, type = "character", options = {}) {
   const s = deepClone(system ?? {});
   s.attributes ??= {};
   for (const [key, label] of Object.entries(GT.CONFIG.attributes)) {
@@ -584,7 +615,9 @@ GT.recalculateSystem = function(system, type = "character") {
   const lr = GT.LEVEL_RESOURCES[s.stufe] ?? {lp: s.stufe * 10, erz: 0};
   s.lp ??= {value: lr.lp, max: lr.lp};
   s.lp.max = Number(s.lp.max || lr.lp);
+  const equippedBonus = options.equippedArmorBonus ?? null;
   s.armorBonus ??= {rk: 0, ele: 0, ma: 0};
+  if (equippedBonus) s.armorBonus = {rk: Number(equippedBonus.rk || 0), ele: Number(equippedBonus.ele || 0), ma: Number(equippedBonus.ma || 0)};
   s.defenses ??= {};
   const geB = Number(s.attributes.ge?.bonus ?? 0), intuB = Number(s.attributes.intu?.bonus ?? 0), ausdB = Number(s.attributes.ausd?.bonus ?? 0), konzB = Number(s.attributes.konz?.bonus ?? 0), erfB = Number(s.attributes.erf?.bonus ?? 0);
   s.defenses.rk = {label: "RK", value: 10 + geB + intuB + Number(s.armorBonus.rk ?? 0), bonus: Number(s.armorBonus.rk ?? 0)};
@@ -712,7 +745,8 @@ GT.itemFromSource = async function(name, quantity = 1, mode = "normal") {
         quantity,
         description: GT.formatItemDescription(data),
         properties: mode === "scroll" ? `${data.properties || ""}${data.properties ? ", " : ""}Spruchrolle` : data.properties || "",
-        uses: {value: quantity, max: quantity}
+        uses: {value: quantity, max: quantity},
+        equipped: false
       },
       flags: {"gothic-tales": {sourceBook: data.sourceBook, sourcePage: data.sourcePage, importedName: entry.name}}
     };
@@ -781,8 +815,8 @@ class GothicTalesActorSheet extends BaseActorSheet {
     const data = super.getData(options);
     data.config = GT.CONFIG;
     data.actor = this.actor;
-    data.system = GT.recalculateSystem(this.actor.system, this.actor.type);
     data.items = Array.from(this.actor.items ?? []).sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name));
+    data.system = GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(data.items)});
     data.editable = this.isEditable;
     data.actorTypeLabel = GT.CONFIG.actorTypes[this.actor.type] || this.actor.type;
     return enrichLists(data);
@@ -795,7 +829,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
       html.find("input, textarea, select").prop("disabled", true);
       html.find('input[name="system.hp.value"], input[name="system.mana.value"], input[name="system.exhaustion.value"], input[name="system.deathCounter.value"]').prop("disabled", false).addClass("gt-resource-editable");
       html.find(".gt-lock-toggle, .gt-roll, .gt-open-talent-tree, .gt-open-creator, .gt-open-npc-creator, .gt-rest-button, .gt-recalculate, .gt-description-edit").prop("disabled", false);
-      html.find(".item-create, .item-edit, .item-delete").prop("disabled", true).addClass("disabled");
+      html.find(".item-create, .item-edit, .item-delete, .item-equip").prop("disabled", true).addClass("disabled");
     }
     html.find(".gt-roll").on("click", ev => {
       ev.preventDefault();
@@ -804,7 +838,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
     });
     html.find(".gt-recalculate").on("click", async ev => {
       ev.preventDefault();
-      const calc = GT.recalculateSystem(this.actor.system, this.actor.type);
+      const calc = GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)});
       await this.actor.update(GT.flattenSystemUpdate(calc));
       ui.notifications.info("Gothic Tales: Werte neu berechnet.");
     });
@@ -841,7 +875,14 @@ class GothicTalesActorSheet extends BaseActorSheet {
     html.find(".item-delete").on("click", async ev => {
       ev.preventDefault();
       const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
-      if (item && await Dialog.confirm({title: "Gegenstand löschen", content: `<p>${GT.escape(item.name)} entfernen?</p>`})) await item.delete();
+      if (item && await Dialog.confirm({title: GT.localize("GOTHICTALES.DeleteItem", "Gegenstand löschen"), content: `<p>${GT.escape(item.name)} entfernen?</p>`})) await item.delete();
+    });
+    html.find(".item-equip").on("click", async ev => {
+      ev.preventDefault();
+      const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
+      if (!item) return;
+      await item.update({"system.equipped": !item.system?.equipped});
+      await this.actor.update(GT.flattenSystemUpdate(GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)})));
     });
     html.find(".item-roll").on("click", ev => {
       ev.preventDefault();
@@ -1446,8 +1487,9 @@ class GothicTalesImporter extends BaseApplication {
           attribute: entry.attribute || "", targetDefense: entry.targetDefense || (type === "spell" ? "ele" : "rk"), properties: entry.properties || "",
           requirements: entry.requirements || "", value: entry.value || "", circle: entry.circle || "", mana: entry.mana || "", range: entry.range || "",
           rk: Number(entry.rk || 0), ele: Number(entry.ele || 0), ma: Number(entry.ma || 0), points: entry.points || 0, kind: entry.kind || "", quantity: entry.quantity || 1,
-          uses: entry.uses || {value: 0, max: 0}, treeId: entry.treeId || "", nodeId: entry.id || "", lpCost: Number(entry.lpCost || 0)
+          uses: entry.uses || {value: 0, max: 0}, treeId: entry.treeId || "", nodeId: entry.id || "", lpCost: Number(entry.lpCost || 0), equipped: false
         },
+        effects: GT.makeItemActiveEffects({...entry, name}),
         flags: {"gothic-tales": {uid: isTalent ? `talent.${entry.treeId}.${entry.id}` : `${type}.${GT.slug(name)}.${GT.slug(entry.kind || entry.category || "")}`, sourceBook: entry.sourceBook, sourcePage: entry.sourcePage, version: GT.SYSTEM_VERSION}}
       });
     }
@@ -1643,6 +1685,7 @@ GT.installGlobalClickHandlers = function() {
 Hooks.once("init", async function() {
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("not", a => !a);
+  Handlebars.registerHelper("or", (...args) => args.slice(0, -1).some(Boolean));
   Handlebars.registerHelper("lookupType", (obj, key) => obj?.[key] ?? key);
   CONFIG.GT = GT.CONFIG;
   game.gothicTales = GT;
@@ -1653,7 +1696,7 @@ Hooks.once("init", async function() {
   GT.installGlobalClickHandlers();
   game.settings.register("gothic-tales", "autoImportDone", {scope: "world", config: false, type: Boolean, default: false});
   game.settings.register("gothic-tales", "autoImportVersion", {scope: "world", config: false, type: String, default: ""});
-  game.settings.register("gothic-tales", "autoImportEnabled", {scope: "world", config: true, type: Boolean, default: true, name: "Gothic Tales automatisch importieren/aktualisieren", hint: "Importiert oder aktualisiert Nachschlagewerk, Actoren, Talente, Ausrüstung und Karten automatisch. Das Nachschlagewerk enthält jedes Buch als ein einzelnes Dokument."});
+  game.settings.register("gothic-tales", "autoImportEnabled", {scope: "world", config: true, type: Boolean, default: true, name: "GOTHICTALES.Settings.AutoImport.Name", hint: "GOTHICTALES.Settings.AutoImport.Hint"});
   await loadTemplates([
     "systems/gothic-tales/templates/actor/parts/attributes.hbs",
     "systems/gothic-tales/templates/actor/parts/items.hbs",

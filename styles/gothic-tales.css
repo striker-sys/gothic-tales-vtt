@@ -848,3 +848,18 @@ body.gt-system-ui {
   .attributes-panel .gt-attr-row,
   .skills-panel .gt-attr-row { grid-template-columns: 32px 1fr 70px 56px 56px; }
 }
+
+.item-equip.active {
+  background: linear-gradient(#d8f0bd, #7fb36a);
+  color: #17350f;
+}
+
+.gt-checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.gt-checkbox-label input[type="checkbox"] {
+  width: auto;
+}

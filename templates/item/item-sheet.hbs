@@ -19,6 +19,7 @@
         <div class="gt-two-col">
           <label>Kategorie <input name="system.category" type="text" value="{{system.category}}"></label>
           <label>Menge <input name="system.quantity" type="number" value="{{system.quantity}}"></label>
+          <label class="gt-checkbox-label"><input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}}> Ausgerüstet</label>
           <label>Attribut <select name="system.attribute">
             <option value="">—</option>
             {{#each attributeOptions}}
