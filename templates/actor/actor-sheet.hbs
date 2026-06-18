@@ -1,0 +1,162 @@
+<form class="{{cssClass}} gt-sheet actor-sheet {{#if sheetLocked}}gt-locked{{/if}}" autocomplete="off">
+  <header class="gt-header gt-paper-header">
+    <div class="gt-logo-mark">GT</div>
+    <div class="gt-title-block">
+      <label class="gt-small-label">{{actorTypeLabel}}</label>
+      <input class="gt-name" name="name" type="text" value="{{actor.name}}" placeholder="Name des Helden / der Figur">
+      <div class="gt-subline">
+        <label>Name des Spielers <input name="system.playerName" type="text" value="{{system.playerName}}"></label>
+        <label>Fraktion <input name="system.faction" type="text" value="{{system.faction}}"></label>
+      </div>
+    </div>
+    <div class="gt-level-box">
+      <label>Stufe <input name="system.stufe" type="number" value="{{system.stufe}}"></label>
+      {{#if isCharacter}}<label>LP <input name="system.lp.value" type="number" value="{{system.lp.value}}"> / <input name="system.lp.max" type="number" value="{{system.lp.max}}"></label>{{/if}}
+      <button type="button" class="gt-recalculate"><i class="fas fa-calculator"></i> Werte</button>
+      <button type="button" class="gt-rest-button"><i class="fas fa-bed"></i> Ausruhen</button>
+      <button type="button" class="gt-lock-toggle"><i class="fas {{#if sheetLocked}}fa-lock{{else}}fa-unlock{{/if}}"></i> {{#if sheetLocked}}Werte gesperrt{{else}}Werte bearbeiten{{/if}}</button>
+    </div>
+  </header>
+
+  <div class="gt-sheet-layout">
+    <section class="sheet-body">
+      <div class="tab main" data-group="primary" data-tab="main">
+        <div class="gt-grid-main gt-main-sheet-grid">
+          <section class="gt-panel attributes-panel gt-parchment-panel">
+            <h2>Attribute</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/attributes.hbs" list=attributeList path="attributes" kind="attr"}}
+          </section>
+
+          <section class="gt-panel defense-panel gt-parchment-panel">
+            <h2>Verteidigung</h2>
+            <div class="gt-defenses">
+              <label>RK <input name="system.defenses.rk.value" type="number" value="{{system.defenses.rk.value}}"></label>
+              <label>Elemente <input name="system.defenses.ele.value" type="number" value="{{system.defenses.ele.value}}"></label>
+              <label>Mentale Abwehr <input name="system.defenses.ma.value" type="number" value="{{system.defenses.ma.value}}"></label>
+            </div>
+            <h3>Rüstungsbonus</h3>
+            <div class="gt-defenses small">
+              <label>RK <input name="system.armorBonus.rk" type="number" value="{{system.armorBonus.rk}}"></label>
+              <label>ELE <input name="system.armorBonus.ele" type="number" value="{{system.armorBonus.ele}}"></label>
+              <label>MA <input name="system.armorBonus.ma" type="number" value="{{system.armorBonus.ma}}"></label>
+            </div>
+            <h2>Charakterwerte</h2>
+            <div class="gt-resources">
+              <label>Trefferpunkte <span><input name="system.hp.value" type="number" value="{{system.hp.value}}"> / <input name="system.hp.max" type="number" value="{{system.hp.max}}"></span></label>
+              <label>Mana <span><input name="system.mana.value" type="number" value="{{system.mana.value}}"> / <input name="system.mana.max" type="number" value="{{system.mana.max}}"></span></label>
+              <label>Initiative <input name="system.initiative.value" type="number" value="{{system.initiative.value}}"></label>
+              <label>Bewegung <input name="system.movement.value" type="number" value="{{system.movement.value}}"></label>
+            </div>
+            <div class="gt-trackers">
+              <label>Erschöpfung <span><input name="system.exhaustion.value" type="number" value="{{system.exhaustion.value}}"> / <input name="system.exhaustion.max" type="number" value="{{system.exhaustion.max}}"></span></label>
+              <label>Todeskampf <span><input name="system.deathCounter.value" type="number" value="{{system.deathCounter.value}}"> / <input name="system.deathCounter.max" type="number" value="{{system.deathCounter.max}}"></span></label>
+            </div>
+          </section>
+
+          <section class="gt-panel skills-panel gt-parchment-panel">
+            <h2>Fähigkeiten</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/attributes.hbs" list=skillList path="skills" kind="skill"}}
+          </section>
+        </div>
+      </div>
+
+      <div class="tab combat" data-group="primary" data-tab="combat">
+        <div class="gt-grid-main combat-grid">
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Waffen, Schilde & Zauber</h2>
+            <p class="gt-help">Angriff: W20 + Attributswürfel & Bonus. Schaden: Waffen-/Zauberwürfel und je nach Regel Attributswurf.</p>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=combatGroups compact=true}}
+          </section>
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Schnellwürfe</h2>
+            <div class="gt-action-grid">
+              {{#each attributeList}}
+                <button type="button" class="gt-roll" data-label="{{label}}" data-formula="{{formula}}">{{label}}</button>
+              {{/each}}
+            </div>
+            <h3>Vorteil & Nachteil</h3>
+            <div class="gt-action-grid">
+              <button type="button" class="gt-roll" data-label="kleiner Vorteil/Nachteil" data-formula="w2">w2</button>
+              <button type="button" class="gt-roll" data-label="mittlerer Vorteil/Nachteil" data-formula="w6">w6</button>
+              <button type="button" class="gt-roll" data-label="großer Vorteil/Nachteil" data-formula="w12">w12</button>
+              <button type="button" class="gt-roll" data-label="Initiative" data-formula="w20 + {{system.initiative.die}} + {{system.initiative.bonus}}">Initiative</button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="tab inventory" data-group="primary" data-tab="inventory">
+        <div class="gt-grid-main inventory-grid">
+          {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=itemGroups}}
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Inventartext</h2>
+            <div class="gt-description-preview gt-scroll">{{{system.inventoryText}}}</div><button type="button" class="gt-description-edit" data-path="inventoryText" data-label="Inventartext"><i class="fas fa-edit"></i> Inventartext bearbeiten</button>
+          </section>
+        </div>
+      </div>
+
+      <div class="tab equipment" data-group="primary" data-tab="equipment">
+        <div class="gt-grid-main inventory-grid">
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Waffen</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "weapons") single=true}}
+          </section>
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Schilde</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "shields") single=true}}
+            <h2>Rüstungen</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "armor") single=true}}
+          </section>
+        </div>
+      </div>
+
+      <div class="tab talents" data-group="primary" data-tab="talents">
+        <section class="gt-panel gt-parchment-panel">
+          <h2>Talentbaum</h2>
+          {{#if isCharacter}}<p>Öffnet den anklickbaren Talentbaum. Lernpunkte werden bei Auswahl direkt verrechnet.</p>{{else}}<p>Öffnet den Talentbaum. NSCs und Monster können Talente ohne Lernpunkte erhalten.</p>{{/if}}
+          <button type="button" class="gt-open-talent-tree"><i class="fas fa-sitemap"></i> Talentbaum öffnen</button>
+          <div class="gt-learned-list">
+            <h3>Gelernte Talente</h3>
+            {{#each learnedTalentLabels}}<span class="gt-chip learned">{{this}}</span>{{/each}}
+          </div>
+        </section>
+        {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "talents") single=true}}
+      </div>
+
+      <div class="tab creation" data-group="primary" data-tab="creation">
+        <section class="gt-panel gt-parchment-panel">
+          <h2>Editor & Generator</h2>
+          <p>Der Charakter-Editor führt durch Level, Lernpunkte, Attribute, Fähigkeiten, Stärken/Schwächen, Talente und Startausrüstung. Der NSC-Generator erzeugt NSCs mit fester Initiative, Inventar und Aktionszahl.</p>
+          <button type="button" class="gt-open-creator"><i class="fas fa-user-plus"></i> Charakter-Editor öffnen</button>
+          <button type="button" class="gt-open-npc-creator"><i class="fas fa-users"></i> NSC-Generator öffnen</button>
+        </section>
+        <section class="gt-panel gt-parchment-panel">
+          <h2>Stärken & Schwächen</h2>
+          <div class="gt-description-preview gt-scroll">{{{system.strengthsWeaknesses}}}</div><button type="button" class="gt-description-edit" data-path="strengthsWeaknesses" data-label="Stärken & Schwächen"><i class="fas fa-edit"></i> Stärken & Schwächen bearbeiten</button>
+        </section>
+      </div>
+
+      <div class="tab notes" data-group="primary" data-tab="notes">
+        <div class="gt-grid-main notes-grid">
+          <section class="gt-panel gt-parchment-panel"><h2>Hintergrund</h2><div class="gt-description-preview gt-scroll">{{{system.biography}}}</div><button type="button" class="gt-description-edit" data-path="biography" data-label="Hintergrund"><i class="fas fa-edit"></i> Hintergrund bearbeiten</button></section>
+          <section class="gt-panel gt-parchment-panel"><h2>Notizen</h2><div class="gt-description-preview gt-scroll">{{{system.notes}}}</div><button type="button" class="gt-description-edit" data-path="notes" data-label="Notizen"><i class="fas fa-edit"></i> Notizen bearbeiten</button></section>
+        </div>
+      </div>
+
+      <div class="tab source" data-group="primary" data-tab="source">
+        {{> "systems/gothic-tales/templates/actor/parts/source.hbs"}}
+      </div>
+    </section>
+
+    <nav class="sheet-tabs tabs gt-side-tabs" data-group="primary">
+      <a class="item" data-tab="main"><i class="fas fa-id-card"></i><span>Bogen</span></a>
+      <a class="item" data-tab="combat"><i class="fas fa-dice-d20"></i><span>Kampf</span></a>
+      <a class="item" data-tab="inventory"><i class="fas fa-sack"></i><span>Inventar</span></a>
+      <a class="item" data-tab="equipment"><i class="fas fa-shield-halved"></i><span>Ausrüstung</span></a>
+      <a class="item" data-tab="talents"><i class="fas fa-sitemap"></i><span>Talente</span></a>
+      <a class="item" data-tab="creation"><i class="fas fa-pen-to-square"></i><span>Editor</span></a>
+      <a class="item" data-tab="notes"><i class="fas fa-feather"></i><span>Notizen</span></a>
+      <a class="item" data-tab="source"><i class="fas fa-book"></i><span>Quelle</span></a>
+    </nav>
+  </div>
+</form>

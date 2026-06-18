@@ -1,0 +1,12 @@
+<div class="gt-attr-list">
+  {{#each list}}
+  <div class="gt-attr-row">
+    <button type="button" class="gt-roll" data-label="{{label}}" data-formula="{{#if formula}}{{formula}}{{else}}w20 + {{die}} + {{bonus}}{{/if}}"><i class="fas fa-dice-d20"></i></button>
+    <label class="gt-attr-label">{{label}}</label>
+    <label>Wert <input name="system.{{../path}}.{{key}}.value" type="number" value="{{value}}"></label>
+    <label>W <input name="system.{{../path}}.{{key}}.die" type="text" value="{{die}}"></label>
+    <label>B <input name="system.{{../path}}.{{key}}.bonus" type="number" value="{{bonus}}"></label>
+    {{#if grade}}<span class="gt-chip">Grad {{grade}}</span>{{/if}}
+  </div>
+  {{/each}}
+</div>

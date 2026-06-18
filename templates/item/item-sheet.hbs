@@ -1,0 +1,64 @@
+<form class="{{cssClass}} gt-sheet item-sheet" autocomplete="off">
+  <header class="gt-header item-header gt-paper-header">
+    <div class="gt-logo-mark small">GT</div>
+    <div class="gt-title-block">
+      <label class="gt-small-label">{{lookupType config.itemTypes item.type}}</label>
+      <input class="gt-name" name="name" type="text" value="{{item.name}}" placeholder="Name">
+    </div>
+  </header>
+
+  <nav class="sheet-tabs tabs gt-tabs" data-group="primary">
+    <a class="item" data-tab="main">Werte</a>
+    <a class="item" data-tab="rules">Beschreibung</a>
+    <a class="item" data-tab="source">Quelle</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab main" data-group="primary" data-tab="main">
+      <section class="gt-panel gt-parchment-panel">
+        <div class="gt-two-col">
+          <label>Kategorie <input name="system.category" type="text" value="{{system.category}}"></label>
+          <label>Menge <input name="system.quantity" type="number" value="{{system.quantity}}"></label>
+          <label>Attribut <select name="system.attribute">
+            <option value="">—</option>
+            {{#each attributeOptions}}
+            <option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}} ({{key}})</option>
+            {{/each}}
+          </select></label>
+          <label>Schaden/Effekt <input name="system.damage" type="text" value="{{system.damage}}"></label>
+          <label>Ziel-Verteidigung <input name="system.targetDefense" type="text" value="{{system.targetDefense}}"></label>
+          <label>Mana <input name="system.mana" type="text" value="{{system.mana}}"></label>
+          <label>Kreis <input name="system.circle" type="text" value="{{system.circle}}"></label>
+          <label>Reichweite <input name="system.range" type="text" value="{{system.range}}"></label>
+          <label>Eigenschaften <input name="system.properties" type="text" value="{{system.properties}}"></label>
+          <label>Voraussetzungen <input name="system.requirements" type="text" value="{{system.requirements}}"></label>
+          <label>Wert <input name="system.value" type="text" value="{{system.value}}"></label>
+          <label>RK <input name="system.rk" type="number" value="{{system.rk}}"></label>
+          <label>ELE <input name="system.ele" type="number" value="{{system.ele}}"></label>
+          <label>MA <input name="system.ma" type="number" value="{{system.ma}}"></label>
+          <label>Benutzungen <span><input name="system.uses.value" type="number" value="{{system.uses.value}}"> / <input name="system.uses.max" type="number" value="{{system.uses.max}}"></span></label>
+        </div>
+        <div class="gt-action-row">
+          <button type="button" class="gt-roll" data-formula="{{system.damage}}"><i class="fas fa-dice"></i> Schaden/Effekt würfeln</button>
+        </div>
+      </section>
+    </div>
+    <div class="tab rules" data-group="primary" data-tab="rules">
+      <section class="gt-panel gt-text-panel gt-parchment-panel">
+        <h2>Beschreibung</h2>
+        <div class="gt-description-preview gt-scroll">{{{system.description}}}</div>
+        <button type="button" class="gt-description-edit"><i class="fas fa-edit"></i> Beschreibung bearbeiten</button>
+      </section>
+    </div>
+    <div class="tab source" data-group="primary" data-tab="source">
+      <section class="gt-panel source-panel gt-parchment-panel">
+        <h2>Quelle</h2>
+        <div class="gt-source-meta">
+          <label>Buch <input name="system.sourceBook" type="text" value="{{system.sourceBook}}"></label>
+          <label>Seite <input name="system.sourcePage" type="text" value="{{system.sourcePage}}"></label>
+        </div>
+        <div class="gt-source-text gt-scroll">{{{system.sourceText}}}</div>
+      </section>
+    </div>
+  </section>
+</form>

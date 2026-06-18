@@ -1,0 +1,872 @@
+{
+  "trees": [
+    {
+      "id": "einhand",
+      "label": "Einhändiger Kampf",
+      "nodes": [
+        {
+          "id": "einhand-1",
+          "label": "Einhand I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Einhand I gehört zum Talentbaum Einhändiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "stoss",
+          "label": "Stoß",
+          "lpCost": 0,
+          "requires": [
+            "einhand-1"
+          ],
+          "description": "Stoß gehört zum Talentbaum Einhändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: einhand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "finte",
+          "label": "Finte",
+          "lpCost": 0,
+          "requires": [
+            "einhand-1"
+          ],
+          "description": "Finte gehört zum Talentbaum Einhändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: einhand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "einhand-2",
+          "label": "Einhand II",
+          "lpCost": 5,
+          "requires": [
+            "einhand-1"
+          ],
+          "description": "Einhand II gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "parade",
+          "label": "Parade",
+          "lpCost": 5,
+          "requires": [
+            "einhand-2"
+          ],
+          "description": "Parade gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "einhand-3",
+          "label": "Einhand III",
+          "lpCost": 5,
+          "requires": [
+            "einhand-2"
+          ],
+          "description": "Einhand III gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "parade-konter",
+          "label": "Parade & Konter",
+          "lpCost": 5,
+          "requires": [
+            "parade",
+            "einhand-3"
+          ],
+          "description": "Parade & Konter gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: parade, einhand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "einhand-4",
+          "label": "Einhand IV",
+          "lpCost": 5,
+          "requires": [
+            "einhand-3"
+          ],
+          "description": "Einhand IV gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schwertmeister",
+          "label": "Schwertmeister",
+          "lpCost": 5,
+          "requires": [
+            "einhand-4"
+          ],
+          "description": "Schwertmeister gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "zweihand",
+      "label": "Zweihändiger Kampf",
+      "nodes": [
+        {
+          "id": "zweihand-1",
+          "label": "Zweihand I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Zweihand I gehört zum Talentbaum Zweihändiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "knaufschlag",
+          "label": "Knaufschlag",
+          "lpCost": 0,
+          "requires": [
+            "zweihand-1"
+          ],
+          "description": "Knaufschlag gehört zum Talentbaum Zweihändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: zweihand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schwerer-schlag",
+          "label": "Schwerer Schlag",
+          "lpCost": 0,
+          "requires": [
+            "zweihand-1"
+          ],
+          "description": "Schwerer Schlag gehört zum Talentbaum Zweihändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: zweihand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "zweihand-2",
+          "label": "Zweihand II",
+          "lpCost": 5,
+          "requires": [
+            "zweihand-1"
+          ],
+          "description": "Zweihand II gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "ansturm",
+          "label": "Ansturm",
+          "lpCost": 5,
+          "requires": [
+            "zweihand-2"
+          ],
+          "description": "Ansturm gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "ausholen",
+          "label": "Ausholen I",
+          "lpCost": 0,
+          "requires": [
+            "zweihand-2"
+          ],
+          "description": "Ausholen I gehört zum Talentbaum Zweihändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: zweihand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "zweihand-3",
+          "label": "Zweihand III",
+          "lpCost": 5,
+          "requires": [
+            "zweihand-2"
+          ],
+          "description": "Zweihand III gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "wirbelwind",
+          "label": "Wirbelwind",
+          "lpCost": 5,
+          "requires": [
+            "zweihand-3"
+          ],
+          "description": "Wirbelwind gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "zweihand-4",
+          "label": "Zweihand IV",
+          "lpCost": 10,
+          "requires": [
+            "zweihand-3"
+          ],
+          "description": "Zweihand IV gehört zum Talentbaum Zweihändiger Kampf. Kosten: 10 LP. Voraussetzung: zweihand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schildbrecher",
+          "label": "Schildbrecher",
+          "lpCost": 5,
+          "requires": [
+            "zweihand-4"
+          ],
+          "description": "Schildbrecher gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "bogen",
+      "label": "Bogen",
+      "nodes": [
+        {
+          "id": "bogen-1",
+          "label": "Bogen I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Bogen I gehört zum Talentbaum Bogen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schnellschuss",
+          "label": "Schnellschuss",
+          "lpCost": 0,
+          "requires": [
+            "bogen-1"
+          ],
+          "description": "Schnellschuss gehört zum Talentbaum Bogen. Kosten: automatisch oder über den Talentpfad. Voraussetzung: bogen-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "fokus",
+          "label": "Fokus",
+          "lpCost": 0,
+          "requires": [
+            "bogen-1"
+          ],
+          "description": "Fokus gehört zum Talentbaum Bogen. Kosten: automatisch oder über den Talentpfad. Voraussetzung: bogen-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "bogen-2",
+          "label": "Bogen II",
+          "lpCost": 5,
+          "requires": [
+            "bogen-1"
+          ],
+          "description": "Bogen II gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "festnageln",
+          "label": "Festnageln",
+          "lpCost": 5,
+          "requires": [
+            "bogen-2"
+          ],
+          "description": "Festnageln gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "duck-dich",
+          "label": "Duck dich!",
+          "lpCost": 0,
+          "requires": [
+            "bogen-2"
+          ],
+          "description": "Duck dich! gehört zum Talentbaum Bogen. Kosten: automatisch oder über den Talentpfad. Voraussetzung: bogen-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "bogen-3",
+          "label": "Bogen III",
+          "lpCost": 5,
+          "requires": [
+            "bogen-2"
+          ],
+          "description": "Bogen III gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "scharfschuetze",
+          "label": "Scharfschütze",
+          "lpCost": 5,
+          "requires": [
+            "bogen-3"
+          ],
+          "description": "Scharfschütze gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "mehrfachschuss",
+          "label": "Mehrfachschuss",
+          "lpCost": 10,
+          "requires": [
+            "bogen-3"
+          ],
+          "description": "Mehrfachschuss gehört zum Talentbaum Bogen. Kosten: 10 LP. Voraussetzung: bogen-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "bogen-4",
+          "label": "Bogen IV",
+          "lpCost": 5,
+          "requires": [
+            "bogen-3"
+          ],
+          "description": "Bogen IV gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "praezision",
+          "label": "Präzision",
+          "lpCost": 5,
+          "requires": [
+            "bogen-4"
+          ],
+          "description": "Präzision gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "armbrust",
+      "label": "Armbrust",
+      "nodes": [
+        {
+          "id": "armbrust-1",
+          "label": "Armbrust I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Armbrust I gehört zum Talentbaum Armbrust. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schwachstelle-1",
+          "label": "Schwachstelle I",
+          "lpCost": 0,
+          "requires": [
+            "armbrust-1"
+          ],
+          "description": "Schwachstelle I gehört zum Talentbaum Armbrust. Kosten: automatisch oder über den Talentpfad. Voraussetzung: armbrust-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "blitzschuss",
+          "label": "Blitzschuss",
+          "lpCost": 0,
+          "requires": [
+            "armbrust-1"
+          ],
+          "description": "Blitzschuss gehört zum Talentbaum Armbrust. Kosten: automatisch oder über den Talentpfad. Voraussetzung: armbrust-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "armbrust-2",
+          "label": "Armbrust II",
+          "lpCost": 5,
+          "requires": [
+            "armbrust-1"
+          ],
+          "description": "Armbrust II gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "durchbohren",
+          "label": "Durchbohren",
+          "lpCost": 5,
+          "requires": [
+            "armbrust-2"
+          ],
+          "description": "Durchbohren gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "armbrust-3",
+          "label": "Armbrust III",
+          "lpCost": 5,
+          "requires": [
+            "armbrust-2"
+          ],
+          "description": "Armbrust III gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "rueckenschuss",
+          "label": "Rückenschuss",
+          "lpCost": 5,
+          "requires": [
+            "armbrust-3"
+          ],
+          "description": "Rückenschuss gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "scharfschuetze-armbrust",
+          "label": "Scharfschütze",
+          "lpCost": 5,
+          "requires": [
+            "armbrust-3"
+          ],
+          "description": "Scharfschütze gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "schild",
+      "label": "Kampf mit Schilden",
+      "nodes": [
+        {
+          "id": "schild-1",
+          "label": "Schild I",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Schild I gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "spott",
+          "label": "Spott",
+          "lpCost": 0,
+          "requires": [
+            "schild-1"
+          ],
+          "description": "Spott gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schild-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schutzwall",
+          "label": "Schutzwall",
+          "lpCost": 0,
+          "requires": [
+            "schild-1"
+          ],
+          "description": "Schutzwall gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schild-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schild-2",
+          "label": "Schild II",
+          "lpCost": 5,
+          "requires": [
+            "schild-1"
+          ],
+          "description": "Schild II gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "intervention",
+          "label": "Intervention",
+          "lpCost": 0,
+          "requires": [
+            "schild-2"
+          ],
+          "description": "Intervention gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schild-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schildschlag",
+          "label": "Schildschlag",
+          "lpCost": 5,
+          "requires": [
+            "schild-2"
+          ],
+          "description": "Schildschlag gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schild-3",
+          "label": "Schild III",
+          "lpCost": 5,
+          "requires": [
+            "schild-2"
+          ],
+          "description": "Schild III gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "beissender-spott",
+          "label": "Beißender Spott",
+          "lpCost": 5,
+          "requires": [
+            "spott",
+            "schild-3"
+          ],
+          "description": "Beißender Spott gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: spott, schild-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schutzwall-2",
+          "label": "Schutzwall II",
+          "lpCost": 0,
+          "requires": [
+            "schutzwall",
+            "schild-3"
+          ],
+          "description": "Schutzwall II gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schutzwall, schild-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schild-4",
+          "label": "Schild IV",
+          "lpCost": 10,
+          "requires": [
+            "schild-3"
+          ],
+          "description": "Schild IV gehört zum Talentbaum Kampf mit Schilden. Kosten: 10 LP. Voraussetzung: schild-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schnelle-rache",
+          "label": "Schnelle Rache",
+          "lpCost": 5,
+          "requires": [
+            "schild-4"
+          ],
+          "description": "Schnelle Rache gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "hinterlist",
+      "label": "Hinterlistiger Kampf",
+      "nodes": [
+        {
+          "id": "hinterlist-1",
+          "label": "Hinterlist I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Hinterlist I gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "meucheln",
+          "label": "Meucheln",
+          "lpCost": 0,
+          "requires": [
+            "hinterlist-1"
+          ],
+          "description": "Meucheln gehört zum Talentbaum Hinterlistiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: hinterlist-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "schattenschritt",
+          "label": "Schattenschritt",
+          "lpCost": 5,
+          "requires": [
+            "hinterlist-1"
+          ],
+          "description": "Schattenschritt gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "hinterlist-2",
+          "label": "Hinterlist II",
+          "lpCost": 5,
+          "requires": [
+            "hinterlist-1"
+          ],
+          "description": "Hinterlist II gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "hinterhalt",
+          "label": "Hinterhalt",
+          "lpCost": 5,
+          "requires": [
+            "hinterlist-2"
+          ],
+          "description": "Hinterhalt gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "hinterlist-3",
+          "label": "Hinterlist III",
+          "lpCost": 5,
+          "requires": [
+            "hinterlist-2"
+          ],
+          "description": "Hinterlist III gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "meisterdieb",
+          "label": "Meisterdieb",
+          "lpCost": 5,
+          "requires": [
+            "hinterlist-3"
+          ],
+          "description": "Meisterdieb gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "beidhaendig",
+      "label": "Beidhändiger Kampf",
+      "nodes": [
+        {
+          "id": "beidhaendig-1",
+          "label": "Beidhändig I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Beidhändig I gehört zum Talentbaum Beidhändiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "zweite-klinge",
+          "label": "Zweite Klinge",
+          "lpCost": 0,
+          "requires": [
+            "beidhaendig-1"
+          ],
+          "description": "Zweite Klinge gehört zum Talentbaum Beidhändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: beidhaendig-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "beidhaendig-2",
+          "label": "Beidhändig II",
+          "lpCost": 5,
+          "requires": [
+            "beidhaendig-1"
+          ],
+          "description": "Beidhändig II gehört zum Talentbaum Beidhändiger Kampf. Kosten: 5 LP. Voraussetzung: beidhaendig-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "klingentanz",
+          "label": "Klingentanz",
+          "lpCost": 5,
+          "requires": [
+            "beidhaendig-2"
+          ],
+          "description": "Klingentanz gehört zum Talentbaum Beidhändiger Kampf. Kosten: 5 LP. Voraussetzung: beidhaendig-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "beidhaendig-3",
+          "label": "Beidhändig III",
+          "lpCost": 5,
+          "requires": [
+            "beidhaendig-2"
+          ],
+          "description": "Beidhändig III gehört zum Talentbaum Beidhändiger Kampf. Kosten: 5 LP. Voraussetzung: beidhaendig-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "magie",
+      "label": "Kreis der Magie 1-6",
+      "nodes": [
+        {
+          "id": "kreis-1",
+          "label": "1. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [],
+          "description": "1. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "kreis-2",
+          "label": "2. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-1"
+          ],
+          "description": "2. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "kreis-3",
+          "label": "3. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-2"
+          ],
+          "description": "3. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "kreis-4",
+          "label": "4. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-3"
+          ],
+          "description": "4. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "kreis-5",
+          "label": "5. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-4"
+          ],
+          "description": "5. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "kreis-6",
+          "label": "6. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-5"
+          ],
+          "description": "6. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-5. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "akrobatik",
+      "label": "Akrobatik",
+      "nodes": [
+        {
+          "id": "akrobatik-1",
+          "label": "Akrobatik I",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Akrobatik I gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "rollen",
+          "label": "Abrollen",
+          "lpCost": 0,
+          "requires": [
+            "akrobatik-1"
+          ],
+          "description": "Abrollen gehört zum Talentbaum Akrobatik. Kosten: automatisch oder über den Talentpfad. Voraussetzung: akrobatik-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "akrobatik-2",
+          "label": "Akrobatik II",
+          "lpCost": 5,
+          "requires": [
+            "akrobatik-1"
+          ],
+          "description": "Akrobatik II gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: akrobatik-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "wandlauf",
+          "label": "Wandlauf",
+          "lpCost": 5,
+          "requires": [
+            "akrobatik-2"
+          ],
+          "description": "Wandlauf gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: akrobatik-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "akrobatik-3",
+          "label": "Akrobatik III",
+          "lpCost": 5,
+          "requires": [
+            "akrobatik-2"
+          ],
+          "description": "Akrobatik III gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: akrobatik-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "weitere-waffen",
+      "label": "Weitere Waffen",
+      "nodes": [
+        {
+          "id": "stabkampf-1",
+          "label": "Stabkampf I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Stabkampf I gehört zum Talentbaum Weitere Waffen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "stabkampf-2",
+          "label": "Stabkampf II",
+          "lpCost": 5,
+          "requires": [
+            "stabkampf-1"
+          ],
+          "description": "Stabkampf II gehört zum Talentbaum Weitere Waffen. Kosten: 5 LP. Voraussetzung: stabkampf-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "speere-1",
+          "label": "Speere I",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Speere I gehört zum Talentbaum Weitere Waffen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "speere-2",
+          "label": "Speere II",
+          "lpCost": 5,
+          "requires": [
+            "speere-1"
+          ],
+          "description": "Speere II gehört zum Talentbaum Weitere Waffen. Kosten: 5 LP. Voraussetzung: speere-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "waffenlos",
+          "label": "Waffenloser Kampf",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Waffenloser Kampf gehört zum Talentbaum Weitere Waffen. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "sonstige",
+      "label": "Sonstige Talente",
+      "nodes": [
+        {
+          "id": "kampffokus",
+          "label": "Kampffokus",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Kampffokus gehört zum Talentbaum Sonstige Talente. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "zauberfokus",
+          "label": "Zauberfokus",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Zauberfokus gehört zum Talentbaum Sonstige Talente. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "zaehigkeit",
+          "label": "Zähigkeit",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Zähigkeit gehört zum Talentbaum Sonstige Talente. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "druiden-riten",
+      "label": "Riten der Druiden",
+      "nodes": [
+        {
+          "id": "riten-der-druiden",
+          "label": "Riten der Druiden",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Riten der Druiden gehört zum Talentbaum Riten der Druiden. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "seelenweber",
+          "label": "Schule des Seelenwebers",
+          "lpCost": 5,
+          "requires": [
+            "riten-der-druiden"
+          ],
+          "description": "Schule des Seelenwebers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "wurzelwirker",
+          "label": "Schule des Wurzelwirkers",
+          "lpCost": 5,
+          "requires": [
+            "riten-der-druiden"
+          ],
+          "description": "Schule des Wurzelwirkers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        },
+        {
+          "id": "gestaltwandler",
+          "label": "Schule des Gestaltwandlers",
+          "lpCost": 5,
+          "requires": [
+            "riten-der-druiden"
+          ],
+          "description": "Schule des Gestaltwandlers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+        }
+      ]
+    },
+    {
+      "id": "berufe-kuenste",
+      "label": "Berufe, Lehren & Künste",
+      "nodes": [
+        {
+          "id": "schloesserknacken",
+          "label": "Schlösserknacken",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Schlösserknacken aus dem Kapitel Berufe, Lehren & Künste. Geschick & Erfahrung – 5 LP Um ein Schloss zu knacken, benötigt man Dietriche, mit denen man die Schalter betätigt. Schalter sind entweder links oder rechts und jedes Schloss hat eine bestimmte Anzahl von Schaltern."
+        },
+        {
+          "id": "taschendiebstahl",
+          "label": "Taschendiebstahl",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Taschendiebstahl aus dem Kapitel Berufe, Lehren & Künste. Intuition & Geschick – 10 LP Mit Taschendiebstahl kann man Figuren bestehlen. Man kann auf konkrete Gegenstände abzielen (ein Schlüssel am Gürtel oder einen Geldbeutel) oder auf gut Glück aus Behältnissen wie Hosentaschen oder Rucksäcken stehlen."
+        },
+        {
+          "id": "feilschen",
+          "label": "Feilschen",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Feilschen aus dem Kapitel Berufe, Lehren & Künste. Intuition & Erfahrung – 10 LP Man kann nun mit Händlern zu feilschen, um (nur!) beim Einkaufen den Preis zu drücken. Doch Achtung, das Ganze kann auch nach hinten losgehen!"
+        },
+        {
+          "id": "wildtiere-ausnehmen",
+          "label": "Wildtiere Ausnehmen",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Wildtiere Ausnehmen aus dem Kapitel Berufe, Lehren & Künste. Erfahrung & Geschick – 10 LP Mit dieser Fähigkeit können Spieler die ‚Beute‘ von erlegten Wildtieren erlangen. Auf jedem Monsterbogen findet man dafür unten rechts einen Kasten."
+        },
+        {
+          "id": "kraeuterkunde",
+          "label": "Kräuterkunde",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Kräuterkunde aus dem Kapitel Berufe, Lehren & Künste. Intuition & Konzentration – 5 LP Kräuterkunde ergänzt sich mit Alchemie. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Kräutern."
+        },
+        {
+          "id": "alchemie",
+          "label": "Alchemie",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Alchemie aus dem Kapitel Berufe, Lehren & Künste. Konzentration & Geschick – 10 LP Alchemie ergänzt sich mit Kräuterkunde. Alchemie ist die Kunst Tränke zu brauen."
+        },
+        {
+          "id": "schuerfen",
+          "label": "Schürfen",
+          "lpCost": 5,
+          "requires": [],
+          "description": "Schürfen aus dem Kapitel Berufe, Lehren & Künste. Stärke & Ausdauer – 5 LP Schürfen ergänzt sich mit Schmiedekunst. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Erzen."
+        },
+        {
+          "id": "schmiedekunst",
+          "label": "Schmiedekunst",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Schmiedekunst aus dem Kapitel Berufe, Lehren & Künste. Stärke & Erfahrung – 10 LP Schmiedekunst ergänzt sich mit Schürfen. Schmiedekunst ist die Fähigkeit Nahkampfwaffen herzustellen."
+        },
+        {
+          "id": "schnitzkunst",
+          "label": "Schnitzkunst",
+          "lpCost": 10,
+          "requires": [],
+          "description": "Schnitzkunst aus dem Kapitel Berufe, Lehren & Künste. Geschick & Ausdauer – 10 LP Schnitzkunst ist die Fähigkeit Pfeile zu schnitzen und Bögen zu bauen. Man benötigt ein Schnitzmesser."
+        }
+      ]
+    }
+  ]
+}

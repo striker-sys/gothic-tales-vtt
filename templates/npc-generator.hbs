@@ -1,0 +1,29 @@
+<form class="gothic-tales gt-creator gt-npc-generator">
+  <section class="gt-panel gt-parchment-panel">
+    <h2>NSC-Grunddaten</h2>
+    <div class="gt-two-col">
+      <label>Name <input name="npcName" type="text" value="{{#if targetActor}}{{targetActor.name}}{{else}}Neuer NSC{{/if}}"></label>
+      <label>Stufe / Stärkegrad <select name="level">{{#each levels}}<option value="{{this}}">{{this}}</option>{{/each}}</select></label>
+      <label>Archetyp <select name="archetype">{{#each archetypes}}<option value="{{id}}">{{label}}</option>{{/each}}</select></label>
+      <label>Fraktion <select name="faction">{{#each factions}}<option value="{{this}}">{{this}}</option>{{/each}}</select></label>
+      <label>Aktionen <select name="actions"><option value="2">2 Aktionen – normaler NSC</option><option value="3">3 Aktionen – Anführer/wichtiger NSC</option></select></label>
+      <label>Variante <select name="variant"><option value="A">A</option><option value="B">B</option></select></label>
+      <label>Bewegung <input name="movement" type="number" value="5"></label>
+    </div>
+  </section>
+  <section class="gt-panel gt-parchment-panel">
+    <h2>Ausrüstung</h2>
+    <div class="gt-two-col">
+      <label>Waffe/Zauber <select name="weapon"><option value="">Archetyp-Vorschlag</option>{{#each weapons}}<option value="{{this}}">{{this}}</option>{{/each}}</select></label>
+      <label>Rüstung <select name="armor"><option value="">Archetyp-Vorschlag</option>{{#each armors}}<option value="{{this}}">{{this}}</option>{{/each}}</select></label>
+      <label>Extra <select name="extra"><option value="">— keiner —</option>{{#each weapons}}<option value="{{this}}">{{this}}</option>{{/each}}</select></label>
+    </div>
+  </section>
+  <section class="gt-panel gt-parchment-panel">
+    <h2>Beschreibung</h2>
+    <textarea name="description" placeholder="Verhalten, Rolle im Abenteuer, Hinweise für die Spielleitung ..."></textarea>
+  </section>
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fas fa-users"></i> {{#if targetActor}}NSC aktualisieren{{else}}NSC erstellen{{/if}}</button>
+  </footer>
+</form>

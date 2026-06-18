@@ -1,0 +1,850 @@
+:root {
+  --gt-paper: #ead4a5;
+  --gt-paper-light: #f4e6c4;
+  --gt-ink: #2b1d15;
+  --gt-ink-soft: #5a3c2a;
+  --gt-red: #9d1717;
+  --gt-line: #4a2f1d;
+  --gt-gold: #c59a50;
+  --gt-panel: rgba(246, 232, 198, .92);
+}
+
+.gothic-tales { color: var(--gt-ink); }
+.gothic-tales .window-content,
+.gothic-tales.sheet .window-content {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.25), transparent 26%),
+    linear-gradient(145deg, #d8b474, #f1dfba 48%, #c69a5f);
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.gt-sheet { min-width: 600px; }
+.gt-paper-header,
+.gt-parchment-panel {
+  background: var(--gt-panel);
+  border: 2px solid var(--gt-line);
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.2), 0 1px 4px rgba(0,0,0,.25);
+}
+.gt-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+}
+.gt-logo-mark {
+  width: 58px; height: 58px;
+  display: grid; place-items: center;
+  border: 3px double var(--gt-line);
+  background: #eee1bd;
+  font-size: 30px; font-weight: 900;
+  color: var(--gt-red);
+  text-shadow: 1px 1px 0 #000;
+}
+.gt-logo-mark.small { width: 44px; height: 44px; font-size: 22px; }
+.gt-title-block { min-width: 0; }
+.gt-small-label { color: var(--gt-red); font-weight: 700; font-size: 13px; }
+.gt-name {
+  font-size: 24px !important;
+  font-weight: 700;
+  height: 36px !important;
+  background: rgba(255,255,255,.45) !important;
+  border: 1px solid var(--gt-line) !important;
+}
+.gt-subline,
+.gt-level-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: end;
+}
+.gt-level-box { justify-content: flex-end; max-width: 340px; }
+.gt-level-box label, .gt-subline label { font-weight: 700; }
+.gt-level-box input { width: 62px; }
+
+.gt-sheet-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 92px;
+  gap: 8px;
+  align-items: start;
+}
+.gt-side-tabs {
+  position: sticky;
+  top: 0;
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  background: rgba(78,48,29,.85);
+  border: 2px solid var(--gt-line);
+  border-radius: 8px;
+}
+.gt-side-tabs a.item {
+  color: #f3e2bd;
+  text-align: center;
+  padding: 7px 3px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 12px;
+}
+.gt-side-tabs a.item.active { background: var(--gt-red); color: #fff; }
+.gt-side-tabs i { display: block; font-size: 18px; margin-bottom: 2px; }
+.gt-side-tabs span { display: block; }
+
+.sheet-body { overflow: auto; padding-right: 2px; }
+.gt-tabs { margin-bottom: 8px; }
+.gt-tabs a.item { color: var(--gt-ink); }
+
+.gt-grid-main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+  gap: 10px;
+}
+.gt-panel {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.gt-panel h2,
+.gt-panel h3 {
+  margin: 0 0 8px;
+  color: var(--gt-red);
+  text-shadow: 1px 1px 0 rgba(255,255,255,.5);
+  border-bottom: 2px solid rgba(74,47,29,.35);
+}
+.gt-panel h3 { font-size: 16px; color: var(--gt-ink); }
+
+.gt-attr-list { display: grid; gap: 6px; }
+.gt-attr-row {
+  display: grid;
+  grid-template-columns: 32px minmax(120px, 1fr) 74px 58px 58px auto;
+  gap: 5px;
+  align-items: center;
+  border-bottom: 1px dashed rgba(60,35,23,.35);
+  padding-bottom: 4px;
+}
+.gt-attr-label { font-weight: 700; color: var(--gt-red); }
+.gt-attr-row label { display: flex; align-items: center; gap: 3px; font-size: 12px; }
+.gt-attr-row input { min-width: 0; }
+
+.gt-defenses,
+.gt-resources,
+.gt-trackers,
+.gt-two-col,
+.gt-attr-builder {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 8px;
+}
+.gt-defenses label,
+.gt-resources label,
+.gt-trackers label,
+.gt-two-col label,
+.gt-attr-builder label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 700;
+  gap: 2px;
+}
+.gt-resources span, .gt-trackers span, .item-sheet span { display: flex; gap: 4px; }
+.gt-resources input, .gt-trackers input { min-width: 50px; }
+input, textarea, select {
+  background: rgba(255,255,255,.55) !important;
+  border: 1px solid rgba(60,35,23,.65) !important;
+  color: var(--gt-ink) !important;
+}
+textarea { min-height: 130px; resize: vertical; }
+
+button,
+.gt-roll,
+.gt-open-talent-tree,
+.gt-open-creator,
+.gt-open-npc-creator,
+.gt-rest-button,
+.gt-lock-toggle,
+.gt-import-buttons button,
+.gt-talent-node,
+.gt-tree-select {
+  border: 1px solid var(--gt-line);
+  border-radius: 5px;
+  background: linear-gradient(#efd8a7, #bd8d4d);
+  color: var(--gt-ink);
+  font-weight: 700;
+}
+button:hover,
+.gt-roll:hover,
+.gt-open-talent-tree:hover,
+.gt-open-creator:hover,
+.gt-open-npc-creator:hover,
+.gt-rest-button:hover,
+.gt-lock-toggle:hover,
+.gt-import-buttons button:hover,
+.gt-talent-node:hover,
+.gt-tree-select:hover { filter: brightness(1.05); }
+button.disabled { opacity: .45; pointer-events: none; }
+
+.items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.items-list .item {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) repeat(5, auto) 28px 28px 28px 28px;
+  gap: 5px;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px dashed rgba(60,35,23,.35);
+  background: rgba(255,255,255,.18);
+}
+.item-name { font-weight: 700; }
+.gt-chip {
+  display: inline-block;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid rgba(60,35,23,.45);
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: rgba(245,232,198,.85);
+  font-size: 12px;
+}
+.gt-chip.wide { max-width: 220px; }
+.gt-chip.learned { margin: 3px; background: rgba(190, 130, 60, .3); }
+
+.gt-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+.gt-help { font-style: italic; color: var(--gt-ink-soft); }
+.gt-source-text { max-height: 620px; overflow: auto; }
+.gt-source-text img, .item-header img, .items-list img { display: none !important; }
+.gt-description-preview {
+  border: 1px dashed rgba(60,35,23,.45);
+  background: rgba(255,255,255,.25);
+  padding: 8px;
+  margin-bottom: 8px;
+  max-height: 200px;
+  overflow: auto;
+}
+
+.gt-import-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr)); gap: 8px; }
+.gt-creator .gt-panel { margin-bottom: 10px; }
+.gt-talent-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  max-height: 260px;
+  overflow: auto;
+  gap: 4px;
+}
+.gt-talent-checklist label {
+  padding: 4px;
+  background: rgba(255,255,255,.22);
+  border: 1px solid rgba(60,35,23,.25);
+  border-radius: 4px;
+}
+.gt-talent-checklist small { display: block; color: var(--gt-ink-soft); }
+
+.gt-talent-app { padding: 8px; }
+.gt-talent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--gt-panel);
+  border: 2px solid var(--gt-line);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+.gt-tree-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.gt-tree-select.active { background: var(--gt-red); color: white; }
+.gt-tree.hidden { display: none; }
+.gt-node-grid {
+  position: relative;
+  min-height: 480px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  align-items: start;
+  padding: 12px;
+  background: rgba(255,255,255,.18);
+  border: 2px solid rgba(60,35,23,.35);
+  border-radius: 8px;
+}
+.gt-talent-node {
+  min-height: 76px;
+  padding: 8px;
+  background: linear-gradient(#e8d3a5, #b98b4d);
+}
+.gt-talent-node.learned { background: linear-gradient(#d4ecb8, #7ca45e); }
+.gt-talent-node.locked { filter: grayscale(.9); opacity: .55; }
+.gt-talent-node span { display: block; font-weight: 800; }
+.gt-talent-node small { display: block; margin-top: 4px; }
+
+.gt-roll-line { margin: 6px 0; }
+.gt-die { display: inline-block; margin: 2px; padding: 2px 4px; border: 1px solid rgba(60,35,23,.35); border-radius: 3px; background: rgba(255,255,255,.28); }
+.gt-pasch { color: var(--gt-red); font-weight: 700; }
+.gt-critical { color: var(--gt-red); font-weight: 900; }
+.gt-total { font-size: 28px; font-weight: 900; text-align: center; border-top: 2px solid rgba(60,35,23,.35); margin-top: 6px; padding-top: 6px; }
+
+.gt-directory-tools {
+  display: grid;
+  gap: 4px;
+  padding: 6px;
+  border-bottom: 1px solid rgba(0,0,0,.2);
+}
+.gt-directory-tools button { width: 100%; }
+
+.gt-locked input,
+.gt-locked textarea,
+.gt-locked select { opacity: .65; }
+.gt-locked .item-create,
+.gt-locked .item-edit,
+.gt-locked .item-delete { display: none; }
+
+@media (max-width: 860px) {
+  .gt-header { grid-template-columns: 1fr; }
+  .gt-logo-mark { display: none; }
+  .gt-sheet-layout { grid-template-columns: 1fr; }
+  .gt-side-tabs { position: relative; grid-template-columns: repeat(4, 1fr); order: -1; }
+  .gt-side-tabs span { font-size: 11px; }
+  .gt-attr-row { grid-template-columns: 32px 1fr 70px 56px 56px; }
+  .items-list .item { grid-template-columns: minmax(130px, 1fr) repeat(3, auto); }
+}
+
+.gt-combined-reference {
+  max-width: 980px;
+  margin: 0 auto;
+  line-height: 1.45;
+}
+.gt-combined-reference h1 {
+  border-bottom: 3px double rgba(60,35,23,.5);
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+.gt-reference-toc {
+  background: rgba(255,255,255,.24);
+  border: 1px solid rgba(60,35,23,.28);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0 18px;
+}
+.gt-reference-toc ol {
+  columns: 2 260px;
+  margin: 0;
+  padding-left: 18px;
+}
+.gt-reference-toc li { break-inside: avoid; margin: 2px 0; }
+.gt-reference-section {
+  border-top: 1px solid rgba(60,35,23,.22);
+  padding-top: 10px;
+  margin-top: 14px;
+}
+.gt-source-note {
+  color: var(--gt-ink-soft);
+  font-style: italic;
+}
+
+/* Gothic Tales v0.3.6: feste, gut lesbare Farbwelt und Würfeltabelle im Chat */
+html.gt-readable-ui,
+body.gt-readable-ui,
+body.gt-system-ui {
+  color-scheme: light !important;
+  --gt-paper: #ead4a5;
+  --gt-paper-light: #fff0c9;
+  --gt-ink: #21140d;
+  --gt-ink-soft: #4d3320;
+  --gt-red: #821010;
+  --gt-line: #3a2416;
+  --gt-gold: #af7a2c;
+  --gt-panel: rgba(252, 238, 199, .97);
+  --gt-panel-soft: rgba(255, 247, 224, .92);
+  --gt-input-bg: #fff7df;
+  --gt-input-text: #21140d;
+  --gt-dark-panel: #1d1510;
+  --gt-dark-panel-soft: #2a1d15;
+  --gt-light-text: #f8ead1;
+  --gt-light-muted: #d8bf93;
+  --gt-button-top: #f8e3b0;
+  --gt-button-bottom: #c8964d;
+  --gt-document-bg: #f5e4bd;
+  --gt-document-bg-soft: #fff2d2;
+  --gt-document-text: #21140d;
+  --gt-document-muted: #4a321f;
+  --gt-document-heading: #7f1111;
+  --gt-document-link: #8d1717;
+}
+
+body.gt-system-ui {
+  background-image:
+    linear-gradient(rgba(12, 10, 8, .18), rgba(12, 10, 8, .18)),
+    url("../assets/gt-background.webp") !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+}
+
+/* Systembögen: helle Pergamentflächen mit dunkler Schrift */
+.gothic-tales,
+.gothic-tales * {
+  text-shadow: none !important;
+}
+.gothic-tales,
+.gothic-tales p,
+.gothic-tales label,
+.gothic-tales span,
+.gothic-tales li,
+.gothic-tales td,
+.gothic-tales th,
+.gothic-tales small,
+.gothic-tales div {
+  color: var(--gt-ink) !important;
+}
+.gothic-tales .window-content,
+.gothic-tales.sheet .window-content {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,.38), transparent 28%),
+    linear-gradient(145deg, #d8b474, #f1dfba 48%, #c69a5f) !important;
+  color: var(--gt-ink) !important;
+}
+.gt-paper-header,
+.gt-parchment-panel,
+.gt-panel,
+.gt-reference-toc,
+.gt-description-preview,
+.items-list .item,
+.gt-talent-checklist label {
+  background: var(--gt-panel) !important;
+  color: var(--gt-ink) !important;
+  border-color: var(--gt-line) !important;
+}
+.gt-panel h1,
+.gt-panel h2,
+.gt-panel h3,
+.gt-combined-reference h1,
+.gt-combined-reference h2,
+.gt-combined-reference h3,
+.gothic-tales h1,
+.gothic-tales h2,
+.gothic-tales h3 {
+  color: var(--gt-document-heading) !important;
+}
+.gothic-tales a,
+.gt-combined-reference a { color: var(--gt-document-link) !important; }
+.gt-help,
+.gt-source-note,
+.gt-talent-checklist small { color: var(--gt-ink-soft) !important; }
+
+/* Dunkle Navigationsbereiche: helle Schrift */
+.gt-side-tabs,
+.gt-directory-tools {
+  background: var(--gt-dark-panel) !important;
+  color: var(--gt-light-text) !important;
+  border-color: var(--gt-line) !important;
+}
+.gt-side-tabs *,
+.gt-directory-tools *,
+.gt-side-tabs a.item,
+.gt-side-tabs a.item span,
+.gt-side-tabs a.item i {
+  color: var(--gt-light-text) !important;
+}
+.gt-side-tabs a.item.active {
+  background: var(--gt-red) !important;
+  color: #ffffff !important;
+}
+
+/* Eingaben und Buttons: keine automatische Betriebssystem-Farbinvertierung */
+.gothic-tales input,
+.gothic-tales textarea,
+.gothic-tales select,
+.gothic-tales option,
+.gt-rest-dialog input,
+.gt-rest-dialog textarea,
+.gt-rest-dialog select,
+.gt-rest-dialog option {
+  color-scheme: light !important;
+  background: var(--gt-input-bg) !important;
+  color: var(--gt-input-text) !important;
+  border: 1px solid var(--gt-line) !important;
+}
+.gothic-tales input::placeholder,
+.gothic-tales textarea::placeholder { color: var(--gt-ink-soft) !important; opacity: .9 !important; }
+.gothic-tales button,
+.gothic-tales .gt-roll,
+.gothic-tales .gt-open-talent-tree,
+.gothic-tales .gt-open-creator,
+.gothic-tales .gt-open-npc-creator,
+.gothic-tales .gt-rest-button,
+.gothic-tales .gt-lock-toggle,
+.gothic-tales .gt-import-buttons button,
+.gothic-tales .gt-talent-node,
+.gothic-tales .gt-tree-select {
+  background: linear-gradient(var(--gt-button-top), var(--gt-button-bottom)) !important;
+  color: var(--gt-ink) !important;
+  border-color: var(--gt-line) !important;
+}
+
+/* Journale/Kompendien: helle Dokumente mit dunkler Schrift, unabhängig von Systemeinstellungen */
+.journal-page-content:has(.gt-combined-reference),
+.journal-entry-page:has(.gt-combined-reference),
+.editor-content:has(.gt-combined-reference),
+.prosemirror:has(.gt-combined-reference) {
+  color-scheme: light !important;
+  background: var(--gt-document-bg) !important;
+  color: var(--gt-document-text) !important;
+}
+.journal-page-content .gt-combined-reference,
+.journal-entry-page .gt-combined-reference,
+.editor-content .gt-combined-reference,
+.prosemirror .gt-combined-reference,
+.journal-page-content .gt-combined-reference *,
+.journal-entry-page .gt-combined-reference *,
+.editor-content .gt-combined-reference *,
+.prosemirror .gt-combined-reference * {
+  color: var(--gt-document-text) !important;
+  text-shadow: none !important;
+}
+.journal-page-content .gt-combined-reference h1,
+.journal-page-content .gt-combined-reference h2,
+.journal-page-content .gt-combined-reference h3,
+.journal-entry-page .gt-combined-reference h1,
+.journal-entry-page .gt-combined-reference h2,
+.journal-entry-page .gt-combined-reference h3,
+.editor-content .gt-combined-reference h1,
+.editor-content .gt-combined-reference h2,
+.editor-content .gt-combined-reference h3,
+.prosemirror .gt-combined-reference h1,
+.prosemirror .gt-combined-reference h2,
+.prosemirror .gt-combined-reference h3 {
+  color: var(--gt-document-heading) !important;
+}
+.journal-page-content .gt-combined-reference a,
+.journal-entry-page .gt-combined-reference a,
+.editor-content .gt-combined-reference a,
+.prosemirror .gt-combined-reference a { color: var(--gt-document-link) !important; }
+.journal-page-content .gt-combined-reference table,
+.journal-entry-page .gt-combined-reference table,
+.editor-content .gt-combined-reference table,
+.prosemirror .gt-combined-reference table,
+.journal-page-content .gt-combined-reference blockquote,
+.journal-entry-page .gt-combined-reference blockquote,
+.editor-content .gt-combined-reference blockquote,
+.prosemirror .gt-combined-reference blockquote,
+.gt-reference-toc {
+  background: var(--gt-document-bg-soft) !important;
+  color: var(--gt-document-text) !important;
+  border-color: var(--gt-line) !important;
+}
+.journal-page-content .gt-combined-reference td,
+.journal-page-content .gt-combined-reference th,
+.journal-entry-page .gt-combined-reference td,
+.journal-entry-page .gt-combined-reference th,
+.editor-content .gt-combined-reference td,
+.editor-content .gt-combined-reference th,
+.prosemirror .gt-combined-reference td,
+.prosemirror .gt-combined-reference th {
+  color: var(--gt-document-text) !important;
+  border-color: rgba(74, 47, 29, .45) !important;
+}
+
+/* Chatkarten: helle Karte mit dunkler Schrift */
+.chat-message .gothic-tales.chat-card,
+.gothic-tales.chat-card {
+  color-scheme: light !important;
+  background: var(--gt-panel) !important;
+  color: var(--gt-ink) !important;
+  border: 2px solid var(--gt-line) !important;
+}
+.chat-message .gothic-tales.chat-card *,
+.gothic-tales.chat-card * { color: var(--gt-ink) !important; }
+.gothic-tales.chat-card h1,
+.gothic-tales.chat-card h2,
+.gothic-tales.chat-card h3,
+.gothic-tales.chat-card .gt-critical,
+.gothic-tales.chat-card .gt-pasch { color: var(--gt-red) !important; }
+
+/* Würfeltabelle im Chat: dunkler Kasten mit heller Schrift */
+#gt-chat-dice-tray.gt-chat-dice-tray {
+  position: relative !important;
+  inset: auto !important;
+  z-index: auto !important;
+  width: auto !important;
+  margin: 6px 6px 8px 6px !important;
+  padding: 8px !important;
+  border: 2px solid var(--gt-line) !important;
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, var(--gt-dark-panel-soft), var(--gt-dark-panel)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 220, 160, .16), 0 1px 4px rgba(0,0,0,.4) !important;
+  color: var(--gt-light-text) !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  pointer-events: auto !important;
+  user-select: none !important;
+}
+#gt-chat-dice-tray,
+#gt-chat-dice-tray * {
+  color: var(--gt-light-text) !important;
+  pointer-events: auto !important;
+  text-shadow: none !important;
+}
+#gt-chat-dice-tray .gt-chat-dice-title {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 6px !important;
+  color: #ffd38b !important;
+  font-weight: 900 !important;
+}
+#gt-chat-dice-tray .gt-chat-dice-buttons {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(32px, 1fr)) !important;
+  gap: 4px !important;
+}
+#gt-chat-dice-tray .gt-chat-die-button,
+#gt-chat-dice-tray .gt-chat-clear-button,
+#gt-chat-dice-tray .gt-chat-roll-button {
+  position: relative !important;
+  z-index: auto !important;
+  min-height: 30px !important;
+  border: 1px solid #c69a5f !important;
+  border-radius: 6px !important;
+  background: linear-gradient(#f7dfad, #c49048) !important;
+  color: #21140d !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+}
+#gt-chat-dice-tray .gt-chat-die-button.active {
+  outline: 2px solid #ffd38b !important;
+  background: linear-gradient(#ffe7b8, #d99f43) !important;
+}
+#gt-chat-dice-tray .gt-chat-die-button span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  margin-left: 4px !important;
+  border-radius: 999px !important;
+  background: #821010 !important;
+  color: #fff !important;
+  font-size: 11px !important;
+}
+#gt-chat-dice-tray .gt-chat-dice-formula {
+  min-height: 28px !important;
+  margin: 6px 0 !important;
+  padding: 5px 7px !important;
+  border: 1px solid rgba(255, 220, 160, .28) !important;
+  border-radius: 6px !important;
+  background: rgba(0, 0, 0, .24) !important;
+  color: var(--gt-light-text) !important;
+  font-weight: 700 !important;
+  word-break: break-word !important;
+}
+#gt-chat-dice-tray .gt-chat-dice-controls {
+  display: grid !important;
+  grid-template-columns: minmax(78px, 1fr) auto auto !important;
+  gap: 6px !important;
+  align-items: center !important;
+  margin-top: 6px !important;
+}
+#gt-chat-dice-tray .gt-chat-dice-controls label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  color: var(--gt-light-text) !important;
+  font-weight: 700 !important;
+}
+#gt-chat-dice-tray .gt-chat-bonus {
+  color-scheme: light !important;
+  width: 58px !important;
+  height: 26px !important;
+  background: #fff7df !important;
+  color: #21140d !important;
+  border: 1px solid #c69a5f !important;
+}
+#gt-chat-dice-tray .gt-chat-roll-button:disabled {
+  opacity: .5 !important;
+  cursor: not-allowed !important;
+}
+@media (max-width: 720px) {
+  #gt-chat-dice-tray .gt-chat-dice-buttons { grid-template-columns: repeat(4, minmax(38px, 1fr)) !important; }
+  #gt-chat-dice-tray .gt-chat-dice-controls { grid-template-columns: 1fr 1fr; }
+  #gt-chat-dice-tray .gt-chat-dice-controls label { grid-column: 1 / -1; }
+}
+
+/* GT window headers: dark header with white text */
+.window-app.gothic-tales .window-header,
+.app.window-app.gothic-tales .window-header,
+.application.gothic-tales .window-header {
+  background: linear-gradient(180deg, #3c2418, #1f130d) !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #c59a50 !important;
+}
+.window-app.gothic-tales .window-header *,
+.app.window-app.gothic-tales .window-header *,
+.application.gothic-tales .window-header * {
+  color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .85) !important;
+}
+.window-app.gothic-tales .window-header .window-title,
+.app.window-app.gothic-tales .window-header .window-title,
+.application.gothic-tales .window-header .window-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+.window-app.gothic-tales .window-header a,
+.window-app.gothic-tales .window-header button,
+.app.window-app.gothic-tales .window-header a,
+.app.window-app.gothic-tales .window-header button,
+.application.gothic-tales .window-header a,
+.application.gothic-tales .window-header button {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+.window-app.gothic-tales .window-header a:hover,
+.app.window-app.gothic-tales .window-header a:hover,
+.application.gothic-tales .window-header a:hover {
+  color: #ffd38b !important;
+}
+
+/* Gothic Tales v0.3.9: übersichtlichere Hauptbogen-Anordnung */
+.gt-main-sheet-grid {
+  grid-template-columns: minmax(620px, 1fr) minmax(300px, 380px);
+  grid-template-areas:
+    "attributes defense"
+    "skills defense";
+  align-items: start;
+}
+.gt-main-sheet-grid .attributes-panel { grid-area: attributes; }
+.gt-main-sheet-grid .skills-panel { grid-area: skills; }
+.gt-main-sheet-grid .defense-panel { grid-area: defense; }
+.attributes-panel .gt-attr-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+.attributes-panel .gt-attr-row {
+  grid-template-columns: 30px minmax(74px, 1fr) 50px 42px 42px;
+  gap: 4px;
+  min-width: 0;
+}
+.attributes-panel .gt-attr-row .gt-attr-label { font-size: 12px; }
+.skills-panel .gt-attr-list { grid-template-columns: 1fr; }
+.skills-panel .gt-attr-row {
+  grid-template-columns: 32px minmax(190px, 1fr) 74px 58px 58px auto;
+}
+
+/* Hübsche Hoverfenster für Talente und Werte-Chips */
+.gt-talent-node {
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+.gt-talent-node:hover,
+.gt-talent-node:focus { z-index: 50; }
+.gt-talent-node .gt-talent-name {
+  display: block;
+  font-weight: 900;
+  font-size: 14px;
+}
+.gt-talent-node .gt-talent-tooltip {
+  display: none !important;
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  width: min(380px, 78vw);
+  white-space: normal;
+  text-align: left;
+  line-height: 1.35;
+  padding: 10px 12px;
+  border: 2px solid var(--gt-line);
+  border-radius: 8px;
+  background: #fff3d0 !important;
+  color: var(--gt-ink) !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.45);
+  pointer-events: none;
+  font-weight: 500;
+}
+.gt-talent-node .gt-talent-tooltip::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: var(--gt-line);
+}
+.gt-talent-node:hover .gt-talent-tooltip,
+.gt-talent-node:focus .gt-talent-tooltip {
+  display: block !important;
+}
+.gt-node-grid { overflow: visible; }
+
+.gt-tip {
+  position: relative;
+  cursor: help;
+}
+.gt-tip:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  min-width: 140px;
+  max-width: 320px;
+  white-space: normal;
+  z-index: 1000;
+  padding: 6px 8px;
+  border: 1px solid var(--gt-line);
+  border-radius: 6px;
+  background: #fff3d0;
+  color: var(--gt-ink);
+  box-shadow: 0 4px 12px rgba(0,0,0,.35);
+  font-weight: 700;
+}
+.gt-tip:hover::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--gt-line);
+  z-index: 1001;
+}
+.items-list .item { overflow: visible; }
+
+.gt-description-dialog {
+  display: grid;
+  gap: 10px;
+}
+.gt-description-dialog label {
+  display: grid;
+  gap: 4px;
+}
+.gt-description-dialog textarea {
+  min-height: 180px;
+  font-family: Georgia, "Times New Roman", serif;
+}
+.gt-description-preview p { margin: 0 0 .55em; }
+.gt-description-preview ul { margin: .35em 0 .65em 1.2em; }
+.gt-description-preview li { margin: .18em 0; }
+
+@media (max-width: 980px) {
+  .gt-main-sheet-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "attributes"
+      "defense"
+      "skills";
+  }
+  .attributes-panel .gt-attr-list { grid-template-columns: 1fr; }
+  .attributes-panel .gt-attr-row,
+  .skills-panel .gt-attr-row { grid-template-columns: 32px 1fr 70px 56px 56px; }
+}

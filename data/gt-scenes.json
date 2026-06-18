@@ -1,0 +1,930 @@
+{
+  "version": "0.3.7",
+  "title": "GT Karten",
+  "scenes": [
+    {
+      "id": "minental",
+      "name": "Minental",
+      "type": "Weltkarte",
+      "image": "systems/gothic-tales/assets/maps/minental.webp",
+      "folder": "Weltkarten",
+      "scene": {
+        "name": "Minental",
+        "navigation": true,
+        "thumb": "",
+        "width": 3840,
+        "height": 2160,
+        "padding": 0,
+        "shiftX": 0,
+        "shiftY": 0,
+        "initial": {
+          "x": null,
+          "y": null,
+          "scale": null
+        },
+        "initialLevel": "defaultLevel0000",
+        "grid": {
+          "type": 1,
+          "size": 50,
+          "style": "solidLines",
+          "thickness": 1,
+          "color": "#000000",
+          "alpha": 0.55,
+          "distance": 1,
+          "units": "Feld"
+        },
+        "tokenVision": true,
+        "fog": {
+          "mode": 2,
+          "colors": {
+            "explored": null,
+            "unexplored": "#d0c6b4"
+          }
+        },
+        "environment": {
+          "darknessLevel": 0,
+          "darknessLock": false,
+          "globalLight": {
+            "enabled": true,
+            "alpha": 0.5,
+            "bright": false,
+            "color": null,
+            "coloration": 1,
+            "luminosity": 0,
+            "saturation": 0,
+            "contrast": 0,
+            "shadows": 0,
+            "darkness": {
+              "min": 0,
+              "max": 0
+            }
+          },
+          "cycle": true,
+          "base": {
+            "hue": 0,
+            "intensity": 0,
+            "luminosity": 0,
+            "saturation": 0,
+            "shadows": 0
+          },
+          "dark": {
+            "hue": 0.7138888888888889,
+            "intensity": 0,
+            "luminosity": -0.25,
+            "saturation": 0,
+            "shadows": 0
+          }
+        },
+        "transition": {
+          "type": null,
+          "duration": 1500,
+          "activeOnly": false
+        },
+        "drawings": [],
+        "tokens": [],
+        "levels": [
+          {
+            "_id": "defaultLevel0000",
+            "name": "Level",
+            "elevation": {
+              "bottom": 0,
+              "top": 20
+            },
+            "background": {
+              "color": "#000000",
+              "src": "systems/gothic-tales/assets/maps/minental.webp",
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "foreground": {
+              "src": null,
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "fog": {
+              "src": null
+            },
+            "textures": {
+              "anchorX": 0.5,
+              "anchorY": 0.5,
+              "offsetX": 0,
+              "offsetY": 0,
+              "fit": "fill",
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0
+            },
+            "visibility": {
+              "levels": []
+            },
+            "sort": 0,
+            "flags": {}
+          }
+        ],
+        "lights": [],
+        "notes": [],
+        "sounds": [],
+        "regions": [],
+        "tiles": [],
+        "walls": [],
+        "playlist": null,
+        "playlistSound": null,
+        "journal": null,
+        "journalEntryPage": null,
+        "weather": "",
+        "flags": {
+          "gothic-tales": {
+            "uid": "scene.minental",
+            "mapType": "Weltkarte",
+            "version": "0.3.7",
+            "source": "User Map Export"
+          }
+        },
+        "navName": "Minental",
+        "ownership": {
+          "default": 0
+        },
+        "background": {
+          "src": "systems/gothic-tales/assets/maps/minental.webp",
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tint": "#ffffff"
+        },
+        "img": "systems/gothic-tales/assets/maps/minental.webp"
+      }
+    },
+    {
+      "id": "altes-lager",
+      "name": "Altes Lager",
+      "type": "Gebietskarte",
+      "image": "systems/gothic-tales/assets/maps/altes-lager.webp",
+      "folder": "Gebietskarten",
+      "scene": {
+        "name": "Altes Lager",
+        "navigation": false,
+        "thumb": "",
+        "width": 3840,
+        "height": 2160,
+        "padding": 0,
+        "shiftX": 0,
+        "shiftY": 0,
+        "initial": {
+          "x": null,
+          "y": null,
+          "scale": null
+        },
+        "initialLevel": "defaultLevel0000",
+        "grid": {
+          "type": 1,
+          "size": 50,
+          "style": "solidLines",
+          "thickness": 1,
+          "color": "#000000",
+          "alpha": 0.55,
+          "distance": 1,
+          "units": "Feld"
+        },
+        "tokenVision": true,
+        "fog": {
+          "mode": 1,
+          "colors": {
+            "explored": null,
+            "unexplored": null
+          }
+        },
+        "environment": {
+          "darknessLevel": 0,
+          "darknessLock": false,
+          "globalLight": {
+            "enabled": true,
+            "alpha": 0.5,
+            "bright": false,
+            "color": null,
+            "coloration": 1,
+            "luminosity": 0,
+            "saturation": 0,
+            "contrast": 0,
+            "shadows": 0,
+            "darkness": {
+              "min": 0,
+              "max": 1
+            }
+          },
+          "cycle": true,
+          "base": {
+            "hue": 0,
+            "intensity": 0,
+            "luminosity": 0,
+            "saturation": 0,
+            "shadows": 0
+          },
+          "dark": {
+            "hue": 0.7138888888888889,
+            "intensity": 0,
+            "luminosity": -0.25,
+            "saturation": 0,
+            "shadows": 0
+          }
+        },
+        "transition": {
+          "type": null,
+          "duration": 1500,
+          "activeOnly": false
+        },
+        "drawings": [],
+        "tokens": [],
+        "levels": [
+          {
+            "_id": "defaultLevel0000",
+            "name": "Level",
+            "elevation": {
+              "bottom": 0,
+              "top": 20
+            },
+            "background": {
+              "color": "#000000",
+              "src": "systems/gothic-tales/assets/maps/altes-lager.webp",
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "foreground": {
+              "src": null,
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "fog": {
+              "src": null
+            },
+            "textures": {
+              "anchorX": 0.5,
+              "anchorY": 0.5,
+              "offsetX": 0,
+              "offsetY": 0,
+              "fit": "fill",
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0
+            },
+            "visibility": {
+              "levels": []
+            },
+            "sort": 0,
+            "flags": {}
+          }
+        ],
+        "lights": [],
+        "notes": [],
+        "sounds": [],
+        "regions": [],
+        "tiles": [],
+        "walls": [],
+        "playlist": null,
+        "playlistSound": null,
+        "journal": null,
+        "journalEntryPage": null,
+        "weather": "",
+        "flags": {
+          "gothic-tales": {
+            "uid": "scene.altes-lager",
+            "mapType": "Gebietskarte",
+            "version": "0.3.7",
+            "source": "User Map Export"
+          }
+        },
+        "navName": "Altes Lager",
+        "ownership": {
+          "default": 0
+        },
+        "background": {
+          "src": "systems/gothic-tales/assets/maps/altes-lager.webp",
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tint": "#ffffff"
+        },
+        "img": "systems/gothic-tales/assets/maps/altes-lager.webp"
+      }
+    },
+    {
+      "id": "neues-lager",
+      "name": "Neues Lager",
+      "type": "Gebietskarte",
+      "image": "systems/gothic-tales/assets/maps/neues-lager.webp",
+      "folder": "Gebietskarten",
+      "scene": {
+        "name": "Neues Lager",
+        "navigation": false,
+        "thumb": "",
+        "width": 3840,
+        "height": 2160,
+        "padding": 0,
+        "shiftX": 0,
+        "shiftY": 0,
+        "initial": {
+          "x": null,
+          "y": null,
+          "scale": null
+        },
+        "initialLevel": "defaultLevel0000",
+        "grid": {
+          "type": 1,
+          "size": 50,
+          "style": "solidLines",
+          "thickness": 1,
+          "color": "#000000",
+          "alpha": 0.55,
+          "distance": 1,
+          "units": "Feld"
+        },
+        "tokenVision": true,
+        "fog": {
+          "mode": 1,
+          "colors": {
+            "explored": null,
+            "unexplored": null
+          }
+        },
+        "environment": {
+          "darknessLevel": 0,
+          "darknessLock": false,
+          "globalLight": {
+            "enabled": true,
+            "alpha": 0.5,
+            "bright": false,
+            "color": null,
+            "coloration": 1,
+            "luminosity": 0,
+            "saturation": 0,
+            "contrast": 0,
+            "shadows": 0,
+            "darkness": {
+              "min": 0,
+              "max": 1
+            }
+          },
+          "cycle": true,
+          "base": {
+            "hue": 0,
+            "intensity": 0,
+            "luminosity": 0,
+            "saturation": 0,
+            "shadows": 0
+          },
+          "dark": {
+            "hue": 0.7138888888888889,
+            "intensity": 0,
+            "luminosity": -0.25,
+            "saturation": 0,
+            "shadows": 0
+          }
+        },
+        "transition": {
+          "type": null,
+          "duration": 1500,
+          "activeOnly": false
+        },
+        "drawings": [],
+        "tokens": [],
+        "levels": [
+          {
+            "_id": "defaultLevel0000",
+            "name": "Level",
+            "elevation": {
+              "bottom": 0,
+              "top": 20
+            },
+            "background": {
+              "color": "#000000",
+              "src": "systems/gothic-tales/assets/maps/neues-lager.webp",
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "foreground": {
+              "src": null,
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "fog": {
+              "src": null
+            },
+            "textures": {
+              "anchorX": 0.5,
+              "anchorY": 0.5,
+              "offsetX": 0,
+              "offsetY": 0,
+              "fit": "fill",
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0
+            },
+            "visibility": {
+              "levels": []
+            },
+            "sort": 0,
+            "flags": {}
+          }
+        ],
+        "lights": [],
+        "notes": [],
+        "sounds": [],
+        "regions": [],
+        "tiles": [],
+        "walls": [],
+        "playlist": null,
+        "playlistSound": null,
+        "journal": null,
+        "journalEntryPage": null,
+        "weather": "",
+        "flags": {
+          "gothic-tales": {
+            "uid": "scene.neues-lager",
+            "mapType": "Gebietskarte",
+            "version": "0.3.7",
+            "source": "User Map Export"
+          }
+        },
+        "navName": "Neues Lager",
+        "ownership": {
+          "default": 0
+        },
+        "background": {
+          "src": "systems/gothic-tales/assets/maps/neues-lager.webp",
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tint": "#ffffff"
+        },
+        "img": "systems/gothic-tales/assets/maps/neues-lager.webp"
+      }
+    },
+    {
+      "id": "sumpflager",
+      "name": "Sumpflager",
+      "type": "Gebietskarte",
+      "image": "systems/gothic-tales/assets/maps/sumpflager.webp",
+      "folder": "Gebietskarten",
+      "scene": {
+        "name": "Sumpflager",
+        "navigation": false,
+        "thumb": "",
+        "width": 3840,
+        "height": 2160,
+        "padding": 0,
+        "shiftX": 0,
+        "shiftY": 0,
+        "initial": {
+          "x": null,
+          "y": null,
+          "scale": null
+        },
+        "initialLevel": "defaultLevel0000",
+        "grid": {
+          "type": 1,
+          "size": 50,
+          "style": "solidLines",
+          "thickness": 1,
+          "color": "#000000",
+          "alpha": 0.55,
+          "distance": 1,
+          "units": "Feld"
+        },
+        "tokenVision": true,
+        "fog": {
+          "mode": 1,
+          "colors": {
+            "explored": null,
+            "unexplored": null
+          }
+        },
+        "environment": {
+          "darknessLevel": 0,
+          "darknessLock": false,
+          "globalLight": {
+            "enabled": true,
+            "alpha": 0.5,
+            "bright": false,
+            "color": null,
+            "coloration": 1,
+            "luminosity": 0,
+            "saturation": 0,
+            "contrast": 0,
+            "shadows": 0,
+            "darkness": {
+              "min": 0,
+              "max": 1
+            }
+          },
+          "cycle": true,
+          "base": {
+            "hue": 0,
+            "intensity": 0,
+            "luminosity": 0,
+            "saturation": 0,
+            "shadows": 0
+          },
+          "dark": {
+            "hue": 0.7138888888888889,
+            "intensity": 0,
+            "luminosity": -0.25,
+            "saturation": 0,
+            "shadows": 0
+          }
+        },
+        "transition": {
+          "type": null,
+          "duration": 1500,
+          "activeOnly": false
+        },
+        "drawings": [],
+        "tokens": [],
+        "levels": [
+          {
+            "_id": "defaultLevel0000",
+            "name": "Level",
+            "elevation": {
+              "bottom": 0,
+              "top": 20
+            },
+            "background": {
+              "color": "#000000",
+              "src": "systems/gothic-tales/assets/maps/sumpflager.webp",
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "foreground": {
+              "src": null,
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "fog": {
+              "src": null
+            },
+            "textures": {
+              "anchorX": 0.5,
+              "anchorY": 0.5,
+              "offsetX": 0,
+              "offsetY": 0,
+              "fit": "fill",
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0
+            },
+            "visibility": {
+              "levels": []
+            },
+            "sort": 0,
+            "flags": {}
+          }
+        ],
+        "lights": [],
+        "notes": [],
+        "sounds": [],
+        "regions": [],
+        "tiles": [],
+        "walls": [],
+        "playlist": null,
+        "playlistSound": null,
+        "journal": null,
+        "journalEntryPage": null,
+        "weather": "",
+        "flags": {
+          "gothic-tales": {
+            "uid": "scene.sumpflager",
+            "mapType": "Gebietskarte",
+            "version": "0.3.7",
+            "source": "User Map Export"
+          }
+        },
+        "navName": "Sumpflager",
+        "ownership": {
+          "default": 0
+        },
+        "background": {
+          "src": "systems/gothic-tales/assets/maps/sumpflager.webp",
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tint": "#ffffff"
+        },
+        "img": "systems/gothic-tales/assets/maps/sumpflager.webp"
+      }
+    },
+    {
+      "id": "orkstadt",
+      "name": "Orkstadt",
+      "type": "Gebietskarte",
+      "image": "systems/gothic-tales/assets/maps/orkstadt.webp",
+      "folder": "Gebietskarten",
+      "scene": {
+        "name": "Orkstadt",
+        "navigation": false,
+        "thumb": "",
+        "width": 3840,
+        "height": 2160,
+        "padding": 0,
+        "shiftX": 0,
+        "shiftY": 0,
+        "initial": {
+          "x": null,
+          "y": null,
+          "scale": null
+        },
+        "initialLevel": "defaultLevel0000",
+        "grid": {
+          "type": 1,
+          "size": 50,
+          "style": "solidLines",
+          "thickness": 1,
+          "color": "#000000",
+          "alpha": 0.55,
+          "distance": 1,
+          "units": "Feld"
+        },
+        "tokenVision": true,
+        "fog": {
+          "mode": 1,
+          "colors": {
+            "explored": null,
+            "unexplored": null
+          }
+        },
+        "environment": {
+          "darknessLevel": 0,
+          "darknessLock": false,
+          "globalLight": {
+            "enabled": true,
+            "alpha": 0.5,
+            "bright": false,
+            "color": null,
+            "coloration": 1,
+            "luminosity": 0,
+            "saturation": 0,
+            "contrast": 0,
+            "shadows": 0,
+            "darkness": {
+              "min": 0,
+              "max": 1
+            }
+          },
+          "cycle": true,
+          "base": {
+            "hue": 0,
+            "intensity": 0,
+            "luminosity": 0,
+            "saturation": 0,
+            "shadows": 0
+          },
+          "dark": {
+            "hue": 0.7138888888888889,
+            "intensity": 0,
+            "luminosity": -0.25,
+            "saturation": 0,
+            "shadows": 0
+          }
+        },
+        "transition": {
+          "type": null,
+          "duration": 1500,
+          "activeOnly": false
+        },
+        "drawings": [],
+        "tokens": [],
+        "levels": [
+          {
+            "_id": "defaultLevel0000",
+            "name": "Level",
+            "elevation": {
+              "bottom": 0,
+              "top": 20
+            },
+            "background": {
+              "color": "#000000",
+              "src": "systems/gothic-tales/assets/maps/orkstadt.webp",
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "foreground": {
+              "src": null,
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "fog": {
+              "src": null
+            },
+            "textures": {
+              "anchorX": 0.5,
+              "anchorY": 0.5,
+              "offsetX": 0,
+              "offsetY": 0,
+              "fit": "fill",
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0
+            },
+            "visibility": {
+              "levels": []
+            },
+            "sort": 0,
+            "flags": {}
+          }
+        ],
+        "lights": [],
+        "notes": [],
+        "sounds": [],
+        "regions": [],
+        "tiles": [],
+        "walls": [],
+        "playlist": null,
+        "playlistSound": null,
+        "journal": null,
+        "journalEntryPage": null,
+        "weather": "",
+        "flags": {
+          "gothic-tales": {
+            "uid": "scene.orkstadt",
+            "mapType": "Gebietskarte",
+            "version": "0.3.7",
+            "source": "User Map Export"
+          }
+        },
+        "navName": "Orkstadt",
+        "ownership": {
+          "default": 0
+        },
+        "background": {
+          "src": "systems/gothic-tales/assets/maps/orkstadt.webp",
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tint": "#ffffff"
+        },
+        "img": "systems/gothic-tales/assets/maps/orkstadt.webp"
+      }
+    },
+    {
+      "id": "schlaefertempel",
+      "name": "Schläfertempel",
+      "type": "Gebietskarte",
+      "image": "systems/gothic-tales/assets/maps/schlaefertempel.webp",
+      "folder": "Gebietskarten",
+      "scene": {
+        "name": "Schläfertempel",
+        "navigation": false,
+        "thumb": "",
+        "width": 3840,
+        "height": 2160,
+        "padding": 0,
+        "shiftX": 0,
+        "shiftY": 0,
+        "initial": {
+          "x": null,
+          "y": null,
+          "scale": null
+        },
+        "initialLevel": "defaultLevel0000",
+        "grid": {
+          "type": 1,
+          "size": 30,
+          "style": "solidLines",
+          "thickness": 1,
+          "color": "#000000",
+          "alpha": 0.55,
+          "distance": 1,
+          "units": "Feld"
+        },
+        "tokenVision": true,
+        "fog": {
+          "mode": 1,
+          "colors": {
+            "explored": null,
+            "unexplored": null
+          }
+        },
+        "environment": {
+          "darknessLevel": 0,
+          "darknessLock": false,
+          "globalLight": {
+            "enabled": true,
+            "alpha": 0.5,
+            "bright": false,
+            "color": null,
+            "coloration": 1,
+            "luminosity": 0,
+            "saturation": 0,
+            "contrast": 0,
+            "shadows": 0,
+            "darkness": {
+              "min": 0,
+              "max": 1
+            }
+          },
+          "cycle": true,
+          "base": {
+            "hue": 0,
+            "intensity": 0,
+            "luminosity": 0,
+            "saturation": 0,
+            "shadows": 0
+          },
+          "dark": {
+            "hue": 0.7138888888888889,
+            "intensity": 0,
+            "luminosity": -0.25,
+            "saturation": 0,
+            "shadows": 0
+          }
+        },
+        "transition": {
+          "type": null,
+          "duration": 1500,
+          "activeOnly": false
+        },
+        "drawings": [],
+        "tokens": [],
+        "levels": [
+          {
+            "_id": "defaultLevel0000",
+            "name": "Level",
+            "elevation": {
+              "bottom": 0,
+              "top": 20
+            },
+            "background": {
+              "color": "#000000",
+              "src": "systems/gothic-tales/assets/maps/schlaefertempel.webp",
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "foreground": {
+              "src": null,
+              "tint": "#ffffff",
+              "alphaThreshold": 0.75
+            },
+            "fog": {
+              "src": null
+            },
+            "textures": {
+              "anchorX": 0.5,
+              "anchorY": 0.5,
+              "offsetX": 0,
+              "offsetY": 0,
+              "fit": "fill",
+              "scaleX": 1,
+              "scaleY": 1,
+              "rotation": 0
+            },
+            "visibility": {
+              "levels": []
+            },
+            "sort": 0,
+            "flags": {}
+          }
+        ],
+        "lights": [],
+        "notes": [],
+        "sounds": [],
+        "regions": [],
+        "tiles": [],
+        "walls": [],
+        "playlist": null,
+        "playlistSound": null,
+        "journal": null,
+        "journalEntryPage": null,
+        "weather": "",
+        "flags": {
+          "gothic-tales": {
+            "uid": "scene.schlaefertempel",
+            "mapType": "Gebietskarte",
+            "version": "0.3.7",
+            "source": "User Map Export"
+          }
+        },
+        "navName": "Schläfertempel",
+        "ownership": {
+          "default": 0
+        },
+        "background": {
+          "src": "systems/gothic-tales/assets/maps/schlaefertempel.webp",
+          "offsetX": 0,
+          "offsetY": 0,
+          "scaleX": 1,
+          "scaleY": 1,
+          "rotation": 0,
+          "tint": "#ffffff"
+        },
+        "img": "systems/gothic-tales/assets/maps/schlaefertempel.webp"
+      }
+    }
+  ]
+}

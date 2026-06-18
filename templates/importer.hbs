@@ -1,0 +1,15 @@
+<form class="gothic-tales gt-importer">
+  {{#unless isGM}}
+  <p>Nur die Spielleitung kann den Import ausführen.</p>
+  {{/unless}}
+  <p>Beim ersten Start und nach Systemupdates aktualisiert Gothic Tales automatisch alle Inhalte. Das <strong>GT Nachschlagewerk</strong> enthält jedes Buch als ein einzelnes Dokument, damit keine unnötig langen Dokumentlisten entstehen.</p>
+  <div class="gt-import-buttons">
+    <button type="button" data-import="reference"><i class="fas fa-book-open"></i> GT Nachschlagewerk aktualisieren</button>
+    <button type="button" data-import="monsters"><i class="fas fa-dragon"></i> Monster</button>
+    <button type="button" data-import="npcs"><i class="fas fa-users"></i> NSCs</button>
+    <button type="button" data-import="talents"><i class="fas fa-sitemap"></i> Talente</button>
+    <button type="button" data-import="items"><i class="fas fa-sack"></i> Ausrüstung & Rumpelkammer</button>
+    <button type="button" data-import="scenes"><i class="fas fa-map"></i> Karten & Szenen</button>
+    <button type="button" data-import="all"><i class="fas fa-download"></i> Alles aktualisieren</button>
+  </div>
+</form>

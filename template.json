@@ -1,0 +1,364 @@
+{
+  "Actor": {
+    "types": [
+      "character",
+      "npc",
+      "monster"
+    ],
+    "templates": {
+      "base": {
+        "playerName": "",
+        "faction": "",
+        "stufe": 1,
+        "lp": {
+          "value": 10,
+          "max": 10
+        },
+        "attributes": {
+          "st": {
+            "label": "Stärke",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0
+          },
+          "ge": {
+            "label": "Geschick",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0
+          },
+          "ausd": {
+            "label": "Ausdauer",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0
+          },
+          "konz": {
+            "label": "Konzentration",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0
+          },
+          "intu": {
+            "label": "Intuition",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0
+          },
+          "erf": {
+            "label": "Erfahrung",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0
+          }
+        },
+        "skills": {
+          "durchhalten": {
+            "label": "Durchhalten",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "objekteBewegen": {
+            "label": "Objekte Bewegen",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "springenKlettern": {
+            "label": "Springen/Klettern",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "gewandtheit": {
+            "label": "Gewandtheit",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "heimlichkeit": {
+            "label": "Heimlichkeit",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "ueberreden": {
+            "label": "Überreden",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "einschuechtern": {
+            "label": "Einschüchtern",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "betruegen": {
+            "label": "Betrügen",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "menschenkenntnis": {
+            "label": "Menschenkenntnis",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "wahrnehmen": {
+            "label": "Wahrnehmen",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "erinnernErwaegenErforschen": {
+            "label": "Erinnern/Erwägen/Erforschen",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          },
+          "magiegespuer": {
+            "label": "Magiegespür",
+            "value": 10,
+            "die": "w4",
+            "bonus": 0,
+            "grade": 0,
+            "gradeDie": ""
+          }
+        },
+        "defenses": {
+          "rk": {
+            "label": "RK",
+            "value": 10,
+            "bonus": 0
+          },
+          "ele": {
+            "label": "Elemente",
+            "value": 10,
+            "bonus": 0
+          },
+          "ma": {
+            "label": "Mentale Abwehr",
+            "value": 10,
+            "bonus": 0
+          }
+        },
+        "hp": {
+          "value": 36,
+          "max": 36
+        },
+        "mana": {
+          "value": 20,
+          "max": 20
+        },
+        "initiative": {
+          "value": 16,
+          "die": "w4",
+          "bonus": 1
+        },
+        "movement": {
+          "value": 5
+        },
+        "exhaustion": {
+          "value": 0,
+          "max": 6
+        },
+        "deathCounter": {
+          "value": 0,
+          "max": 6
+        },
+        "biography": "",
+        "notes": "",
+        "strengthsWeaknesses": "",
+        "inventoryText": "",
+        "sourceText": "",
+        "sourceImage": "",
+        "sourceBook": "",
+        "sourcePage": "",
+        "armorBonus": {
+          "rk": 0,
+          "ele": 0,
+          "ma": 0
+        },
+        "talentTree": {
+          "learned": {}
+        }
+      }
+    },
+    "character": {
+      "templates": [
+        "base"
+      ]
+    },
+    "npc": {
+      "templates": [
+        "base"
+      ],
+      "variant": "",
+      "attributeTotal": 0
+    },
+    "monster": {
+      "templates": [
+        "base"
+      ],
+      "monsterNumber": 0,
+      "monsterType": "",
+      "monsterstufe": "0",
+      "lootText": ""
+    }
+  },
+  "Item": {
+    "types": [
+      "weapon",
+      "shield",
+      "armor",
+      "spell",
+      "talent",
+      "trait",
+      "equipment",
+      "consumable"
+    ],
+    "templates": {
+      "base": {
+        "description": "",
+        "category": "",
+        "sourceText": "",
+        "sourceImage": "",
+        "sourceBook": "",
+        "sourcePage": ""
+      },
+      "usable": {
+        "uses": {
+          "value": 0,
+          "max": 0
+        },
+        "cost": "",
+        "requirements": ""
+      }
+    },
+    "weapon": {
+      "templates": [
+        "base",
+        "usable"
+      ],
+      "damage": "",
+      "attribute": "st",
+      "properties": "",
+      "value": "",
+      "range": "",
+      "sourceImage": "",
+      "targetDefense": "rk",
+      "requirements": ""
+    },
+    "shield": {
+      "templates": [
+        "base",
+        "usable"
+      ],
+      "damage": "",
+      "properties": "",
+      "value": "",
+      "sourceImage": "",
+      "attribute": "",
+      "targetDefense": "rk",
+      "requirements": ""
+    },
+    "armor": {
+      "templates": [
+        "base"
+      ],
+      "rk": 0,
+      "ele": 0,
+      "ma": 0,
+      "properties": "",
+      "value": "",
+      "sourceImage": "",
+      "requirements": ""
+    },
+    "spell": {
+      "templates": [
+        "base",
+        "usable"
+      ],
+      "circle": "",
+      "mana": "",
+      "targetDefense": "ele",
+      "damage": "",
+      "properties": "",
+      "value": "",
+      "sourceImage": "",
+      "attribute": "konz",
+      "requirements": "",
+      "range": ""
+    },
+    "talent": {
+      "templates": [
+        "base",
+        "usable"
+      ],
+      "lpCost": 0,
+      "actionType": "",
+      "effect": "",
+      "sourceImage": "",
+      "requirements": "",
+      "properties": "",
+      "value": ""
+    },
+    "trait": {
+      "templates": [
+        "base"
+      ],
+      "points": 0,
+      "kind": "",
+      "sourceImage": "",
+      "properties": "",
+      "value": ""
+    },
+    "equipment": {
+      "templates": [
+        "base"
+      ],
+      "quantity": 1,
+      "value": "",
+      "sourceImage": "",
+      "properties": "",
+      "requirements": ""
+    },
+    "consumable": {
+      "templates": [
+        "base",
+        "usable"
+      ],
+      "quantity": 1,
+      "effect": "",
+      "value": "",
+      "sourceImage": "",
+      "properties": "",
+      "requirements": ""
+    }
+  }
+}

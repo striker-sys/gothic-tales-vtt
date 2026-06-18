@@ -1,0 +1,118 @@
+{
+  "id": "gothic-tales",
+  "title": "Gothic Tales",
+  "description": "Spielsystem für Gothic Tales mit bereinigten NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
+  "version": "0.3.9",
+  "authors": [
+    {
+      "name": "Kuberia"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.368"
+  },
+  "url": "https://github.com/striker-sys/gothic-tales-vtt",
+  "manifest": "https://raw.githubusercontent.com/striker-sys/gothic-tales-vtt/main/system.json",
+  "download": "https://github.com/striker-sys/gothic-tales-vtt/releases/latest/download/gothic-tales.zip",
+  "esmodules": [
+    "scripts/gothic-tales.mjs"
+  ],
+  "styles": [
+    "styles/gothic-tales.css"
+  ],
+  "languages": [
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText"
+        ]
+      },
+      "npc": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText"
+        ]
+      },
+      "monster": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText"
+        ]
+      }
+    },
+    "Item": {
+      "weapon": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "shield": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "spell": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "talent": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "trait": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "equipment": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "consumable": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      }
+    }
+  },
+  "initiative": "1d20 + @initiative.bonus",
+  "primaryTokenAttribute": "hp",
+  "secondaryTokenAttribute": "mana",
+  "url": "",
+  "license": "LICENSE.txt",
+  "grid": {
+    "type": 1,
+    "distance": 1,
+    "units": "Feld"
+  },
+  "background": "systems/gothic-tales/assets/gt-background.webp",
+  "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp"
+}

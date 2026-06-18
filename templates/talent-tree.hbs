@@ -1,0 +1,23 @@
+<div class="gothic-tales gt-talent-app">
+  <header class="gt-talent-header">
+    <h2>{{actor.name}} – Talentbaum</h2>
+    {{#if isCharacter}}<div>Verfügbare LP: <strong>{{system.lp.value}}</strong></div>{{else}}<div>NSC/Monster: Talente ohne LP-Kosten</div>{{/if}}
+  </header>
+  <nav class="gt-tree-tabs">
+    {{#each trees}}<button type="button" class="gt-tree-select {{#if active}}active{{/if}}" data-tree="{{id}}">{{label}}</button>{{/each}}
+  </nav>
+  {{#each trees}}
+  <section class="gt-tree {{#unless active}}hidden{{/unless}}" data-tree-panel="{{id}}">
+    <h3>{{label}}</h3>
+    <div class="gt-node-grid">
+      {{#each nodes}}
+      <button type="button" class="gt-talent-node {{#if learned}}learned{{/if}} {{#unless available}}locked{{/unless}}" data-tree="{{../id}}" data-node="{{id}}">
+        <span class="gt-talent-name">{{displayLabel}}</span>
+        <small>{{displayCost}}</small>
+        <span class="gt-talent-tooltip">{{description}}</span>
+      </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/each}}
+</div>

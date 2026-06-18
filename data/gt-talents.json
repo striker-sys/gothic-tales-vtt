@@ -1,0 +1,132 @@
+{
+  "talents": [
+    {
+      "name": "Einhändiger Kampf",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Einhändiger Kampf",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 1
+    },
+    {
+      "name": "Zweihändiger Kampf",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Zweihändiger Kampf",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 2
+    },
+    {
+      "name": "Bogen",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Bogen",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 3
+    },
+    {
+      "name": "Armbrust",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Armbrust",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 4
+    },
+    {
+      "name": "Schilde",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Schilde",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 5
+    },
+    {
+      "name": "Hinterlist",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Hinterlist",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 6
+    },
+    {
+      "name": "Beidhändig",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Beidhändig",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 7
+    },
+    {
+      "name": "Magische Kreise 1-3",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Magische Kreise 1-3",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 8
+    },
+    {
+      "name": "Magische Kreise 4-6",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Magische Kreise 4-6",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 9
+    },
+    {
+      "name": "Druiden - Riten + Gestaltwandler",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Druiden – Riten + Gestaltwandler",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 10
+    },
+    {
+      "name": "Seite 11",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 11
+    },
+    {
+      "name": "Druiden - Seelenweber",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Druiden – Seelenweber",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 12
+    },
+    {
+      "name": "Druiden - Wurzelwirker",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Druiden – Wurzelwirker",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 13
+    },
+    {
+      "name": "Akrobatik",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Akrobatik",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 14
+    },
+    {
+      "name": "Sonstige Talente",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "Sonstige Talente",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 15
+    },
+    {
+      "name": "Seite 16",
+      "type": "talent",
+      "category": "Talentbaum",
+      "text": "",
+      "sourceBook": "Talentbäume",
+      "sourcePage": 16
+    }
+  ]
+}

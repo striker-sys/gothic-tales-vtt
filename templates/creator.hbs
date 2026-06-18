@@ -1,0 +1,88 @@
+<form class="gothic-tales gt-creator">
+  <section class="gt-panel gt-parchment-panel">
+    <h2>1. Identität & Startstufe</h2>
+    <div class="gt-two-col">
+      <label>Name des Helden <input name="heroName" type="text" value="{{#if targetActor}}{{targetActor.name}}{{else}}Neuer Held{{/if}}"></label>
+      <label>Name des Spielers <input name="playerName" type="text"></label>
+      <label>Fraktion <input name="faction" type="text" placeholder="optional"></label>
+      <label>Stufe
+        <select name="level">
+          {{#each levels}}<option value="{{level}}">Stufe {{level}} – {{lp}} LP{{#if erz}}, {{erz}} Erz{{/if}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Startpaket
+        <select name="package">
+          {{#each packages}}<option value="{{id}}">{{label}} – {{summary}}</option>{{/each}}
+        </select>
+      </label>
+    </div>
+    <label>Hintergrund <textarea name="biography"></textarea></label>
+  </section>
+
+  <section class="gt-panel gt-parchment-panel">
+    <h2>2. Attribute</h2>
+    <p>Alle Attribute beginnen bei 10. Bis Wert 25 kostet jeder Punkt 1 LP, von 26–50 kostet jeder Punkt 2 LP, ab 51 kostet jeder Punkt 3 LP.</p>
+    <div class="gt-attr-builder">
+      {{#each attributes}}<label>{{label}} + <input name="add_{{key}}" type="number" value="0" min="0" max="90"></label>{{/each}}
+    </div>
+  </section>
+
+  <section class="gt-panel gt-parchment-panel">
+    <h2>3. Fähigkeiten schulen</h2>
+    <p>Grad 1 kostet 5 LP, Grad 2 insgesamt 10 LP, Grad 3 insgesamt 20 LP. Voraussetzungen werden am Spieltisch durch Lehrer oder Lernmomente geprüft.</p>
+    <div class="gt-attr-builder">
+      {{#each skills}}
+      <label>{{label}}
+        <select name="skill_{{key}}">
+          <option value="0">Anfänger</option>
+          <option value="1">Geübt (+2) – 5 LP</option>
+          <option value="2">Gelehrt (w4+2) – 10 LP</option>
+          <option value="3">Gemeistert (w8+5) – 20 LP</option>
+        </select>
+      </label>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="gt-panel gt-parchment-panel">
+    <h2>4. Stärken & Schwächen</h2>
+    <p>Bis zu drei Schwächen und bis zu drei Stärken. Die Auswahl ist auf die Rumpelkammer begrenzt.</p>
+    <div class="gt-two-col">
+      <label>Schwäche 1 <select name="weakness1"><option value="">— keine —</option>{{#each weaknesses}}<option value="{{name}}">{{name}} ({{points}}) – {{category}}</option>{{/each}}</select></label>
+      <label>Stärke 1 <select name="strength1"><option value="">— keine —</option>{{#each strengths}}<option value="{{name}}">{{name}} ({{points}}) – {{category}}</option>{{/each}}</select></label>
+      <label>Schwäche 2 <select name="weakness2"><option value="">— keine —</option>{{#each weaknesses}}<option value="{{name}}">{{name}} ({{points}}) – {{category}}</option>{{/each}}</select></label>
+      <label>Stärke 2 <select name="strength2"><option value="">— keine —</option>{{#each strengths}}<option value="{{name}}">{{name}} ({{points}}) – {{category}}</option>{{/each}}</select></label>
+      <label>Schwäche 3 <select name="weakness3"><option value="">— keine —</option>{{#each weaknesses}}<option value="{{name}}">{{name}} ({{points}}) – {{category}}</option>{{/each}}</select></label>
+      <label>Stärke 3 <select name="strength3"><option value="">— keine —</option>{{#each strengths}}<option value="{{name}}">{{name}} ({{points}}) – {{category}}</option>{{/each}}</select></label>
+    </div>
+  </section>
+
+  <section class="gt-panel gt-parchment-panel">
+    <h2>5. Talente</h2>
+    <p>Wähle Starttalente. Der anklickbare Talentbaum kann nach der Erstellung weiter verwendet werden.</p>
+    <div class="gt-talent-checklist">
+      {{#each talents}}
+      <label><input type="checkbox" name="talent_{{id}}"> {{label}} <small>{{tree}} – {{lpCost}} LP</small></label>
+      {{/each}}
+    </div>
+  </section>
+
+  <section class="gt-panel gt-parchment-panel">
+    <h2>6. Zusätzliche Gegenstände</h2>
+    <p>Das gewählte Startpaket wird automatisch als Items hinzugefügt. Bis zu drei zusätzliche Gegenstände können direkt ergänzt werden.</p>
+    <div class="gt-two-col">
+      <label>Zusatz 1 <select name="extraItem1"><option value="">— keiner —</option>{{#each basicItems}}<option value="{{name}}">{{name}} – {{category}} {{#if value}}({{value}} Erz){{/if}}</option>{{/each}}</select></label>
+      <label>Zusatz 2 <select name="extraItem2"><option value="">— keiner —</option>{{#each basicItems}}<option value="{{name}}">{{name}} – {{category}} {{#if value}}({{value}} Erz){{/if}}</option>{{/each}}</select></label>
+      <label>Zusatz 3 <select name="extraItem3"><option value="">— keiner —</option>{{#each basicItems}}<option value="{{name}}">{{name}} – {{category}} {{#if value}}({{value}} Erz){{/if}}</option>{{/each}}</select></label>
+    </div>
+  </section>
+
+  <section class="gt-panel gt-parchment-panel">
+    <h2>7. Lernzettel</h2>
+    <textarea name="notes" placeholder="Gewünschte Lehrer, Lernmomente, spätere Talentziele ..."></textarea>
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fas fa-user-plus"></i> {{#if targetActor}}Charakter aktualisieren{{else}}Spielercharakter erstellen{{/if}}</button>
+  </footer>
+</form>
