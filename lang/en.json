@@ -1,0 +1,12 @@
+{
+  "GOTHICTALES.SystemName": "Gothic Tales",
+  "GOTHICTALES.ActorSheet": "Gothic Tales Sheet",
+  "GOTHICTALES.ItemSheet": "Gothic Tales Item",
+  "GOTHICTALES.Roll": "Roll",
+  "GOTHICTALES.ImportTitle": "Import Gothic Tales Sources",
+  "GOTHICTALES.DeleteItem": "Delete item",
+  "GOTHICTALES.Settings.AutoImport.Name": "Automatically import/update Gothic Tales",
+  "GOTHICTALES.Settings.AutoImport.Hint": "Automatically imports or updates reference books, actors, talents, equipment and maps. The reference library contains each book as a single document.",
+  "GOTHICTALES.Equipment.Equipped": "Equipped",
+  "GOTHICTALES.Equipment.Toggle": "Toggle equipment"
+}

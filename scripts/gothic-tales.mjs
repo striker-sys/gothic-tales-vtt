@@ -1,12 +1,22 @@
+/**
+ * Gothic-Tales-System-Namespace. Alle Helfer, Konfigurationen, Bögen, Importeure
+ * und UI-Anbindungen liegen hier gebündelt, damit Foundry sie während init über
+ * game.gothicTales bereitstellen kann.
+ */
 const GT = {};
-GT.SYSTEM_VERSION = "0.3.9";
+GT.SYSTEM_VERSION = "0.4.0";
 
+// Foundry-Utility-Aliase halten den folgenden Code lesbar und bündeln Kompatibilitäts-Fallbacks.
 const mergeObject = foundry.utils.mergeObject;
 const deepClone = foundry.utils.deepClone ?? (obj => JSON.parse(JSON.stringify(obj ?? {})));
 const setProperty = foundry.utils.setProperty;
 const getProperty = foundry.utils.getProperty;
 const flattenObject = foundry.utils.flattenObject;
 
+/**
+ * Statische Beschriftungen und Typ-Zuordnungen für Bögen, Importeure und Templates.
+ * Diese Konfiguration dient der Anzeige und ist keine persistierte Weltdatenstruktur.
+ */
 GT.CONFIG = {
   attributes: {
     st: "Stärke",
@@ -59,10 +69,38 @@ GT.CONFIG = {
     npc: "NSC",
     monster: "Monster"
   },
-  defaultActorImg: "icons/svg/mystery-man.svg",
-  defaultItemImg: "icons/svg/item-bag.svg"
+  defaultActorImg: "systems/gothic-tales/assets/icons/allgemein.svg",
+  defaultItemImg: "systems/gothic-tales/assets/icons/allgemein.svg",
+  icons: {
+    default: "systems/gothic-tales/assets/icons/allgemein.svg",
+    actors: {
+      character: "systems/gothic-tales/assets/icons/charakter.svg",
+      npc: "systems/gothic-tales/assets/icons/nsc.svg",
+      monster: "systems/gothic-tales/assets/icons/monster.svg"
+    },
+    items: {
+      weapon: "systems/gothic-tales/assets/icons/waffe.svg",
+      armor: "systems/gothic-tales/assets/icons/ruestung.svg",
+      shield: "systems/gothic-tales/assets/icons/schild.svg",
+      spell: "systems/gothic-tales/assets/icons/zauber.svg",
+      talent: "systems/gothic-tales/assets/icons/talent.svg",
+      trait: "systems/gothic-tales/assets/icons/eigenschaft.svg",
+      equipment: "systems/gothic-tales/assets/icons/ausruestung.svg",
+      consumable: "systems/gothic-tales/assets/icons/verbrauchbar.svg"
+    }
+  }
 };
 
+/** Löst einen Lokalisierungsschlüssel auf und behält einen Fallback für frühe Initialisierung oder fehlende Texte. */
+GT.localize = function(key, fallback = key) {
+  return game?.i18n?.localize?.(key) || fallback;
+};
+
+GT.format = function(key, data = {}, fallback = key) {
+  return game?.i18n?.format?.(key, data) || fallback;
+};
+
+/** Stufentabelle für Lernpunkte und Start-Erz, die in der Charaktererstellung angezeigt wird. */
 GT.LEVEL_RESOURCES = {
   1: {lp: 10, erz: 0}, 2: {lp: 20, erz: 50}, 3: {lp: 30, erz: 130}, 4: {lp: 40, erz: 210},
   5: {lp: 50, erz: 300}, 6: {lp: 60, erz: 400}, 7: {lp: 70, erz: 500}, 8: {lp: 80, erz: 600},
@@ -73,6 +111,7 @@ GT.LEVEL_RESOURCES = {
   25: {lp: 250, erz: 4000}, 26: {lp: 260, erz: 4400}, 27: {lp: 270, erz: 4800}
 };
 
+/** Vordefinierte Startpakete, die der Charakterassistent für neue Figuren verwendet. */
 GT.START_PACKAGES = [
   {id: "anwaerter", label: "Der Anwärter", summary: "Kampfstab, Spruchrollen, Manatränke, Rationen & Wasser", items: [
     ["Kampfstab", 1], ["Feuerpfeil", 5, "scroll"], ["Eissplitter", 5, "scroll"], ["Geysir", 3, "scroll"], ["Kleine Heilung", 3, "scroll"], ["Kleiner Manatrank", 3], ["Ration / Nahrung", 3], ["Wasserschlauch", 1, "custom-water-full"]
@@ -94,6 +133,7 @@ GT.START_PACKAGES = [
   ]}
 ];
 
+/** NSC-Generator-Vorlagen, die Attribute und Standardausrüstung je nach Archetyp gewichten. */
 GT.NPC_ARCHETYPES = {
   arbeiter: {label: "Arbeiter/Buddler", focus: {st: 2, ausd: 2, erf: 1}, weapon: "Spitzhacke", armor: "Buddlerkluft"},
   kaempfer: {label: "Kämpfer/Wache", focus: {st: 3, ausd: 2, ge: 1}, weapon: "Grobes Schwert", armor: "Leichte Lederrüstung"},
@@ -103,18 +143,55 @@ GT.NPC_ARCHETYPES = {
   ork: {label: "Ork", focus: {st: 4, ausd: 3}, weapon: "Grober Nagelknüppel", armor: "Kette & Leder"}
 };
 
+/** Prüft, ob ein Dokumentbild bereits sinnvoll gesetzt ist oder noch durch ein GT-Icon ersetzt werden darf. */
+GT.isPlaceholderImage = function(img) {
+  const value = String(img || "").trim();
+  if (!value) return true;
+  return ["icons/svg/mystery-man.svg", "icons/svg/item-bag.svg", GT.CONFIG.icons.default].includes(value);
+};
+
+/** Liefert ein Actor-Bild anhand des Actor-Typs oder ein allgemeines Fallback-Icon. */
+GT.actorImage = function(type = "character", name = "") {
+  return GT.CONFIG.icons.actors[type] || GT.CONFIG.icons.default;
+};
+
+/** Liefert ein Item-Bild anhand von Typ, Name oder Kategorie und fällt auf allgemein.svg zurück. */
+GT.itemImage = function(type = "equipment", name = "", category = "") {
+  const haystack = `${name} ${category}`.toLowerCase();
+  if (/schild/i.test(haystack)) return GT.CONFIG.icons.items.shield;
+  if (/rüstung|ruestung|robe|kluft|panzer|kleidung/i.test(haystack)) return GT.CONFIG.icons.items.armor;
+  if (/trank|ration|nahrung|wasser|fleisch|beute/i.test(haystack)) return GT.CONFIG.icons.items.consumable;
+  if (/zauber|spruchrolle|magie|feuer|eis|blitz|heilung/i.test(haystack)) return GT.CONFIG.icons.items.spell;
+  if (/bogen|pfeil|bolzen|schwert|messer|dolch|stab|axt|armbrust|keule|knüppel|knueppel|speer/i.test(haystack)) return GT.CONFIG.icons.items.weapon;
+  return GT.CONFIG.icons.items[type] || GT.CONFIG.icons.default;
+};
+
+/** Öffnet Foundrys Dateibrowser, damit Bilder hochgeladen oder vorhandene Bildquellen gewählt werden können. */
+GT.openImagePicker = function(document, path = "img") {
+  if (!document?.isOwner) return ui.notifications.warn("Du hast keine Berechtigung zum Bearbeiten des Bildes.");
+  const current = path === "img" ? document.img : getProperty(document, path);
+  new FilePicker({
+    type: "image",
+    current: current || GT.CONFIG.icons.default,
+    callback: selected => document.update({[path]: selected || GT.CONFIG.icons.default})
+  }).browse(current || GT.CONFIG.icons.default);
+};
+
+/** Maskiert Klartext, bevor er in manuell erzeugte HTML-Fragmente eingefügt wird. */
 GT.escape = function(value) {
   const div = document.createElement("div");
   div.innerText = value ?? "";
   return div.innerHTML;
 };
 
+/** Entfernt HTML-Tags, wenn Import- oder Quellentext als Klartext verglichen werden muss. */
 GT.stripHtml = function(value) {
   const div = document.createElement("div");
   div.innerHTML = value ?? "";
   return (div.textContent || div.innerText || "").trim();
 };
 
+/** Normalisiert importierten PDF-/OCR-Text, indem Trennzeichen, Ersatzglyphen und überzählige Leerzeichen entfernt werden. */
 GT.cleanText = function(value) {
   return String(value ?? "")
     .replace(/\u00ad/g, "")
@@ -125,6 +202,7 @@ GT.cleanText = function(value) {
     .trim();
 };
 
+/** Wandelt Klartextabsätze in einfaches, sicheres HTML für Bogenvorschauen und Journalseiten um. */
 GT.textToHtml = function(text) {
   const clean = GT.cleanText(text);
   if (!clean) return "";
@@ -132,6 +210,7 @@ GT.textToHtml = function(text) {
 };
 
 
+/** Wandelt gespeichertes HTML für den einfachen Beschreibungseditor zurück in bearbeitbaren Klartext. */
 GT.htmlToPlainText = function(value) {
   const html = String(value ?? "");
   if (!html) return "";
@@ -143,6 +222,7 @@ GT.htmlToPlainText = function(value) {
   return GT.cleanText(div.textContent || div.innerText || "");
 };
 
+/** Akzeptiert entweder HTML oder Klartext und gibt normalisiertes HTML für htmlFields zurück. */
 GT.normalizeHtml = function(value) {
   const raw = String(value ?? "").trim();
   if (!raw) return "";
@@ -150,11 +230,13 @@ GT.normalizeHtml = function(value) {
   return GT.textToHtml(raw);
 };
 
+/** Löst kurze Attributschlüssel wie st/ge in ihre deutschen Beschriftungen auf. */
 GT.attributeLabel = function(key) {
   const normalized = String(key ?? "").toLowerCase().trim();
   return GT.CONFIG.attributes[normalized] || key || "";
 };
 
+/** Erzeugt kompakte Gegenstandshilfen aus Importdaten, damit Kompendiumseinträge ohne Nachbearbeitung nutzbar sind. */
 GT.formatItemDescription = function(entry = {}) {
   const type = entry.type || "equipment";
   const intro = entry.description && /<li|<p|<ul|<article/i.test(entry.description)
@@ -197,6 +279,7 @@ GT.formatItemDescription = function(entry = {}) {
   return html.join("");
 };
 
+/** Bereinigt importierte Talentbeschriftungen, damit Talentknoten kurze Namen anzeigen. */
 GT.talentDisplayLabel = function(node) {
   const raw = String(node?.label ?? node?.name ?? "Talent").trim();
   return raw
@@ -206,6 +289,7 @@ GT.talentDisplayLabel = function(node) {
     .trim() || "Talent";
 };
 
+/** Erzeugt Fallback-Beschreibungen für Talente mit Baum, Kosten und Voraussetzungen. */
 GT.talentNodeDescription = function(tree, node) {
   const label = GT.talentDisplayLabel(node);
   const explicit = String(node.description ?? "").trim();
@@ -215,6 +299,7 @@ GT.talentNodeDescription = function(tree, node) {
   return `${label} gehört zum Talentbaum ${tree.label}. Kosten: ${cost}. ${req}`;
 };
 
+/** Erzeugt eine Zuordnung von Baum-/Knoten-IDs zu Anzeigenamen für gelernte Talente auf Actor-Bögen. */
 GT.rebuildTalentLabelIndex = function(scaffold) {
   GT._talentLabelIndex = new Map();
   for (const tree of scaffold?.trees ?? []) {
@@ -226,6 +311,7 @@ GT.rebuildTalentLabelIndex = function(scaffold) {
   }
 };
 
+/** Flacht Talentbaumdaten zu gegenstandsähnlichen Dokumenten für den Talent-Kompendiumimport ab. */
 GT.flattenTalentScaffold = function(scaffold) {
   return (scaffold?.trees ?? []).flatMap(tree => (tree.nodes ?? []).map(node => {
     const label = GT.talentDisplayLabel(node);
@@ -234,6 +320,7 @@ GT.flattenTalentScaffold = function(scaffold) {
   }));
 };
 
+/** Erkennt Talentnamen in NSC-/Monster-Quellentexten und hängt passende eingebettete Talent-Items an. */
 GT.actorEmbeddedTalentItems = function(entry, sourceTalents = []) {
   const text = ` ${GT.cleanImportedPlainText(entry?.text || "")} `;
   const added = new Map();
@@ -247,7 +334,7 @@ GT.actorEmbeddedTalentItems = function(entry, sourceTalents = []) {
     added.set(key, {
       name,
       type: "talent",
-      img: GT.CONFIG.defaultItemImg,
+      img: GT.itemImage("talent", name, talent.treeLabel || talent.category || "Talente"),
       system: {
         category: talent.treeLabel || talent.category || "Talente",
         description,
@@ -266,6 +353,7 @@ GT.actorEmbeddedTalentItems = function(entry, sourceTalents = []) {
 };
 
 
+/** Entfernt Tabellenartefakte und einzelne Wertefragmente aus importierten Kreaturen-/NSC-Beschreibungen. */
 GT.cleanImportedPlainText = function(value) {
   let text = String(value ?? "");
   text = text.replace(/<\/?[^>]+>/g, " ");
@@ -284,6 +372,7 @@ GT.cleanImportedPlainText = function(value) {
     .join("\n");
 };
 
+/** Erzeugt lesbare Biografie-/Quellenbeschreibungen für importierte NSCs und Monster. */
 GT.actorDescriptionHtml = function(entry, type) {
   const label = type === "monster" ? "Monster" : "NSC";
   const parts = [];
@@ -307,6 +396,7 @@ GT.descriptionToPlain = function(value) {
   return GT.cleanImportedPlainText(GT.stripHtml(value ?? ""));
 };
 
+/** Einfacher Editor, mit dem Bögen htmlFields bearbeiten können, ohne überall rohe Eingabefelder anzuzeigen. */
 GT.openTextEditorDialog = function(document, path, label = "Beschreibung") {
   if (!document?.isOwner) return ui.notifications.warn("Du hast keine Berechtigung zum Bearbeiten.");
   const current = String(getProperty(document.system ?? {}, path) ?? "");
@@ -342,6 +432,7 @@ GT.openTextEditorDialog = function(document, path, label = "Beschreibung") {
   }).render(true);
 };
 
+/** Normalisiert deutsche Namen für unscharfe Treffer zwischen Quellentext und importierten Gegenständen. */
 GT.normalizedSearch = function(value) {
   return String(value ?? "")
     .toLowerCase()
@@ -359,6 +450,7 @@ GT.containsSearchTerm = function(text, term) {
   return t.includes(` ${n} `);
 };
 
+/** Erzeugt alternative Gegenstandsnamen, damit importierter Actor-Text auch Munition und Klammerzusätze findet. */
 GT.actorItemAliases = function(item) {
   const names = new Set([item.name]);
   names.add(String(item.name || "").replace(/\s*\([^)]*\)\s*/g, "").trim());
@@ -366,6 +458,7 @@ GT.actorItemAliases = function(item) {
   return Array.from(names).filter(Boolean);
 };
 
+/** Klonet einen Quellgegenstand als eingebettetes Actor-Item und erhält dabei Quellenmetadaten. */
 GT.cloneSourceItemForActor = function(entry, quantity = 1, nameOverride = null) {
   const data = deepClone(entry ?? {});
   const system = {
@@ -373,14 +466,15 @@ GT.cloneSourceItemForActor = function(entry, quantity = 1, nameOverride = null) 
     quantity,
     description: GT.formatItemDescription(data),
     sourceText: data.sourceText || GT.formatItemDescription(data),
-    uses: data.uses || {value: 0, max: 0}
+    uses: data.uses || {value: 0, max: 0},
+    equipped: false
   };
   delete system.name;
   delete system.type;
   return {
     name: nameOverride || data.name || "Gegenstand",
     type: data.type || "equipment",
-    img: GT.CONFIG.defaultItemImg,
+    img: data.img || data.image || data.sourceImage || GT.itemImage(data.type || "equipment", nameOverride || data.name, data.category || data.folderCategory || ""),
     system,
     flags: {"gothic-tales": {sourceBook: data.sourceBook, sourcePage: data.sourcePage, importedName: data.name}}
   };
@@ -390,12 +484,13 @@ GT.customActorItem = function(name, type = "equipment", quantity = 1, category =
   return {
     name,
     type,
-    img: GT.CONFIG.defaultItemImg,
+    img: GT.itemImage(type, name, category),
     system: {quantity, category, description: GT.formatItemDescription({name, type, quantity, category, text: "Aus dem NSC-/Monsterbogen extrahiert."}), sourceText: GT.textToHtml("Aus dem NSC-/Monsterbogen extrahiert.")},
     flags: {"gothic-tales": {importedName: name}}
   };
 };
 
+/** Extrahiert wahrscheinliches Inventar, Beute und Talente aus importiertem NSC-/Monster-Fließtext. */
 GT.actorEmbeddedItems = function(entry, type, sourceItems = [], sourceTalents = []) {
   const text = String(entry.text || "");
   const added = new Map();
@@ -438,6 +533,7 @@ GT.actorEmbeddedItems = function(entry, type, sourceItems = [], sourceTalents = 
   return items.concat(GT.actorEmbeddedTalentItems(entry, sourceTalents)).slice(0, 36);
 };
 
+/** Ergänzt Anzeigenamen und Beschreibungen am Talentgerüst nach dem Laden der JSON-Daten. */
 GT.enrichTalentScaffold = function(scaffold) {
   for (const tree of scaffold?.trees ?? []) {
     for (const node of tree.nodes ?? []) {
@@ -451,6 +547,7 @@ GT.enrichTalentScaffold = function(scaffold) {
   return scaffold;
 };
 
+/** Erzeugt stabile IDs für Flags, Journal-Anker und Kompendium-Import-UIDs. */
 GT.slug = function(value) {
   return String(value || "")
     .toLowerCase()
@@ -459,6 +556,7 @@ GT.slug = function(value) {
     .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "eintrag";
 };
 
+/** Übersetzt Gothic-Tales-Attributwerte in Würfel- und Bonuswerte für Würfe. */
 GT.attrFromValue = function(value) {
   const v = Number(value || 0);
   const bonus = Math.max(-1, Math.min(10, Math.floor((v - 5) / 10)));
@@ -478,6 +576,7 @@ GT.attrFromValue = function(value) {
   return {die: "2w12", bonus};
 };
 
+/** Berechnet die LP-Kosten für Attributsteigerungen während der Charaktererstellung. */
 GT.attributeCost = function(from, to) {
   let cost = 0;
   for (let next = Number(from) + 1; next <= Number(to); next++) {
@@ -488,6 +587,7 @@ GT.attributeCost = function(from, to) {
   return cost;
 };
 
+/** Berechnet die LP-Kosten für Fähigkeitsgrade aus der Charaktererstellung. */
 GT.skillGradeCost = function(grade) {
   const g = Number(grade || 0);
   if (g <= 0) return 0;
@@ -501,6 +601,7 @@ GT.parseFormulaTerms = function(formula) {
   return clean.match(/[+-]?[^+-]+/g) || [];
 };
 
+/** Eigener Gothic-Tales-Würfler mit w-Notation und Pasch-Nachwurf-Logik. */
 GT.rollGT = function(formula) {
   const terms = GT.parseFormulaTerms(formula);
   const dice = [];
@@ -534,6 +635,7 @@ GT.rollGT = function(formula) {
   return {formula, dice, constant, total, critical: dice.some(d => d.sides === 20 && d.result === 20)};
 };
 
+/** Gibt eigene Würfelergebnisse als Foundry-Chatkarten aus. */
 GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null, flavor = ""} = {}) {
   if (!formula) formula = "w20";
   const result = GT.rollGT(formula);
@@ -555,7 +657,32 @@ GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null
   return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content});
 };
 
-GT.recalculateSystem = function(system, type = "character") {
+/** Summiert RK-/ELE-/MA-Boni aus eingebetteten Rüstungen und Schilden, die als ausgerüstet markiert sind. */
+GT.equippedArmorBonusFromItems = function(items = []) {
+  const bonus = {rk: 0, ele: 0, ma: 0};
+  for (const item of items ?? []) {
+    if (!item?.system?.equipped) continue;
+    if (!["armor", "shield"].includes(item.type)) continue;
+    bonus.rk += Number(item.system.rk || 0);
+    bonus.ele += Number(item.system.ele || 0);
+    bonus.ma += Number(item.system.ma || 0);
+  }
+  return bonus;
+};
+
+/** Bereitet deaktivierte Active-Effect-Vorlagen für defensive Ausrüstung vor, die in Kompendien importiert wird. */
+GT.makeItemActiveEffects = function(entry = {}) {
+  const changes = [];
+  for (const key of ["rk", "ele", "ma"]) {
+    const value = Number(entry[key] || 0);
+    if (value) changes.push({key: `system.armorBonus.${key}`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: String(value), priority: 20});
+  }
+  if (!changes.length) return [];
+  return [{name: `${entry.name || "Gegenstand"} ausgerüstet`, icon: GT.CONFIG.defaultItemImg, disabled: true, transfer: false, changes, flags: {"gothic-tales": {equipmentEffect: true}}}];
+};
+
+/** Berechnet abgeleitete Actor-Daten neu: Attributwürfel, Fähigkeitsformeln, Verteidigungen, Ressourcen und Zähler. */
+GT.recalculateSystem = function(system, type = "character", options = {}) {
   const s = deepClone(system ?? {});
   s.attributes ??= {};
   for (const [key, label] of Object.entries(GT.CONFIG.attributes)) {
@@ -584,7 +711,9 @@ GT.recalculateSystem = function(system, type = "character") {
   const lr = GT.LEVEL_RESOURCES[s.stufe] ?? {lp: s.stufe * 10, erz: 0};
   s.lp ??= {value: lr.lp, max: lr.lp};
   s.lp.max = Number(s.lp.max || lr.lp);
+  const equippedBonus = options.equippedArmorBonus ?? null;
   s.armorBonus ??= {rk: 0, ele: 0, ma: 0};
+  if (equippedBonus) s.armorBonus = {rk: Number(equippedBonus.rk || 0), ele: Number(equippedBonus.ele || 0), ma: Number(equippedBonus.ma || 0)};
   s.defenses ??= {};
   const geB = Number(s.attributes.ge?.bonus ?? 0), intuB = Number(s.attributes.intu?.bonus ?? 0), ausdB = Number(s.attributes.ausd?.bonus ?? 0), konzB = Number(s.attributes.konz?.bonus ?? 0), erfB = Number(s.attributes.erf?.bonus ?? 0);
   s.defenses.rk = {label: "RK", value: 10 + geB + intuB + Number(s.armorBonus.rk ?? 0), bonus: Number(s.armorBonus.rk ?? 0)};
@@ -612,6 +741,7 @@ GT.recalculateSystem = function(system, type = "character") {
   return s;
 };
 
+/** Wandelt ein neu berechnetes Systemobjekt in Foundry-Updatepfade unter system.* um. */
 GT.flattenSystemUpdate = function(system) {
   const flat = flattenObject(system);
   const update = {};
@@ -619,6 +749,7 @@ GT.flattenSystemUpdate = function(system) {
   return update;
 };
 
+/** Löst ein Actor-Attribut in die Angriffs-/Attributwurfformel auf, die Gegenstandsbuttons verwenden. */
 GT.actorAttributeFormula = function(actor, attribute) {
   const raw = String(attribute || "st").toLowerCase();
   const attr = raw.includes("ge") && raw.includes("st") ? "st" : raw.split(/[\/,& ]+/).filter(Boolean)[0] || "st";
@@ -628,6 +759,7 @@ GT.actorAttributeFormula = function(actor, attribute) {
   return `w20 + ${data.die || "w4"} + ${Number(data.bonus || 0)}`;
 };
 
+/** Erzeugt die Schadens-/Wirkungsformel für Waffen und Zauber inklusive relevanter Actor-Würfel. */
 GT.itemDamageFormula = function(actor, item) {
   const damage = item?.system?.damage || item?.system?.effect || "";
   if (!damage) return "w20";
@@ -645,6 +777,7 @@ GT.itemDamageFormula = function(actor, item) {
   return damage;
 };
 
+/** Gruppiert eingebettete Items für Bogenbereiche wie Kampf, Kram, Munition, Nahrung und Tränke. */
 GT.groupItems = function(items) {
   const order = [
     ["weapons", "Waffen", ["weapon"], null, "weapon"],
@@ -671,6 +804,7 @@ GT.groupItems = function(items) {
   return groups;
 };
 
+/** Lädt mitgelieferte JSON-Daten aus systems/gothic-tales/data für Importeure und Assistenten. */
 async function fetchSystemJson(file) {
   const response = await fetch(`systems/gothic-tales/data/${file}`);
   if (!response.ok) throw new Error(`Daten konnten nicht geladen werden: ${file}`);
@@ -693,6 +827,7 @@ GT.getSceneData = async function() {
   return GT._sceneData;
 };
 
+/** Erzeugt Gegenstandsdaten für Startpakete aus Quellitems, Spruchrollenmodi oder speziellen Wasserschläuchen. */
 GT.itemFromSource = async function(name, quantity = 1, mode = "normal") {
   const list = await GT.getRumpelkammerItems();
   const exact = String(name || "").toLowerCase();
@@ -706,34 +841,36 @@ GT.itemFromSource = async function(name, quantity = 1, mode = "normal") {
     return {
       name: itemName,
       type,
-      img: GT.CONFIG.defaultItemImg,
+      img: data.img || data.image || data.sourceImage || GT.itemImage(type, itemName, data.category || data.folderCategory || ""),
       system: {
         ...data,
         quantity,
         description: GT.formatItemDescription(data),
         properties: mode === "scroll" ? `${data.properties || ""}${data.properties ? ", " : ""}Spruchrolle` : data.properties || "",
-        uses: {value: quantity, max: quantity}
+        uses: {value: quantity, max: quantity},
+        equipped: false
       },
       flags: {"gothic-tales": {sourceBook: data.sourceBook, sourcePage: data.sourcePage, importedName: entry.name}}
     };
   }
   if (mode === "custom-water-full") {
-    return {name: "Wasserschlauch (3/3)", type: "consumable", img: GT.CONFIG.defaultItemImg, system: {quantity, category: "Essen & Trinken", description: "<p>Gefüllter Wasserschlauch mit drei Portionen Wasser.</p>", value: "", uses: {value: 3, max: 3}}};
+    return {name: "Wasserschlauch (3/3)", type: "consumable", img: GT.itemImage("consumable", "Wasserschlauch"), system: {quantity, category: "Essen & Trinken", description: "<p>Gefüllter Wasserschlauch mit drei Portionen Wasser.</p>", value: "", uses: {value: 3, max: 3}}};
   }
-  if (name === "Wasserschlauch") return {name: "Wasserschlauch (2/3)", type: "consumable", img: GT.CONFIG.defaultItemImg, system: {quantity, category: "Essen & Trinken", description: "<p>Wasserschlauch mit zwei von drei Portionen Wasser.</p>", uses: {value: 2, max: 3}}};
-  return {name, type: "equipment", img: GT.CONFIG.defaultItemImg, system: {quantity, category: "Kram", description: "<p>Startausrüstung.</p>"}};
+  if (name === "Wasserschlauch") return {name: "Wasserschlauch (2/3)", type: "consumable", img: GT.itemImage("consumable", "Wasserschlauch"), system: {quantity, category: "Essen & Trinken", description: "<p>Wasserschlauch mit zwei von drei Portionen Wasser.</p>", uses: {value: 2, max: 3}}};
+  return {name, type: "equipment", img: GT.itemImage("equipment", name), system: {quantity, category: "Kram", description: "<p>Startausrüstung.</p>"}};
 };
 
 GT.itemsFromPackage = async function(packageId) {
   const pack = GT.START_PACKAGES.find(p => p.id === packageId) ?? GT.START_PACKAGES[0];
   const docs = [];
-  docs.push({name: "Zerschlissene Kleidung", type: "armor", img: GT.CONFIG.defaultItemImg, system: {category: "Startausrüstung", rk: 0, ele: 0, ma: 0, description: "<p>Einfache, zerschlissene Kleidung.</p>"}});
+  docs.push({name: "Zerschlissene Kleidung", type: "armor", img: GT.itemImage("armor", "Zerschlissene Kleidung"), system: {category: "Startausrüstung", rk: 0, ele: 0, ma: 0, description: "<p>Einfache, zerschlissene Kleidung.</p>"}});
   docs.push(await GT.itemFromSource("Ration / Nahrung", 1));
   docs.push(await GT.itemFromSource("Wasserschlauch", 1));
   for (const [name, qty, mode] of pack.items) docs.push(await GT.itemFromSource(name, qty, mode));
   return docs;
 };
 
+/** Bereitet reine Bogenlisten, gruppierte Items und Anzeigenamen gelernter Talente für Handlebars-Templates vor. */
 function enrichLists(data) {
   const system = data.system ?? {};
   data.attributeList = Object.entries(system.attributes ?? {}).map(([key, value]) => ({key, ...value, formula: `w20 + ${value.die} + ${value.bonus}`}));
@@ -759,11 +896,12 @@ function enrichLists(data) {
   return data;
 }
 
-const BaseActorSheet = globalThis.ActorSheet ?? foundry?.appv1?.sheets?.ActorSheet;
-const BaseItemSheet = globalThis.ItemSheet ?? foundry?.appv1?.sheets?.ItemSheet;
-const BaseFormApplication = globalThis.FormApplication ?? foundry?.appv1?.api?.FormApplication;
-const BaseApplication = globalThis.Application ?? foundry?.appv1?.api?.Application;
+const BaseActorSheet = foundry?.appv1?.sheets?.ActorSheet;
+const BaseItemSheet = foundry?.appv1?.sheets?.ItemSheet;
+const BaseFormApplication = foundry?.appv1?.api?.FormApplication;
+const BaseApplication = foundry?.appv1?.api?.Application;
 
+/** Hauptbogen für Charaktere, NSCs und Monster. Verdrahtet Würfe, Sperrmodus, Rast und Gegenstandsaktionen. */
 class GothicTalesActorSheet extends BaseActorSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
@@ -781,8 +919,11 @@ class GothicTalesActorSheet extends BaseActorSheet {
     const data = super.getData(options);
     data.config = GT.CONFIG;
     data.actor = this.actor;
-    data.system = GT.recalculateSystem(this.actor.system, this.actor.type);
-    data.items = Array.from(this.actor.items ?? []).sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name));
+    data.documentImage = GT.isPlaceholderImage(this.actor.img) ? GT.actorImage(this.actor.type, this.actor.name) : this.actor.img;
+    data.items = Array.from(this.actor.items ?? [])
+      .sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name))
+      .map(item => ({id: item.id, name: item.name, type: item.type, sort: item.sort, img: GT.isPlaceholderImage(item.img) ? GT.itemImage(item.type, item.name, item.system?.category || "") : item.img, system: item.system}));
+    data.system = GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)});
     data.editable = this.isEditable;
     data.actorTypeLabel = GT.CONFIG.actorTypes[this.actor.type] || this.actor.type;
     return enrichLists(data);
@@ -795,7 +936,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
       html.find("input, textarea, select").prop("disabled", true);
       html.find('input[name="system.hp.value"], input[name="system.mana.value"], input[name="system.exhaustion.value"], input[name="system.deathCounter.value"]').prop("disabled", false).addClass("gt-resource-editable");
       html.find(".gt-lock-toggle, .gt-roll, .gt-open-talent-tree, .gt-open-creator, .gt-open-npc-creator, .gt-rest-button, .gt-recalculate, .gt-description-edit").prop("disabled", false);
-      html.find(".item-create, .item-edit, .item-delete").prop("disabled", true).addClass("disabled");
+      html.find(".item-create, .item-edit, .item-delete, .item-equip").prop("disabled", true).addClass("disabled");
     }
     html.find(".gt-roll").on("click", ev => {
       ev.preventDefault();
@@ -804,7 +945,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
     });
     html.find(".gt-recalculate").on("click", async ev => {
       ev.preventDefault();
-      const calc = GT.recalculateSystem(this.actor.system, this.actor.type);
+      const calc = GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)});
       await this.actor.update(GT.flattenSystemUpdate(calc));
       ui.notifications.info("Gothic Tales: Werte neu berechnet.");
     });
@@ -827,11 +968,15 @@ class GothicTalesActorSheet extends BaseActorSheet {
       const label = ev.currentTarget.dataset.label || "Beschreibung";
       GT.openTextEditorDialog(this.actor, path, label);
     });
+    html.find(".gt-image-picker").on("click", ev => {
+      ev.preventDefault();
+      GT.openImagePicker(this.actor, "img");
+    });
     if (!this.isEditable || locked) return;
     html.find(".item-create").on("click", async ev => {
       ev.preventDefault();
       const type = ev.currentTarget.dataset.type || "equipment";
-      await this.actor.createEmbeddedDocuments("Item", [{name: "Neuer Eintrag", type, img: GT.CONFIG.defaultItemImg}]);
+      await this.actor.createEmbeddedDocuments("Item", [{name: "Neuer Eintrag", type, img: GT.itemImage(type, "Neuer Eintrag")}]);
     });
     html.find(".item-edit").on("click", ev => {
       ev.preventDefault();
@@ -841,7 +986,14 @@ class GothicTalesActorSheet extends BaseActorSheet {
     html.find(".item-delete").on("click", async ev => {
       ev.preventDefault();
       const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
-      if (item && await Dialog.confirm({title: "Gegenstand löschen", content: `<p>${GT.escape(item.name)} entfernen?</p>`})) await item.delete();
+      if (item && await Dialog.confirm({title: GT.localize("GOTHICTALES.DeleteItem", "Gegenstand löschen"), content: `<p>${GT.escape(item.name)} entfernen?</p>`})) await item.delete();
+    });
+    html.find(".item-equip").on("click", async ev => {
+      ev.preventDefault();
+      const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
+      if (!item) return;
+      await item.update({"system.equipped": !item.system?.equipped});
+      await this.actor.update(GT.flattenSystemUpdate(GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)})));
     });
     html.find(".item-roll").on("click", ev => {
       ev.preventDefault();
@@ -857,6 +1009,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
   }
 }
 
+/** Rastdialog, der TP/Mana regeneriert, optional Erschöpfung senkt und anschließend eine Chat-Zusammenfassung schreibt. */
 GT.openRestDialog = function(actor) {
   const hp = actor.system?.hp ?? {value: 0, max: 0};
   const mana = actor.system?.mana ?? {value: 0, max: 0};
@@ -899,6 +1052,7 @@ GT.openRestDialog = function(actor) {
   }).render(true);
 };
 
+/** Gegenstandsbogen für Waffen, Rüstungen, Zauber, Talente und Ausrüstungsmetadaten. */
 class GothicTalesItemSheet extends BaseItemSheet {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
@@ -916,6 +1070,7 @@ class GothicTalesItemSheet extends BaseItemSheet {
     const data = super.getData(options);
     data.config = GT.CONFIG;
     data.item = this.item;
+    data.documentImage = GT.isPlaceholderImage(this.item.img) ? GT.itemImage(this.item.type, this.item.name, this.item.system?.category || "") : this.item.img;
     data.system = this.item.system;
     data.editable = this.isEditable;
     data.descriptionText = GT.htmlToPlainText(this.item.system?.description || "");
@@ -933,9 +1088,14 @@ class GothicTalesItemSheet extends BaseItemSheet {
       ev.preventDefault();
       GT.openTextEditorDialog(this.item, "description", "Beschreibung");
     });
+    html.find(".gt-image-picker").on("click", ev => {
+      ev.preventDefault();
+      GT.openImagePicker(this.item, "img");
+    });
   }
 }
 
+/** Charakterassistent für Stufe, LP-Ausgaben, Stärken/Schwächen, Talente und Startausrüstung. */
 class GothicTalesCharacterCreator extends BaseFormApplication {
   constructor(options = {}) { super({}, options); this.targetActor = options.targetActor ?? null; }
   static get defaultOptions() {
@@ -1022,7 +1182,7 @@ class GothicTalesCharacterCreator extends BaseFormApplication {
     }, "character");
     let actor = this.targetActor;
     if (actor) await actor.update({name, type: "character", system: baseSystem});
-    else actor = await Actor.create({name, type: "character", img: GT.CONFIG.defaultActorImg, system: baseSystem});
+    else actor = await Actor.create({name, type: "character", img: GT.actorImage("character", name), prototypeToken: {texture: {src: GT.actorImage("character", name)}}, system: baseSystem});
     const itemDocs = await GT.itemsFromPackage(selected.id);
     for (const itemName of [formData.extraItem1, formData.extraItem2, formData.extraItem3].filter(Boolean)) itemDocs.push(await GT.itemFromSource(itemName, 1));
     if (itemDocs.length) await actor.createEmbeddedDocuments("Item", itemDocs);
@@ -1031,6 +1191,7 @@ class GothicTalesCharacterCreator extends BaseFormApplication {
   }
 }
 
+/** SL-Werkzeug zum Erstellen archetypbasierter NSC-Actoren mit Startausrüstung. */
 class GothicTalesNPCGenerator extends BaseFormApplication {
   constructor(options = {}) { super({}, options); this.targetActor = options.targetActor ?? null; }
   static get defaultOptions() {
@@ -1078,7 +1239,8 @@ class GothicTalesNPCGenerator extends BaseFormApplication {
     system.initiative.value = Math.floor((Number(attrs.ge.value) + Number(attrs.intu.value) + 2 * Number(attrs.erf.value) - 5) / 15);
     system.initiative.bonus = system.initiative.value;
     system.initiative.die = "";
-    const actorData = {name: formData.npcName || "Neuer NSC", type: "npc", img: GT.CONFIG.defaultActorImg, system};
+    const actorName = formData.npcName || "Neuer NSC";
+    const actorData = {name: actorName, type: "npc", img: GT.actorImage("npc", actorName), prototypeToken: {texture: {src: GT.actorImage("npc", actorName)}}, system};
     let actor = this.targetActor;
     if (actor) await actor.update(actorData);
     else actor = await Actor.create(actorData);
@@ -1089,6 +1251,7 @@ class GothicTalesNPCGenerator extends BaseFormApplication {
   }
 }
 
+/** Interaktives Talentbaumfenster, das LP ausgibt/erstattet und gelernte Knoten am Actor speichert. */
 class GothicTalesTalentTree extends BaseApplication {
   constructor(actor, options = {}) { super(options); this.actor = actor; this.activeTree = "einhand"; }
   static get defaultOptions() {
@@ -1156,6 +1319,7 @@ class GothicTalesTalentTree extends BaseApplication {
   }
 }
 
+/** Import-Anwendung für Journale, Actoren, Gegenstände, Talente und Szenen aus mitgelieferten JSON-Daten. */
 class GothicTalesImporter extends BaseApplication {
   constructor(options = {}) { super(options); this.silent = !!options.silent; }
   static get defaultOptions() {
@@ -1360,7 +1524,8 @@ class GothicTalesImporter extends BaseApplication {
       };
       if (type === "monster") Object.assign(system, {monsterNumber: entry.number, monsterType: entry.typ, monsterstufe: entry.monsterstufe});
       if (type === "npc") Object.assign(system, {attributeTotal: entry.attributeTotal});
-      return {name: entry.name, type, img: GT.CONFIG.defaultActorImg, folder: folder?.id, system, items: GT.actorEmbeddedItems(entry, type, sourceItems, sourceTalents), flags: {"gothic-tales": {uid: `${type}.${GT.slug(entry.name)}.${entry.sourcePage}`, sourceBook: entry.sourceBook, sourcePage: entry.sourcePage, version: GT.SYSTEM_VERSION}}};
+      const actorImg = entry.img || entry.image || entry.sourceImage || GT.actorImage(type, entry.name);
+      return {name: entry.name, type, img: actorImg, prototypeToken: {texture: {src: actorImg}}, folder: folder?.id, system, items: GT.actorEmbeddedItems(entry, type, sourceItems, sourceTalents), flags: {"gothic-tales": {uid: `${type}.${GT.slug(entry.name)}.${entry.sourcePage}`, sourceBook: entry.sourceBook, sourcePage: entry.sourcePage, version: GT.SYSTEM_VERSION}}};
     });
     const res = await this.upsertDocuments(Actor, docs, {pack});
     this.notify(`${kind === "monsters" ? "Monster" : "NSCs"}: ${res.created} neu, ${res.updated} aktualisiert. Beschreibungen wurden bereinigt; Inventar, Gegenstände und erkannte Talente wurden ergänzt.`);
@@ -1439,15 +1604,16 @@ class GothicTalesImporter extends BaseApplication {
       const name = entry.name;
       const description = isTalent ? (entry.description || GT.textToHtml(entry.text || "")) : GT.formatItemDescription(entry);
       docs.push({
-        name, type, img: GT.CONFIG.defaultItemImg, folder: folder?.id, sort: Number(entry.sort || 0),
+        name, type, img: entry.img || entry.image || entry.sourceImage || GT.itemImage(type, name, entry.category || entry.folderCategory || ""), folder: folder?.id, sort: Number(entry.sort || 0),
         system: {
           category: entry.category || "", description, sourceText: entry.sourceText || description || "",
           sourceImage: "", sourceBook: entry.sourceBook || "", sourcePage: String(entry.sourcePage || ""), damage: entry.damage || "", effect: entry.effect || "",
           attribute: entry.attribute || "", targetDefense: entry.targetDefense || (type === "spell" ? "ele" : "rk"), properties: entry.properties || "",
           requirements: entry.requirements || "", value: entry.value || "", circle: entry.circle || "", mana: entry.mana || "", range: entry.range || "",
           rk: Number(entry.rk || 0), ele: Number(entry.ele || 0), ma: Number(entry.ma || 0), points: entry.points || 0, kind: entry.kind || "", quantity: entry.quantity || 1,
-          uses: entry.uses || {value: 0, max: 0}, treeId: entry.treeId || "", nodeId: entry.id || "", lpCost: Number(entry.lpCost || 0)
+          uses: entry.uses || {value: 0, max: 0}, treeId: entry.treeId || "", nodeId: entry.id || "", lpCost: Number(entry.lpCost || 0), equipped: false
         },
+        effects: GT.makeItemActiveEffects({...entry, name}),
         flags: {"gothic-tales": {uid: isTalent ? `talent.${entry.treeId}.${entry.id}` : `${type}.${GT.slug(name)}.${GT.slug(entry.kind || entry.category || "")}`, sourceBook: entry.sourceBook, sourcePage: entry.sourcePage, version: GT.SYSTEM_VERSION}}
       });
     }
@@ -1482,8 +1648,10 @@ class GothicTalesImporter extends BaseApplication {
 
 
 
+/** Status der Chat-Würfeltabelle; zählt ausgewählte Würfel bis zum manuellen Wurf. */
 GT.manualDiceState = {2: 0, 4: 0, 6: 0, 8: 0, 10: 0, 12: 0, 20: 0};
 
+/** Wendet Gothic-Tales-UI-Klassen und Hintergrundvariablen auf Foundry-Oberflächenelemente an. */
 GT.applyTheme = function() {
   for (const node of [document.documentElement, document.body]) {
     if (!node) continue;
@@ -1553,6 +1721,7 @@ GT.rollManualDice = function() {
   GT.clearManualDice();
 };
 
+/** Fügt die manuelle Würfeltabelle unter dem Chatformular ein und hängt lokale Eventhandler einmalig an. */
 GT.injectDiceTray = function() {
   let tray = document.querySelector("#gt-chat-dice-tray");
   const chat = document.querySelector("#chat") || document.querySelector("#chat-popout") || document.querySelector("#sidebar");
@@ -1582,7 +1751,7 @@ GT.injectDiceTray = function() {
   }
   const form = chat.querySelector("#chat-form") || chat.querySelector(".chat-form");
   if (form?.parentElement) {
-    if (tray.parentElement !== form.parentElement || tray.nextElementSibling !== form) form.parentElement.insertBefore(tray, form);
+    if (tray.parentElement !== form.parentElement || tray.previousElementSibling !== form) form.insertAdjacentElement("afterend", tray);
   } else if (tray.parentElement !== chat) {
     chat.appendChild(tray);
   }
@@ -1613,6 +1782,7 @@ GT.injectDiceTray = function() {
   return tray;
 };
 
+/** Fängt Klicks der Würfeltabelle ab, auch wenn Foundry den Chat neu rendert oder die Tabelle verschiebt. */
 GT.installGlobalClickHandlers = function() {
   if (GT._globalClickHandlersInstalled) return;
   GT._globalClickHandlersInstalled = true;
@@ -1640,9 +1810,11 @@ GT.installGlobalClickHandlers = function() {
   }, true);
 };
 
+/** Foundry-init: registriert Helfer, Einstellungen, Bögen, Templates und öffentliche game.gothicTales-APIs. */
 Hooks.once("init", async function() {
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("not", a => !a);
+  Handlebars.registerHelper("or", (...args) => args.slice(0, -1).some(Boolean));
   Handlebars.registerHelper("lookupType", (obj, key) => obj?.[key] ?? key);
   CONFIG.GT = GT.CONFIG;
   game.gothicTales = GT;
@@ -1653,14 +1825,14 @@ Hooks.once("init", async function() {
   GT.installGlobalClickHandlers();
   game.settings.register("gothic-tales", "autoImportDone", {scope: "world", config: false, type: Boolean, default: false});
   game.settings.register("gothic-tales", "autoImportVersion", {scope: "world", config: false, type: String, default: ""});
-  game.settings.register("gothic-tales", "autoImportEnabled", {scope: "world", config: true, type: Boolean, default: true, name: "Gothic Tales automatisch importieren/aktualisieren", hint: "Importiert oder aktualisiert Nachschlagewerk, Actoren, Talente, Ausrüstung und Karten automatisch. Das Nachschlagewerk enthält jedes Buch als ein einzelnes Dokument."});
-  await loadTemplates([
+  game.settings.register("gothic-tales", "autoImportEnabled", {scope: "world", config: true, type: Boolean, default: true, name: "GOTHICTALES.Settings.AutoImport.Name", hint: "GOTHICTALES.Settings.AutoImport.Hint"});
+  await foundry.applications.handlebars.loadTemplates([
     "systems/gothic-tales/templates/actor/parts/attributes.hbs",
     "systems/gothic-tales/templates/actor/parts/items.hbs",
     "systems/gothic-tales/templates/actor/parts/source.hbs"
   ]);
-  const ActorSheets = globalThis.Actors ?? foundry.documents.collections.Actors;
-  const ItemSheets = globalThis.Items ?? foundry.documents.collections.Items;
+  const ActorSheets = foundry.documents.collections.Actors;
+  const ItemSheets = foundry.documents.collections.Items;
   if (BaseActorSheet) {
     try { ActorSheets.unregisterSheet("core", BaseActorSheet); } catch (err) {}
     ActorSheets.registerSheet("gothic-tales", GothicTalesActorSheet, {types: ["character", "npc", "monster"], makeDefault: true, label: "Gothic Tales Bogen"});
@@ -1671,34 +1843,58 @@ Hooks.once("init", async function() {
   }
 });
 
+GT.htmlRoot = function(html) {
+  return html instanceof HTMLElement ? html : html?.[0] ?? html;
+};
+
+GT.makeToolButton = function(icon, label, onClick) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.innerHTML = `<i class="fas ${icon}"></i> ${label}`;
+  button.addEventListener("click", onClick);
+  return button;
+};
+
+/** Fügt Gothic-Tales-Werkzeugbuttons in den Foundry-Einstellungen für SL hinzu. */
 Hooks.on("renderSettings", (app, html) => {
   if (!game.user.isGM) return;
-  const importerButton = $(`<button type="button"><i class="fas fa-book"></i> Gothic Tales Quellen importieren</button>`);
-  importerButton.on("click", () => new GothicTalesImporter().render(true));
-  const creatorButton = $(`<button type="button"><i class="fas fa-user-plus"></i> Gothic Tales Charakter-Assistent</button>`);
-  creatorButton.on("click", () => new GothicTalesCharacterCreator().render(true));
-  const npcButton = $(`<button type="button"><i class="fas fa-users"></i> Gothic Tales NSC-Generator</button>`);
-  npcButton.on("click", () => new GothicTalesNPCGenerator().render(true));
-  const target = html.find("#settings-game, .settings-list").first();
-  if (target.length) target.append(importerButton, creatorButton, npcButton);
+  const root = GT.htmlRoot(html);
+  const target = root?.querySelector?.("#settings-game, .settings-list");
+  if (!target || target.querySelector(".gt-settings-tools")) return;
+  const tools = document.createElement("div");
+  tools.className = "gt-settings-tools";
+  tools.append(
+    GT.makeToolButton("fa-book", "Gothic Tales Quellen importieren", () => new GothicTalesImporter().render(true)),
+    GT.makeToolButton("fa-user-plus", "Gothic Tales Charakter-Assistent", () => new GothicTalesCharacterCreator().render(true)),
+    GT.makeToolButton("fa-users", "Gothic Tales NSC-Generator", () => new GothicTalesNPCGenerator().render(true))
+  );
+  target.append(tools);
 });
 
+/** Fügt Schnellbuttons zur Actor-Verwaltung hinzu, um SL-Arbeitsabläufe zu beschleunigen. */
 Hooks.on("renderActorDirectory", (app, html) => {
   if (!game.user.isGM) return;
-  const bar = $(`<div class="gt-directory-tools"><button type="button"><i class="fas fa-user-plus"></i> Charakter-Editor</button><button type="button"><i class="fas fa-users"></i> NSC-Generator</button></div>`);
-  bar.find("button").eq(0).on("click", () => new GothicTalesCharacterCreator().render(true));
-  bar.find("button").eq(1).on("click", () => new GothicTalesNPCGenerator().render(true));
-  html.find(".directory-header").after(bar);
+  const root = GT.htmlRoot(html);
+  const header = root?.querySelector?.(".directory-header");
+  if (!header || root.querySelector(".gt-directory-tools")) return;
+  const bar = document.createElement("div");
+  bar.className = "gt-directory-tools";
+  bar.append(
+    GT.makeToolButton("fa-user-plus", "Charakter-Editor", () => new GothicTalesCharacterCreator().render(true)),
+    GT.makeToolButton("fa-users", "NSC-Generator", () => new GothicTalesNPCGenerator().render(true))
+  );
+  header.insertAdjacentElement("afterend", bar);
 });
 
 Hooks.on("renderChatLog", () => {
   GT.injectDiceTray();
 });
 
-Hooks.on("renderChatMessage", (message, html) => {
+Hooks.on("renderChatMessageHTML", (message, html) => {
   GT.applyTheme();
 });
 
+/** Foundry-ready: richtet Theme/Chat ein und startet den versionsgesteuerten automatischen SL-Kompendiumimport. */
 Hooks.once("ready", async () => {
   GT.applyTheme();
   GT.installGlobalClickHandlers();
