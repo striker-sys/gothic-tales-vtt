@@ -1,8 +1,8 @@
 {
   "id": "gothic-tales",
   "title": "Gothic Tales",
-  "description": "Spielsystem für Gothic Tales mit TypeDataModels, vollständig V2-basierten Actor-/Item-Bögen, überarbeiteter V2-Fensteroptik, aktualisierten Nachschlagewerken und ausgebautem NSC-/Monsterbuch-Layout mit getrennten Werten, Besonderheiten, Beute und Beschreibung.",
-  "version": "0.5.6",
+  "description": "Spielsystem für Gothic Tales mit gehärtetem Foundry-VTT-14-Manifest, bereinigten Release-Prüfungen, NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
+  "version": "0.4.3",
   "authors": [
     {
       "name": "Kuberia"
@@ -42,97 +42,26 @@
   ],
   "documentTypes": {
     "Actor": {
-      "character": {
-        "htmlFields": [
-          "biography",
-          "notes",
-          "sourceText",
-          "inventoryText",
-          "strengthsWeaknesses",
-          "lootText"
-        ]
-      },
-      "npc": {
-        "htmlFields": [
-          "biography",
-          "notes",
-          "sourceText",
-          "inventoryText",
-          "strengthsWeaknesses",
-          "lootText"
-        ]
-      },
-      "monster": {
-        "htmlFields": [
-          "biography",
-          "notes",
-          "sourceText",
-          "inventoryText",
-          "strengthsWeaknesses",
-          "lootText"
-        ]
-      }
+      "character": {"htmlFields": ["biography", "notes", "sourceText", "inventoryText", "strengthsWeaknesses", "lootText"]},
+      "npc": {"htmlFields": ["biography", "notes", "sourceText", "inventoryText", "strengthsWeaknesses", "lootText"]},
+      "monster": {"htmlFields": ["biography", "notes", "sourceText", "inventoryText", "strengthsWeaknesses", "lootText"]}
     },
     "Item": {
-      "weapon": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "shield": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "armor": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "spell": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "talent": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "trait": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "equipment": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      },
-      "consumable": {
-        "htmlFields": [
-          "description",
-          "sourceText"
-        ]
-      }
+      "weapon": {"htmlFields": ["description", "sourceText"]},
+      "shield": {"htmlFields": ["description", "sourceText"]},
+      "armor": {"htmlFields": ["description", "sourceText"]},
+      "spell": {"htmlFields": ["description", "sourceText"]},
+      "talent": {"htmlFields": ["description", "sourceText"]},
+      "trait": {"htmlFields": ["description", "sourceText"]},
+      "equipment": {"htmlFields": ["description", "sourceText"]},
+      "consumable": {"htmlFields": ["description", "sourceText"]}
     }
   },
   "initiative": "1d20 + @initiative.bonus",
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "mana",
   "license": "LICENSE.txt",
-  "grid": {
-    "type": 1,
-    "distance": 1,
-    "units": "Feld"
-  },
+  "grid": {"type": 1, "distance": 1, "units": "Feld"},
   "background": "systems/gothic-tales/assets/gt-background.webp",
   "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp",
   "readme": "https://github.com/striker-sys/gothic-tales-vtt/blob/main/README.md",
