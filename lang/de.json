@@ -3,5 +3,10 @@
   "GOTHICTALES.ActorSheet": "Gothic Tales Bogen",
   "GOTHICTALES.ItemSheet": "Gothic Tales Gegenstand",
   "GOTHICTALES.Roll": "Wurf",
-  "GOTHICTALES.ImportTitle": "Gothic Tales Quellen importieren"
+  "GOTHICTALES.ImportTitle": "Gothic Tales Quellen importieren",
+  "GOTHICTALES.DeleteItem": "Gegenstand löschen",
+  "GOTHICTALES.Settings.AutoImport.Name": "Gothic Tales automatisch importieren/aktualisieren",
+  "GOTHICTALES.Settings.AutoImport.Hint": "Importiert oder aktualisiert Nachschlagewerk, Actoren, Talente, Ausrüstung und Karten automatisch. Das Nachschlagewerk enthält jedes Buch als ein einzelnes Dokument.",
+  "GOTHICTALES.Equipment.Equipped": "Ausgerüstet",
+  "GOTHICTALES.Equipment.Toggle": "Ausrüstung umschalten"
 }
