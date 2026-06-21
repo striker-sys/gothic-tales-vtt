@@ -3,7 +3,7 @@
  * JSON-Datendateien ein und prüft, ob das Foundry-Manifest die Felder enthält,
  * die ein installierbares v14-Systempaket benötigt.
  */
-import {access, readFile} from "node:fs/promises";
+import {access, readFile, readdir} from "node:fs/promises";
 
 const files = [
   "system.json",
@@ -41,6 +41,22 @@ const iconFiles = [
 
 for (const file of iconFiles) {
   await access(file);
+}
+
+async function findTemplates(dir) {
+  const entries = await readdir(dir, {withFileTypes: true});
+  const found = [];
+  for (const entry of entries) {
+    const path = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) found.push(...await findTemplates(path));
+    else if (entry.isFile() && path.endsWith(".hbs")) found.push(path);
+  }
+  return found;
+}
+
+for (const file of await findTemplates("templates")) {
+  const firstLine = (await readFile(file, "utf8")).split(/\r?\n/, 1)[0].trim();
+  if (firstLine.startsWith("<!--")) throw new Error(`${file} beginnt mit einem gerenderten HTML-Kommentar. Nutze einen Handlebars-Kommentar, damit Foundry saubere Sheet-Wurzelelemente erhält.`);
 }
 
 const manifest = JSON.parse(await readFile("system.json", "utf8"));
