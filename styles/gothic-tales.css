@@ -207,6 +207,7 @@ button.disabled { opacity: .45; pointer-events: none; }
   background: rgba(255,255,255,.18);
 }
 .item-name { font-weight: 700; }
+.gt-item-quantity { justify-self: end; }
 .gt-chip {
   display: inline-block;
   max-width: 140px;
@@ -229,7 +230,7 @@ button.disabled { opacity: .45; pointer-events: none; }
 }
 .gt-help { font-style: italic; color: var(--gt-ink-soft); }
 .gt-source-text { max-height: 620px; overflow: auto; }
-.gt-source-text img, .item-header img, .items-list img { display: none !important; }
+.gt-source-text img { display: none !important; }
 .gt-description-preview {
   border: 1px dashed rgba(60,35,23,.45);
   background: rgba(255,255,255,.25);
@@ -298,13 +299,15 @@ button.disabled { opacity: .45; pointer-events: none; }
 .gt-critical { color: var(--gt-red); font-weight: 900; }
 .gt-total { font-size: 28px; font-weight: 900; text-align: center; border-top: 2px solid rgba(60,35,23,.35); margin-top: 6px; padding-top: 6px; }
 
-.gt-directory-tools {
+.gt-directory-tools,
+.gt-settings-tools {
   display: grid;
   gap: 4px;
   padding: 6px;
   border-bottom: 1px solid rgba(0,0,0,.2);
 }
-.gt-directory-tools button { width: 100%; }
+.gt-directory-tools button,
+.gt-settings-tools button { width: 100%; }
 
 .gt-locked input,
 .gt-locked textarea,
@@ -448,13 +451,15 @@ body.gt-system-ui {
 
 /* Dunkle Navigationsbereiche: helle Schrift */
 .gt-side-tabs,
-.gt-directory-tools {
+.gt-directory-tools,
+.gt-settings-tools {
   background: var(--gt-dark-panel) !important;
   color: var(--gt-light-text) !important;
   border-color: var(--gt-line) !important;
 }
 .gt-side-tabs *,
 .gt-directory-tools *,
+.gt-settings-tools *,
 .gt-side-tabs a.item,
 .gt-side-tabs a.item span,
 .gt-side-tabs a.item i {

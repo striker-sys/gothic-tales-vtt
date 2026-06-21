@@ -9,6 +9,7 @@ const files = [
   "system.json",
   "template.json",
   "lang/de.json",
+  "lang/en.json",
   "data/gt-monsters.json",
   "data/gt-nscs.json",
   "data/gt-rulebook-sections.json",

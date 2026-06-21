@@ -896,10 +896,10 @@ function enrichLists(data) {
   return data;
 }
 
-const BaseActorSheet = globalThis.ActorSheet ?? foundry?.appv1?.sheets?.ActorSheet;
-const BaseItemSheet = globalThis.ItemSheet ?? foundry?.appv1?.sheets?.ItemSheet;
-const BaseFormApplication = globalThis.FormApplication ?? foundry?.appv1?.api?.FormApplication;
-const BaseApplication = globalThis.Application ?? foundry?.appv1?.api?.Application;
+const BaseActorSheet = foundry?.appv1?.sheets?.ActorSheet;
+const BaseItemSheet = foundry?.appv1?.sheets?.ItemSheet;
+const BaseFormApplication = foundry?.appv1?.api?.FormApplication;
+const BaseApplication = foundry?.appv1?.api?.Application;
 
 /** Hauptbogen für Charaktere, NSCs und Monster. Verdrahtet Würfe, Sperrmodus, Rast und Gegenstandsaktionen. */
 class GothicTalesActorSheet extends BaseActorSheet {
@@ -1721,7 +1721,7 @@ GT.rollManualDice = function() {
   GT.clearManualDice();
 };
 
-/** Fügt die manuelle Würfeltabelle nahe dem Chatformular ein und hängt lokale Eventhandler einmalig an. */
+/** Fügt die manuelle Würfeltabelle unter dem Chatformular ein und hängt lokale Eventhandler einmalig an. */
 GT.injectDiceTray = function() {
   let tray = document.querySelector("#gt-chat-dice-tray");
   const chat = document.querySelector("#chat") || document.querySelector("#chat-popout") || document.querySelector("#sidebar");
@@ -1751,7 +1751,7 @@ GT.injectDiceTray = function() {
   }
   const form = chat.querySelector("#chat-form") || chat.querySelector(".chat-form");
   if (form?.parentElement) {
-    if (tray.parentElement !== form.parentElement || tray.nextElementSibling !== form) form.parentElement.insertBefore(tray, form);
+    if (tray.parentElement !== form.parentElement || tray.previousElementSibling !== form) form.insertAdjacentElement("afterend", tray);
   } else if (tray.parentElement !== chat) {
     chat.appendChild(tray);
   }
@@ -1826,13 +1826,13 @@ Hooks.once("init", async function() {
   game.settings.register("gothic-tales", "autoImportDone", {scope: "world", config: false, type: Boolean, default: false});
   game.settings.register("gothic-tales", "autoImportVersion", {scope: "world", config: false, type: String, default: ""});
   game.settings.register("gothic-tales", "autoImportEnabled", {scope: "world", config: true, type: Boolean, default: true, name: "GOTHICTALES.Settings.AutoImport.Name", hint: "GOTHICTALES.Settings.AutoImport.Hint"});
-  await loadTemplates([
+  await foundry.applications.handlebars.loadTemplates([
     "systems/gothic-tales/templates/actor/parts/attributes.hbs",
     "systems/gothic-tales/templates/actor/parts/items.hbs",
     "systems/gothic-tales/templates/actor/parts/source.hbs"
   ]);
-  const ActorSheets = globalThis.Actors ?? foundry.documents.collections.Actors;
-  const ItemSheets = globalThis.Items ?? foundry.documents.collections.Items;
+  const ActorSheets = foundry.documents.collections.Actors;
+  const ItemSheets = foundry.documents.collections.Items;
   if (BaseActorSheet) {
     try { ActorSheets.unregisterSheet("core", BaseActorSheet); } catch (err) {}
     ActorSheets.registerSheet("gothic-tales", GothicTalesActorSheet, {types: ["character", "npc", "monster"], makeDefault: true, label: "Gothic Tales Bogen"});
@@ -1843,33 +1843,54 @@ Hooks.once("init", async function() {
   }
 });
 
+GT.htmlRoot = function(html) {
+  return html instanceof HTMLElement ? html : html?.[0] ?? html;
+};
+
+GT.makeToolButton = function(icon, label, onClick) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.innerHTML = `<i class="fas ${icon}"></i> ${label}`;
+  button.addEventListener("click", onClick);
+  return button;
+};
+
 /** Fügt Gothic-Tales-Werkzeugbuttons in den Foundry-Einstellungen für SL hinzu. */
 Hooks.on("renderSettings", (app, html) => {
   if (!game.user.isGM) return;
-  const importerButton = $(`<button type="button"><i class="fas fa-book"></i> Gothic Tales Quellen importieren</button>`);
-  importerButton.on("click", () => new GothicTalesImporter().render(true));
-  const creatorButton = $(`<button type="button"><i class="fas fa-user-plus"></i> Gothic Tales Charakter-Assistent</button>`);
-  creatorButton.on("click", () => new GothicTalesCharacterCreator().render(true));
-  const npcButton = $(`<button type="button"><i class="fas fa-users"></i> Gothic Tales NSC-Generator</button>`);
-  npcButton.on("click", () => new GothicTalesNPCGenerator().render(true));
-  const target = html.find("#settings-game, .settings-list").first();
-  if (target.length) target.append(importerButton, creatorButton, npcButton);
+  const root = GT.htmlRoot(html);
+  const target = root?.querySelector?.("#settings-game, .settings-list");
+  if (!target || target.querySelector(".gt-settings-tools")) return;
+  const tools = document.createElement("div");
+  tools.className = "gt-settings-tools";
+  tools.append(
+    GT.makeToolButton("fa-book", "Gothic Tales Quellen importieren", () => new GothicTalesImporter().render(true)),
+    GT.makeToolButton("fa-user-plus", "Gothic Tales Charakter-Assistent", () => new GothicTalesCharacterCreator().render(true)),
+    GT.makeToolButton("fa-users", "Gothic Tales NSC-Generator", () => new GothicTalesNPCGenerator().render(true))
+  );
+  target.append(tools);
 });
 
 /** Fügt Schnellbuttons zur Actor-Verwaltung hinzu, um SL-Arbeitsabläufe zu beschleunigen. */
 Hooks.on("renderActorDirectory", (app, html) => {
   if (!game.user.isGM) return;
-  const bar = $(`<div class="gt-directory-tools"><button type="button"><i class="fas fa-user-plus"></i> Charakter-Editor</button><button type="button"><i class="fas fa-users"></i> NSC-Generator</button></div>`);
-  bar.find("button").eq(0).on("click", () => new GothicTalesCharacterCreator().render(true));
-  bar.find("button").eq(1).on("click", () => new GothicTalesNPCGenerator().render(true));
-  html.find(".directory-header").after(bar);
+  const root = GT.htmlRoot(html);
+  const header = root?.querySelector?.(".directory-header");
+  if (!header || root.querySelector(".gt-directory-tools")) return;
+  const bar = document.createElement("div");
+  bar.className = "gt-directory-tools";
+  bar.append(
+    GT.makeToolButton("fa-user-plus", "Charakter-Editor", () => new GothicTalesCharacterCreator().render(true)),
+    GT.makeToolButton("fa-users", "NSC-Generator", () => new GothicTalesNPCGenerator().render(true))
+  );
+  header.insertAdjacentElement("afterend", bar);
 });
 
 Hooks.on("renderChatLog", () => {
   GT.injectDiceTray();
 });
 
-Hooks.on("renderChatMessage", (message, html) => {
+Hooks.on("renderChatMessageHTML", (message, html) => {
   GT.applyTheme();
 });
 
