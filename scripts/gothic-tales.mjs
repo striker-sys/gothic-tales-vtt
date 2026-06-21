@@ -4,7 +4,7 @@
  * game.gothicTales bereitstellen kann.
  */
 const GT = {};
-GT.SYSTEM_VERSION = "0.4.0";
+GT.SYSTEM_VERSION = "0.4.2";
 
 // Foundry-Utility-Aliase halten den folgenden Code lesbar und bündeln Kompatibilitäts-Fallbacks.
 const mergeObject = foundry.utils.mergeObject;
@@ -675,7 +675,7 @@ GT.makeItemActiveEffects = function(entry = {}) {
   const changes = [];
   for (const key of ["rk", "ele", "ma"]) {
     const value = Number(entry[key] || 0);
-    if (value) changes.push({key: `system.armorBonus.${key}`, mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: String(value), priority: 20});
+    if (value) changes.push({key: `system.armorBonus.${key}`, mode: "add", value: String(value), priority: 20});
   }
   if (!changes.length) return [];
   return [{name: `${entry.name || "Gegenstand"} ausgerüstet`, icon: GT.CONFIG.defaultItemImg, disabled: true, transfer: false, changes, flags: {"gothic-tales": {equipmentEffect: true}}}];
@@ -1322,6 +1322,11 @@ class GothicTalesTalentTree extends BaseApplication {
 /** Import-Anwendung für Journale, Actoren, Gegenstände, Talente und Szenen aus mitgelieferten JSON-Daten. */
 class GothicTalesImporter extends BaseApplication {
   constructor(options = {}) { super(options); this.silent = !!options.silent; }
+  static headless(options = {}) {
+    const importer = Object.create(GothicTalesImporter.prototype);
+    importer.silent = !!options.silent;
+    return importer;
+  }
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       id: "gothic-tales-importer",
@@ -1342,7 +1347,8 @@ class GothicTalesImporter extends BaseApplication {
   async ensureCompendium({name, label, type}) {
     const collection = `world.${name}`;
     let pack = game.packs.get(collection);
-    if (!pack && globalThis.CompendiumCollection?.createCompendium) pack = await CompendiumCollection.createCompendium({name, label, type, package: "world"});
+    const CompendiumCollection = foundry.documents.collections.CompendiumCollection;
+    if (!pack && CompendiumCollection?.createCompendium) pack = await CompendiumCollection.createCompendium({name, label, type, package: "world"});
     if (!pack) throw new Error(`Compendium ${label} konnte nicht erstellt werden.`);
     return pack;
   }
@@ -1904,7 +1910,7 @@ Hooks.once("ready", async () => {
   if (game.settings.get("gothic-tales", "autoImportEnabled") && lastVersion !== GT.SYSTEM_VERSION) {
     ui.notifications.info(`Gothic Tales: Kompendien werden auf Version ${GT.SYSTEM_VERSION} aktualisiert.`);
     try {
-      await new GothicTalesImporter({silent: true}).importKind("all");
+      await GothicTalesImporter.headless({silent: true}).importKind("all");
       await game.settings.set("gothic-tales", "autoImportDone", true);
       await game.settings.set("gothic-tales", "autoImportVersion", GT.SYSTEM_VERSION);
       ui.notifications.info("Gothic Tales: Automatischer Import abgeschlossen.");

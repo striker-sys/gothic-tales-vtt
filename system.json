@@ -2,7 +2,7 @@
   "id": "gothic-tales",
   "title": "Gothic Tales",
   "description": "Spielsystem für Gothic Tales mit bereinigten NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "authors": [
     {
       "name": "Kuberia"
