@@ -1,3 +1,5 @@
+/* Gothic-Tales-Stylesheet: definiert Pergamentoptik, Bogenlayout, Itemlisten, Chatkarten, Dialoge und responsives Verhalten. */
+/* Theme-Variablen, die Bögen, Anwendungen und Chatkarten gemeinsam verwenden. */
 :root {
   --gt-paper: #ead4a5;
   --gt-paper-light: #f4e6c4;
@@ -9,6 +11,7 @@
   --gt-panel: rgba(246, 232, 198, .92);
 }
 
+/* Basisstil für jedes Gothic-Tales-Fenster und jede Gothic-Tales-Anwendung in Foundry. */
 .gothic-tales { color: var(--gt-ink); }
 .gothic-tales .window-content,
 .gothic-tales.sheet .window-content {
@@ -18,6 +21,7 @@
   font-family: Georgia, "Times New Roman", serif;
 }
 
+/* Rahmen, Kopfbereich und Seitentab-Layout für Actor- und Gegenstandsbögen. */
 .gt-sheet { min-width: 600px; }
 .gt-paper-header,
 .gt-parchment-panel {
@@ -185,6 +189,7 @@ button:hover,
 .gt-tree-select:hover { filter: brightness(1.05); }
 button.disabled { opacity: .45; pointer-events: none; }
 
+/* Inventar- und Kampfitemlisten inklusive Chips und Aktionsbuttons. */
 .items-list {
   list-style: none;
   padding: 0;
@@ -194,7 +199,7 @@ button.disabled { opacity: .45; pointer-events: none; }
 }
 .items-list .item {
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) repeat(5, auto) 28px 28px 28px 28px;
+  grid-template-columns: 34px minmax(150px, 1fr) repeat(5, auto) 28px 28px 28px 28px;
   gap: 5px;
   align-items: center;
   padding: 5px;
@@ -315,7 +320,7 @@ button.disabled { opacity: .45; pointer-events: none; }
   .gt-side-tabs { position: relative; grid-template-columns: repeat(4, 1fr); order: -1; }
   .gt-side-tabs span { font-size: 11px; }
   .gt-attr-row { grid-template-columns: 32px 1fr 70px 56px 56px; }
-  .items-list .item { grid-template-columns: minmax(130px, 1fr) repeat(3, auto); }
+  .items-list .item { grid-template-columns: 34px minmax(130px, 1fr) repeat(3, auto); }
 }
 
 .gt-combined-reference {
@@ -678,7 +683,7 @@ body.gt-system-ui {
   #gt-chat-dice-tray .gt-chat-dice-controls label { grid-column: 1 / -1; }
 }
 
-/* GT window headers: dark header with white text */
+/* GT-Fensterköpfe: dunkler Kopfbereich mit weißer Schrift */
 .window-app.gothic-tales .window-header,
 .app.window-app.gothic-tales .window-header,
 .application.gothic-tales .window-header {
@@ -847,4 +852,47 @@ body.gt-system-ui {
   .attributes-panel .gt-attr-list { grid-template-columns: 1fr; }
   .attributes-panel .gt-attr-row,
   .skills-panel .gt-attr-row { grid-template-columns: 32px 1fr 70px 56px 56px; }
+}
+
+/* Umschaltzustände für ausgerüstete Rüstungen und Schilde. */
+.item-equip.active {
+  background: linear-gradient(#d8f0bd, #7fb36a);
+  color: #17350f;
+}
+
+.gt-checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.gt-checkbox-label input[type="checkbox"] {
+  width: auto;
+}
+
+/* Dokument- und Itembilder: zeigen Actoren, Monster, NSCs und Inventargegenstände als Miniaturen. */
+.gt-document-image-button {
+  width: 72px;
+  height: 72px;
+  padding: 3px;
+  display: grid;
+  place-items: center;
+  background: #efe0bd;
+  border: 3px double var(--gt-line);
+  cursor: pointer;
+}
+.gt-document-image-button.small { width: 58px; height: 58px; }
+.gt-document-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.gt-item-image {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border: 1px solid rgba(60,35,23,.55);
+  border-radius: 4px;
+  background: rgba(255,255,255,.45);
 }

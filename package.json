@@ -1,0 +1,11 @@
+{
+  "name": "gothic-tales-vtt",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "npm run check:json && npm run check:js",
+    "check:json": "node tools/validate-package.mjs",
+    "check:js": "node --check scripts/gothic-tales.mjs"
+  }
+}

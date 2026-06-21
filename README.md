@@ -4,6 +4,10 @@ Willkommen bei **Gothic Tales** für Foundry VTT.
 
 Dieses System bringt die wichtigsten Spielhilfen direkt an den virtuellen Spieltisch: Charakterbögen, NSC- und Monsterbögen, ein gemeinsames Nachschlagewerk, sortierte Ausrüstung, Charaktererstellung, NSC-Generator, Karten und eine manuelle Würfeltabelle im Chatbereich.
 
+## Release 0.4.0
+
+Version 0.4.0 modernisiert das Paket für Foundry VTT 14, bereinigt Manifest-Metadaten, ergänzt Ausrüstungsumschaltung, Active-Effect-Vorlagen für importierte Ausrüstung und Entwicklerprüfungen.
+
 ## Release 0.3.9
 
 Version 0.3.9 bereinigt NSC- und Monsterbeschreibungen, ergänzt Inventar/Gegenstände direkt an den importierten Actoren und verbessert die Bedienung gesperrter Bögen.
@@ -56,13 +60,18 @@ Starte Foundry danach neu. Gothic Tales erscheint anschließend in der Systemaus
 - Kartenpaket für Minental und wichtige Gebiete.
 - Manuelle Würfeltabelle unterhalb des Chats.
 - System-Thumbnail und Hintergrund als WebP.
+- Miniaturbilder für Actoren und Items inklusive allgemeinem Fallback-Icon und Foundry-Dateibrowser-Auswahl.
 
 ## Systemdaten
 
 - System-ID: `gothic-tales`
-- Version: `0.3.9`
+- Version: `0.4.0`
 - Foundry VTT: `14.368`
 - Autor: Kuberia
+
+## Entwicklung
+
+Für einfache statische Prüfungen steht `npm run check` bereit. Der Befehl validiert die JSON-Daten/Manifest-Metadaten und führt einen Syntaxcheck für das Hauptskript aus.
 
 ## Status
 
