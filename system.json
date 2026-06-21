@@ -1,8 +1,8 @@
 {
   "id": "gothic-tales",
   "title": "Gothic Tales",
-  "description": "Spielsystem für Gothic Tales mit gehärtetem Foundry-VTT-14-Manifest, bereinigten Release-Prüfungen, NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
-  "version": "0.4.3",
+  "description": "Spielsystem für Gothic Tales mit TypeDataModels, vollständig V2-basierten Actor-/Item-Bögen, überarbeiteter V2-Fensteroptik, aktualisierten Nachschlagewerken und ausgebautem NSC-/Monsterbuch-Layout mit getrennten Werten, Besonderheiten, Beute und Beschreibung.",
+  "version": "0.5.6",
   "authors": [
     {
       "name": "Kuberia"
