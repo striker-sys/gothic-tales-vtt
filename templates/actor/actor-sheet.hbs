@@ -1,6 +1,7 @@
+<!-- Actor-Bogenlayout: kombiniert abgeleitete Werte, Kampfaktionen, Inventar, Talente, Erstellungswerkzeuge und Quellenangaben für Charaktere, NSCs und Monster. -->
 <form class="{{cssClass}} gt-sheet actor-sheet {{#if sheetLocked}}gt-locked{{/if}}" autocomplete="off">
   <header class="gt-header gt-paper-header">
-    <div class="gt-logo-mark">GT</div>
+    <button type="button" class="gt-image-picker gt-document-image-button" title="Bild auswählen"><img class="gt-document-image" src="{{documentImage}}" alt="{{actor.name}}"></button>
     <div class="gt-title-block">
       <label class="gt-small-label">{{actorTypeLabel}}</label>
       <input class="gt-name" name="name" type="text" value="{{actor.name}}" placeholder="Name des Helden / der Figur">
