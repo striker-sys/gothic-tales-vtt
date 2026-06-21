@@ -4,6 +4,7 @@
     <ol class="items-list no-images">
       {{#each groups.items as |item|}}
       <li class="item" data-item-id="{{item.id}}">
+        <img class="gt-item-image" src="{{item.img}}" alt="{{item.name}}">
         <span class="item-name">{{item.name}}</span>
         {{#if item.system.quantity}}<span class="gt-chip gt-tip" title="Anzahl: {{item.system.quantity}}" data-tooltip="Anzahl: {{item.system.quantity}}">×{{item.system.quantity}}</span>{{/if}}
         {{#if item.system.attribute}}<span class="gt-chip gt-tip" title="Attribut: {{item.system.attribute}}" data-tooltip="Attribut: {{item.system.attribute}}">{{item.system.attribute}}</span>{{/if}}
@@ -28,6 +29,7 @@
     <ol class="items-list no-images">
       {{#each group.items as |item|}}
       <li class="item" data-item-id="{{item.id}}">
+        <img class="gt-item-image" src="{{item.img}}" alt="{{item.name}}">
         <span class="item-name">{{item.name}}</span>
         {{#if item.system.quantity}}<span class="gt-chip gt-tip" title="Anzahl: {{item.system.quantity}}" data-tooltip="Anzahl: {{item.system.quantity}}">×{{item.system.quantity}}</span>{{/if}}
         {{#if item.system.attribute}}<span class="gt-chip gt-tip" title="Attribut: {{item.system.attribute}}" data-tooltip="Attribut: {{item.system.attribute}}">{{item.system.attribute}}</span>{{/if}}

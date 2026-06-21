@@ -3,7 +3,7 @@
  * JSON-Datendateien ein und prüft, ob das Foundry-Manifest die Felder enthält,
  * die ein installierbares v14-Systempaket benötigt.
  */
-import {readFile} from "node:fs/promises";
+import {access, readFile} from "node:fs/promises";
 
 const files = [
   "system.json",
@@ -24,9 +24,28 @@ for (const file of files) {
   JSON.parse(await readFile(file, "utf8"));
 }
 
+const iconFiles = [
+  "assets/icons/allgemein.svg",
+  "assets/icons/charakter.svg",
+  "assets/icons/nsc.svg",
+  "assets/icons/monster.svg",
+  "assets/icons/waffe.svg",
+  "assets/icons/ruestung.svg",
+  "assets/icons/schild.svg",
+  "assets/icons/zauber.svg",
+  "assets/icons/talent.svg",
+  "assets/icons/eigenschaft.svg",
+  "assets/icons/ausruestung.svg",
+  "assets/icons/verbrauchbar.svg"
+];
+
+for (const file of iconFiles) {
+  await access(file);
+}
+
 const manifest = JSON.parse(await readFile("system.json", "utf8"));
 const required = ["id", "title", "version", "compatibility", "esmodules", "styles", "languages", "manifest", "download"];
 const missing = required.filter(key => manifest[key] === undefined || manifest[key] === "");
 if (missing.length) throw new Error(`Manifest missing required fields: ${missing.join(", ")}`);
 if (manifest.compatibility?.minimum !== "14") throw new Error("Gothic Tales is expected to target Foundry VTT v14 minimum compatibility.");
-console.log(`Validated ${files.length} JSON files and manifest metadata.`);
+console.log(`Validated ${files.length} JSON files, ${iconFiles.length} icon files and manifest metadata.`);

@@ -69,8 +69,26 @@ GT.CONFIG = {
     npc: "NSC",
     monster: "Monster"
   },
-  defaultActorImg: "icons/svg/mystery-man.svg",
-  defaultItemImg: "icons/svg/item-bag.svg"
+  defaultActorImg: "systems/gothic-tales/assets/icons/allgemein.svg",
+  defaultItemImg: "systems/gothic-tales/assets/icons/allgemein.svg",
+  icons: {
+    default: "systems/gothic-tales/assets/icons/allgemein.svg",
+    actors: {
+      character: "systems/gothic-tales/assets/icons/charakter.svg",
+      npc: "systems/gothic-tales/assets/icons/nsc.svg",
+      monster: "systems/gothic-tales/assets/icons/monster.svg"
+    },
+    items: {
+      weapon: "systems/gothic-tales/assets/icons/waffe.svg",
+      armor: "systems/gothic-tales/assets/icons/ruestung.svg",
+      shield: "systems/gothic-tales/assets/icons/schild.svg",
+      spell: "systems/gothic-tales/assets/icons/zauber.svg",
+      talent: "systems/gothic-tales/assets/icons/talent.svg",
+      trait: "systems/gothic-tales/assets/icons/eigenschaft.svg",
+      equipment: "systems/gothic-tales/assets/icons/ausruestung.svg",
+      consumable: "systems/gothic-tales/assets/icons/verbrauchbar.svg"
+    }
+  }
 };
 
 /** Löst einen Lokalisierungsschlüssel auf und behält einen Fallback für frühe Initialisierung oder fehlende Texte. */
@@ -123,6 +141,40 @@ GT.NPC_ARCHETYPES = {
   jaeger: {label: "Jäger", focus: {ge: 3, intu: 2, erf: 1}, weapon: "Jagdbogen", armor: "Reisekleidung"},
   magier: {label: "Magier", focus: {konz: 3, erf: 2, intu: 1}, weapon: "Feuerpfeil", armor: "Novizenrobe (Wasser)"},
   ork: {label: "Ork", focus: {st: 4, ausd: 3}, weapon: "Grober Nagelknüppel", armor: "Kette & Leder"}
+};
+
+/** Prüft, ob ein Dokumentbild bereits sinnvoll gesetzt ist oder noch durch ein GT-Icon ersetzt werden darf. */
+GT.isPlaceholderImage = function(img) {
+  const value = String(img || "").trim();
+  if (!value) return true;
+  return ["icons/svg/mystery-man.svg", "icons/svg/item-bag.svg", GT.CONFIG.icons.default].includes(value);
+};
+
+/** Liefert ein Actor-Bild anhand des Actor-Typs oder ein allgemeines Fallback-Icon. */
+GT.actorImage = function(type = "character", name = "") {
+  return GT.CONFIG.icons.actors[type] || GT.CONFIG.icons.default;
+};
+
+/** Liefert ein Item-Bild anhand von Typ, Name oder Kategorie und fällt auf allgemein.svg zurück. */
+GT.itemImage = function(type = "equipment", name = "", category = "") {
+  const haystack = `${name} ${category}`.toLowerCase();
+  if (/schild/i.test(haystack)) return GT.CONFIG.icons.items.shield;
+  if (/rüstung|ruestung|robe|kluft|panzer|kleidung/i.test(haystack)) return GT.CONFIG.icons.items.armor;
+  if (/trank|ration|nahrung|wasser|fleisch|beute/i.test(haystack)) return GT.CONFIG.icons.items.consumable;
+  if (/zauber|spruchrolle|magie|feuer|eis|blitz|heilung/i.test(haystack)) return GT.CONFIG.icons.items.spell;
+  if (/bogen|pfeil|bolzen|schwert|messer|dolch|stab|axt|armbrust|keule|knüppel|knueppel|speer/i.test(haystack)) return GT.CONFIG.icons.items.weapon;
+  return GT.CONFIG.icons.items[type] || GT.CONFIG.icons.default;
+};
+
+/** Öffnet Foundrys Dateibrowser, damit Bilder hochgeladen oder vorhandene Bildquellen gewählt werden können. */
+GT.openImagePicker = function(document, path = "img") {
+  if (!document?.isOwner) return ui.notifications.warn("Du hast keine Berechtigung zum Bearbeiten des Bildes.");
+  const current = path === "img" ? document.img : getProperty(document, path);
+  new FilePicker({
+    type: "image",
+    current: current || GT.CONFIG.icons.default,
+    callback: selected => document.update({[path]: selected || GT.CONFIG.icons.default})
+  }).browse(current || GT.CONFIG.icons.default);
 };
 
 /** Maskiert Klartext, bevor er in manuell erzeugte HTML-Fragmente eingefügt wird. */
@@ -282,7 +334,7 @@ GT.actorEmbeddedTalentItems = function(entry, sourceTalents = []) {
     added.set(key, {
       name,
       type: "talent",
-      img: GT.CONFIG.defaultItemImg,
+      img: GT.itemImage("talent", name, talent.treeLabel || talent.category || "Talente"),
       system: {
         category: talent.treeLabel || talent.category || "Talente",
         description,
@@ -422,7 +474,7 @@ GT.cloneSourceItemForActor = function(entry, quantity = 1, nameOverride = null) 
   return {
     name: nameOverride || data.name || "Gegenstand",
     type: data.type || "equipment",
-    img: GT.CONFIG.defaultItemImg,
+    img: data.img || data.image || data.sourceImage || GT.itemImage(data.type || "equipment", nameOverride || data.name, data.category || data.folderCategory || ""),
     system,
     flags: {"gothic-tales": {sourceBook: data.sourceBook, sourcePage: data.sourcePage, importedName: data.name}}
   };
@@ -432,7 +484,7 @@ GT.customActorItem = function(name, type = "equipment", quantity = 1, category =
   return {
     name,
     type,
-    img: GT.CONFIG.defaultItemImg,
+    img: GT.itemImage(type, name, category),
     system: {quantity, category, description: GT.formatItemDescription({name, type, quantity, category, text: "Aus dem NSC-/Monsterbogen extrahiert."}), sourceText: GT.textToHtml("Aus dem NSC-/Monsterbogen extrahiert.")},
     flags: {"gothic-tales": {importedName: name}}
   };
@@ -789,7 +841,7 @@ GT.itemFromSource = async function(name, quantity = 1, mode = "normal") {
     return {
       name: itemName,
       type,
-      img: GT.CONFIG.defaultItemImg,
+      img: data.img || data.image || data.sourceImage || GT.itemImage(type, itemName, data.category || data.folderCategory || ""),
       system: {
         ...data,
         quantity,
@@ -802,16 +854,16 @@ GT.itemFromSource = async function(name, quantity = 1, mode = "normal") {
     };
   }
   if (mode === "custom-water-full") {
-    return {name: "Wasserschlauch (3/3)", type: "consumable", img: GT.CONFIG.defaultItemImg, system: {quantity, category: "Essen & Trinken", description: "<p>Gefüllter Wasserschlauch mit drei Portionen Wasser.</p>", value: "", uses: {value: 3, max: 3}}};
+    return {name: "Wasserschlauch (3/3)", type: "consumable", img: GT.itemImage("consumable", "Wasserschlauch"), system: {quantity, category: "Essen & Trinken", description: "<p>Gefüllter Wasserschlauch mit drei Portionen Wasser.</p>", value: "", uses: {value: 3, max: 3}}};
   }
-  if (name === "Wasserschlauch") return {name: "Wasserschlauch (2/3)", type: "consumable", img: GT.CONFIG.defaultItemImg, system: {quantity, category: "Essen & Trinken", description: "<p>Wasserschlauch mit zwei von drei Portionen Wasser.</p>", uses: {value: 2, max: 3}}};
-  return {name, type: "equipment", img: GT.CONFIG.defaultItemImg, system: {quantity, category: "Kram", description: "<p>Startausrüstung.</p>"}};
+  if (name === "Wasserschlauch") return {name: "Wasserschlauch (2/3)", type: "consumable", img: GT.itemImage("consumable", "Wasserschlauch"), system: {quantity, category: "Essen & Trinken", description: "<p>Wasserschlauch mit zwei von drei Portionen Wasser.</p>", uses: {value: 2, max: 3}}};
+  return {name, type: "equipment", img: GT.itemImage("equipment", name), system: {quantity, category: "Kram", description: "<p>Startausrüstung.</p>"}};
 };
 
 GT.itemsFromPackage = async function(packageId) {
   const pack = GT.START_PACKAGES.find(p => p.id === packageId) ?? GT.START_PACKAGES[0];
   const docs = [];
-  docs.push({name: "Zerschlissene Kleidung", type: "armor", img: GT.CONFIG.defaultItemImg, system: {category: "Startausrüstung", rk: 0, ele: 0, ma: 0, description: "<p>Einfache, zerschlissene Kleidung.</p>"}});
+  docs.push({name: "Zerschlissene Kleidung", type: "armor", img: GT.itemImage("armor", "Zerschlissene Kleidung"), system: {category: "Startausrüstung", rk: 0, ele: 0, ma: 0, description: "<p>Einfache, zerschlissene Kleidung.</p>"}});
   docs.push(await GT.itemFromSource("Ration / Nahrung", 1));
   docs.push(await GT.itemFromSource("Wasserschlauch", 1));
   for (const [name, qty, mode] of pack.items) docs.push(await GT.itemFromSource(name, qty, mode));
@@ -867,8 +919,11 @@ class GothicTalesActorSheet extends BaseActorSheet {
     const data = super.getData(options);
     data.config = GT.CONFIG;
     data.actor = this.actor;
-    data.items = Array.from(this.actor.items ?? []).sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name));
-    data.system = GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(data.items)});
+    data.documentImage = GT.isPlaceholderImage(this.actor.img) ? GT.actorImage(this.actor.type, this.actor.name) : this.actor.img;
+    data.items = Array.from(this.actor.items ?? [])
+      .sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name))
+      .map(item => ({id: item.id, name: item.name, type: item.type, sort: item.sort, img: GT.isPlaceholderImage(item.img) ? GT.itemImage(item.type, item.name, item.system?.category || "") : item.img, system: item.system}));
+    data.system = GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)});
     data.editable = this.isEditable;
     data.actorTypeLabel = GT.CONFIG.actorTypes[this.actor.type] || this.actor.type;
     return enrichLists(data);
@@ -913,11 +968,15 @@ class GothicTalesActorSheet extends BaseActorSheet {
       const label = ev.currentTarget.dataset.label || "Beschreibung";
       GT.openTextEditorDialog(this.actor, path, label);
     });
+    html.find(".gt-image-picker").on("click", ev => {
+      ev.preventDefault();
+      GT.openImagePicker(this.actor, "img");
+    });
     if (!this.isEditable || locked) return;
     html.find(".item-create").on("click", async ev => {
       ev.preventDefault();
       const type = ev.currentTarget.dataset.type || "equipment";
-      await this.actor.createEmbeddedDocuments("Item", [{name: "Neuer Eintrag", type, img: GT.CONFIG.defaultItemImg}]);
+      await this.actor.createEmbeddedDocuments("Item", [{name: "Neuer Eintrag", type, img: GT.itemImage(type, "Neuer Eintrag")}]);
     });
     html.find(".item-edit").on("click", ev => {
       ev.preventDefault();
@@ -1011,6 +1070,7 @@ class GothicTalesItemSheet extends BaseItemSheet {
     const data = super.getData(options);
     data.config = GT.CONFIG;
     data.item = this.item;
+    data.documentImage = GT.isPlaceholderImage(this.item.img) ? GT.itemImage(this.item.type, this.item.name, this.item.system?.category || "") : this.item.img;
     data.system = this.item.system;
     data.editable = this.isEditable;
     data.descriptionText = GT.htmlToPlainText(this.item.system?.description || "");
@@ -1027,6 +1087,10 @@ class GothicTalesItemSheet extends BaseItemSheet {
     html.find(".gt-description-edit").on("click", ev => {
       ev.preventDefault();
       GT.openTextEditorDialog(this.item, "description", "Beschreibung");
+    });
+    html.find(".gt-image-picker").on("click", ev => {
+      ev.preventDefault();
+      GT.openImagePicker(this.item, "img");
     });
   }
 }
@@ -1118,7 +1182,7 @@ class GothicTalesCharacterCreator extends BaseFormApplication {
     }, "character");
     let actor = this.targetActor;
     if (actor) await actor.update({name, type: "character", system: baseSystem});
-    else actor = await Actor.create({name, type: "character", img: GT.CONFIG.defaultActorImg, system: baseSystem});
+    else actor = await Actor.create({name, type: "character", img: GT.actorImage("character", name), prototypeToken: {texture: {src: GT.actorImage("character", name)}}, system: baseSystem});
     const itemDocs = await GT.itemsFromPackage(selected.id);
     for (const itemName of [formData.extraItem1, formData.extraItem2, formData.extraItem3].filter(Boolean)) itemDocs.push(await GT.itemFromSource(itemName, 1));
     if (itemDocs.length) await actor.createEmbeddedDocuments("Item", itemDocs);
@@ -1175,7 +1239,8 @@ class GothicTalesNPCGenerator extends BaseFormApplication {
     system.initiative.value = Math.floor((Number(attrs.ge.value) + Number(attrs.intu.value) + 2 * Number(attrs.erf.value) - 5) / 15);
     system.initiative.bonus = system.initiative.value;
     system.initiative.die = "";
-    const actorData = {name: formData.npcName || "Neuer NSC", type: "npc", img: GT.CONFIG.defaultActorImg, system};
+    const actorName = formData.npcName || "Neuer NSC";
+    const actorData = {name: actorName, type: "npc", img: GT.actorImage("npc", actorName), prototypeToken: {texture: {src: GT.actorImage("npc", actorName)}}, system};
     let actor = this.targetActor;
     if (actor) await actor.update(actorData);
     else actor = await Actor.create(actorData);
@@ -1459,7 +1524,8 @@ class GothicTalesImporter extends BaseApplication {
       };
       if (type === "monster") Object.assign(system, {monsterNumber: entry.number, monsterType: entry.typ, monsterstufe: entry.monsterstufe});
       if (type === "npc") Object.assign(system, {attributeTotal: entry.attributeTotal});
-      return {name: entry.name, type, img: GT.CONFIG.defaultActorImg, folder: folder?.id, system, items: GT.actorEmbeddedItems(entry, type, sourceItems, sourceTalents), flags: {"gothic-tales": {uid: `${type}.${GT.slug(entry.name)}.${entry.sourcePage}`, sourceBook: entry.sourceBook, sourcePage: entry.sourcePage, version: GT.SYSTEM_VERSION}}};
+      const actorImg = entry.img || entry.image || entry.sourceImage || GT.actorImage(type, entry.name);
+      return {name: entry.name, type, img: actorImg, prototypeToken: {texture: {src: actorImg}}, folder: folder?.id, system, items: GT.actorEmbeddedItems(entry, type, sourceItems, sourceTalents), flags: {"gothic-tales": {uid: `${type}.${GT.slug(entry.name)}.${entry.sourcePage}`, sourceBook: entry.sourceBook, sourcePage: entry.sourcePage, version: GT.SYSTEM_VERSION}}};
     });
     const res = await this.upsertDocuments(Actor, docs, {pack});
     this.notify(`${kind === "monsters" ? "Monster" : "NSCs"}: ${res.created} neu, ${res.updated} aktualisiert. Beschreibungen wurden bereinigt; Inventar, Gegenstände und erkannte Talente wurden ergänzt.`);
@@ -1538,7 +1604,7 @@ class GothicTalesImporter extends BaseApplication {
       const name = entry.name;
       const description = isTalent ? (entry.description || GT.textToHtml(entry.text || "")) : GT.formatItemDescription(entry);
       docs.push({
-        name, type, img: GT.CONFIG.defaultItemImg, folder: folder?.id, sort: Number(entry.sort || 0),
+        name, type, img: entry.img || entry.image || entry.sourceImage || GT.itemImage(type, name, entry.category || entry.folderCategory || ""), folder: folder?.id, sort: Number(entry.sort || 0),
         system: {
           category: entry.category || "", description, sourceText: entry.sourceText || description || "",
           sourceImage: "", sourceBook: entry.sourceBook || "", sourcePage: String(entry.sourcePage || ""), damage: entry.damage || "", effect: entry.effect || "",

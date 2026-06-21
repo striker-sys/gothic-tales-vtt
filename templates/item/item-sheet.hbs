@@ -1,7 +1,7 @@
 <!-- Gegenstandsbogenlayout: bearbeitet allgemeine Itemmetadaten, Kampfwerte, Ausrüstungsstatus, Beschreibungen und Quellenangaben. -->
 <form class="{{cssClass}} gt-sheet item-sheet" autocomplete="off">
   <header class="gt-header item-header gt-paper-header">
-    <div class="gt-logo-mark small">GT</div>
+    <button type="button" class="gt-image-picker gt-document-image-button small" title="Bild auswählen"><img class="gt-document-image" src="{{documentImage}}" alt="{{item.name}}"></button>
     <div class="gt-title-block">
       <label class="gt-small-label">{{lookupType config.itemTypes item.type}}</label>
       <input class="gt-name" name="name" type="text" value="{{item.name}}" placeholder="Name">

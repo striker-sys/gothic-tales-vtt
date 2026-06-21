@@ -60,6 +60,7 @@ Starte Foundry danach neu. Gothic Tales erscheint anschließend in der Systemaus
 - Kartenpaket für Minental und wichtige Gebiete.
 - Manuelle Würfeltabelle unterhalb des Chats.
 - System-Thumbnail und Hintergrund als WebP.
+- Miniaturbilder für Actoren und Items inklusive allgemeinem Fallback-Icon und Foundry-Dateibrowser-Auswahl.
 
 ## Systemdaten
 
