@@ -1,1 +1,0 @@
-/mnt/data/gt056/gothic-tales/package.json
