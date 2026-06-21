@@ -2,7 +2,7 @@
   "id": "gothic-tales",
   "title": "Gothic Tales",
   "description": "Spielsystem für Gothic Tales mit bereinigten NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
-  "version": "0.3.9",
+  "version": "0.4.2",
   "authors": [
     {
       "name": "Kuberia"
@@ -23,8 +23,18 @@
   ],
   "languages": [
     {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
       "lang": "de",
       "name": "Deutsch",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "de-DE",
+      "name": "Deutsch (Deutschland)",
       "path": "lang/de.json"
     }
   ],
@@ -34,21 +44,30 @@
         "htmlFields": [
           "biography",
           "notes",
-          "sourceText"
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
         ]
       },
       "npc": {
         "htmlFields": [
           "biography",
           "notes",
-          "sourceText"
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
         ]
       },
       "monster": {
         "htmlFields": [
           "biography",
           "notes",
-          "sourceText"
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
         ]
       }
     },
@@ -106,7 +125,6 @@
   "initiative": "1d20 + @initiative.bonus",
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "mana",
-  "url": "",
   "license": "LICENSE.txt",
   "grid": {
     "type": 1,
@@ -114,5 +132,7 @@
     "units": "Feld"
   },
   "background": "systems/gothic-tales/assets/gt-background.webp",
-  "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp"
+  "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp",
+  "readme": "https://github.com/striker-sys/gothic-tales-vtt/blob/main/README.md",
+  "bugs": "https://github.com/striker-sys/gothic-tales-vtt/issues"
 }
