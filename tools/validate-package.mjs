@@ -1,3 +1,8 @@
+/**
+ * Validierungsskript für npm run check. Es liest alle mitgelieferten
+ * JSON-Datendateien ein und prüft, ob das Foundry-Manifest die Felder enthält,
+ * die ein installierbares v14-Systempaket benötigt.
+ */
 import {readFile} from "node:fs/promises";
 
 const files = [

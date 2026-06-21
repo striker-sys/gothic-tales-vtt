@@ -68,6 +68,10 @@ Starte Foundry danach neu. Gothic Tales erscheint anschließend in der Systemaus
 - Foundry VTT: `14.368`
 - Autor: Kuberia
 
+## Entwicklung
+
+Für einfache statische Prüfungen steht `npm run check` bereit. Der Befehl validiert die JSON-Daten/Manifest-Metadaten und führt einen Syntaxcheck für das Hauptskript aus.
+
 ## Status
 
 Das System befindet sich noch im Aufbau. Ziel ist eine spielbare, gut lesbare und möglichst einfache Foundry-Umsetzung von Gothic Tales, die Schritt für Schritt weiter ausgebaut wird.
