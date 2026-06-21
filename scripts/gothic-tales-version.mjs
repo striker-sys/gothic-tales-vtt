@@ -6,5 +6,5 @@
  */
 Hooks.once("setup", () => {
   if (!game?.gothicTales) return;
-  game.gothicTales.SYSTEM_VERSION = game.system?.version ?? "0.5.6";
+  game.gothicTales.SYSTEM_VERSION = game.system?.version ?? "0.4.3";
 });
