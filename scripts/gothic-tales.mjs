@@ -635,10 +635,48 @@ GT.rollGT = function(formula) {
   return {formula, dice, constant, total, critical: dice.some(d => d.sides === 20 && d.result === 20)};
 };
 
-/** Gibt eigene Würfelergebnisse als Foundry-Chatkarten aus. */
+/** Wandelt Gothic-Tales-w-Notation in Foundry-d-Notation um, damit 3D-Würfelmodule dieselben Würfel erkennen. */
+GT.toFoundryDiceFormula = function(formula) {
+  return String(formula || "w20").replace(/(\d*)w(\d+)/gi, "$1d$2");
+};
+
+/** Baut aus dem eigenen Würfelergebnis einen Foundry-Roll für Dice So Nice, ohne das sichtbare Ergebnis neu zu würfeln. */
+GT.prepareDiceSoNiceRoll = async function(result) {
+  const supportedSides = new Set([2, 3, 4, 5, 6, 8, 10, 12, 20, 100]);
+  const buckets = new Map();
+  for (const die of result.dice ?? []) {
+    if (!supportedSides.has(die.sides)) continue;
+    const bucket = buckets.get(die.sides) ?? {initial: [], rerolls: []};
+    bucket.initial.push({result: die.result, active: true, exploded: !!die.reroll});
+    if (die.reroll) bucket.rerolls.push({result: die.reroll, active: true});
+    buckets.set(die.sides, bucket);
+  }
+  const formula = Array.from(buckets, ([sides, bucket]) => `${bucket.initial.length}d${sides}`).join("+");
+  if (!formula) return null;
+  const roll = new Roll(formula);
+  if (typeof roll.evaluate === "function") await roll.evaluate();
+  else await roll.roll({async: true});
+  for (const die of roll.dice ?? []) {
+    const bucket = buckets.get(die.faces);
+    if (!bucket) continue;
+    die.results = [...bucket.initial, ...bucket.rerolls];
+  }
+  return roll;
+};
+
+/** Übergibt eigene Gothic-Tales-Würfe an Dice So Nice, falls das Modul aktiv ist. */
+GT.showDiceSoNice = async function(result) {
+  if (!game.dice3d?.showForRoll) return;
+  const roll = await GT.prepareDiceSoNiceRoll(result);
+  if (!roll) return;
+  return game.dice3d.showForRoll(roll, game.user, true, null, false);
+};
+
+/** Gibt eigene Würfelergebnisse als Foundry-Chatkarten aus und synchronisiert 3D-Würfel mit Dice So Nice. */
 GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null, flavor = ""} = {}) {
   if (!formula) formula = "w20";
   const result = GT.rollGT(formula);
+  GT.showDiceSoNice(result).catch(err => console.warn("Gothic Tales | Dice So Nice konnte den Wurf nicht darstellen.", err));
   const diceHtml = result.dice.map(d => {
     const sign = d.sign < 0 ? "−" : "+";
     const rr = d.reroll ? `<span class="gt-pasch"> Pasch +${d.reroll}</span>` : "";
