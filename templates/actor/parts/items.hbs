@@ -1,3 +1,4 @@
+<!-- Wiederverwendbares Itemlisten-Partial: rendert gruppierte Inventar-/Kampfitems und Buttons für Ausrüsten, Angriff, Wurf, Bearbeiten und Löschen. -->
 {{#if single}}
   <div class="gt-item-group">
     <ol class="items-list no-images">
@@ -8,6 +9,7 @@
         {{#if item.system.attribute}}<span class="gt-chip gt-tip" title="Attribut: {{item.system.attribute}}" data-tooltip="Attribut: {{item.system.attribute}}">{{item.system.attribute}}</span>{{/if}}
         {{#if item.system.damage}}<span class="gt-chip gt-tip" title="Würfel/Schaden: {{item.system.damage}}" data-tooltip="Würfel/Schaden: {{item.system.damage}}">{{item.system.damage}}</span>{{/if}}
         {{#if item.system.properties}}<span class="gt-chip wide gt-tip" title="Eigenschaften: {{item.system.properties}}" data-tooltip="Eigenschaften: {{item.system.properties}}">{{item.system.properties}}</span>{{/if}}
+        {{#if (or (eq item.type "armor") (eq item.type "shield"))}}<button type="button" class="item-equip {{#if item.system.equipped}}active{{/if}}" title="{{#if item.system.equipped}}Ablegen{{else}}Ausrüsten{{/if}}"><i class="fas {{#if item.system.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
         <button type="button" class="item-attack" title="Angriff"><i class="fas fa-crosshairs"></i></button>
         <button type="button" class="item-roll" title="Schaden/Effekt"><i class="fas fa-dice"></i></button>
         <button type="button" class="item-edit" title="Bearbeiten"><i class="fas fa-edit"></i></button>
@@ -34,6 +36,7 @@
         {{#if item.system.ele}}<span class="gt-chip gt-tip" title="Elemente: {{item.system.ele}}" data-tooltip="Elemente: {{item.system.ele}}">ELE {{item.system.ele}}</span>{{/if}}
         {{#if item.system.ma}}<span class="gt-chip gt-tip" title="Mentale Abwehr: {{item.system.ma}}" data-tooltip="Mentale Abwehr: {{item.system.ma}}">MA {{item.system.ma}}</span>{{/if}}
         {{#if item.system.properties}}<span class="gt-chip wide gt-tip" title="Eigenschaften: {{item.system.properties}}" data-tooltip="Eigenschaften: {{item.system.properties}}">{{item.system.properties}}</span>{{/if}}
+        {{#if (or (eq item.type "armor") (eq item.type "shield"))}}<button type="button" class="item-equip {{#if item.system.equipped}}active{{/if}}" title="{{#if item.system.equipped}}Ablegen{{else}}Ausrüsten{{/if}}"><i class="fas {{#if item.system.equipped}}fa-toggle-on{{else}}fa-toggle-off{{/if}}"></i></button>{{/if}}
         <button type="button" class="item-attack" title="Angriff"><i class="fas fa-crosshairs"></i></button>
         <button type="button" class="item-roll" title="Schaden/Effekt"><i class="fas fa-dice"></i></button>
         <button type="button" class="item-edit" title="Bearbeiten"><i class="fas fa-edit"></i></button>

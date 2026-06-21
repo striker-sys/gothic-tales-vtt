@@ -1,3 +1,5 @@
+/* Gothic-Tales-Stylesheet: definiert Pergamentoptik, Bogenlayout, Itemlisten, Chatkarten, Dialoge und responsives Verhalten. */
+/* Theme-Variablen, die Bögen, Anwendungen und Chatkarten gemeinsam verwenden. */
 :root {
   --gt-paper: #ead4a5;
   --gt-paper-light: #f4e6c4;
@@ -9,6 +11,7 @@
   --gt-panel: rgba(246, 232, 198, .92);
 }
 
+/* Basisstil für jedes Gothic-Tales-Fenster und jede Gothic-Tales-Anwendung in Foundry. */
 .gothic-tales { color: var(--gt-ink); }
 .gothic-tales .window-content,
 .gothic-tales.sheet .window-content {
@@ -18,6 +21,7 @@
   font-family: Georgia, "Times New Roman", serif;
 }
 
+/* Rahmen, Kopfbereich und Seitentab-Layout für Actor- und Gegenstandsbögen. */
 .gt-sheet { min-width: 600px; }
 .gt-paper-header,
 .gt-parchment-panel {
@@ -185,6 +189,7 @@ button:hover,
 .gt-tree-select:hover { filter: brightness(1.05); }
 button.disabled { opacity: .45; pointer-events: none; }
 
+/* Inventar- und Kampfitemlisten inklusive Chips und Aktionsbuttons. */
 .items-list {
   list-style: none;
   padding: 0;
@@ -678,7 +683,7 @@ body.gt-system-ui {
   #gt-chat-dice-tray .gt-chat-dice-controls label { grid-column: 1 / -1; }
 }
 
-/* GT window headers: dark header with white text */
+/* GT-Fensterköpfe: dunkler Kopfbereich mit weißer Schrift */
 .window-app.gothic-tales .window-header,
 .app.window-app.gothic-tales .window-header,
 .application.gothic-tales .window-header {
@@ -847,4 +852,20 @@ body.gt-system-ui {
   .attributes-panel .gt-attr-list { grid-template-columns: 1fr; }
   .attributes-panel .gt-attr-row,
   .skills-panel .gt-attr-row { grid-template-columns: 32px 1fr 70px 56px 56px; }
+}
+
+/* Umschaltzustände für ausgerüstete Rüstungen und Schilde. */
+.item-equip.active {
+  background: linear-gradient(#d8f0bd, #7fb36a);
+  color: #17350f;
+}
+
+.gt-checkbox-label {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 6px;
+}
+
+.gt-checkbox-label input[type="checkbox"] {
+  width: auto;
 }
