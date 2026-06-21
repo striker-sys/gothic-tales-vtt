@@ -42,26 +42,97 @@
   ],
   "documentTypes": {
     "Actor": {
-      "character": {"htmlFields": ["biography", "notes", "sourceText", "inventoryText", "strengthsWeaknesses", "lootText"]},
-      "npc": {"htmlFields": ["biography", "notes", "sourceText", "inventoryText", "strengthsWeaknesses", "lootText"]},
-      "monster": {"htmlFields": ["biography", "notes", "sourceText", "inventoryText", "strengthsWeaknesses", "lootText"]}
+      "character": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
+        ]
+      },
+      "npc": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
+        ]
+      },
+      "monster": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
+        ]
+      }
     },
     "Item": {
-      "weapon": {"htmlFields": ["description", "sourceText"]},
-      "shield": {"htmlFields": ["description", "sourceText"]},
-      "armor": {"htmlFields": ["description", "sourceText"]},
-      "spell": {"htmlFields": ["description", "sourceText"]},
-      "talent": {"htmlFields": ["description", "sourceText"]},
-      "trait": {"htmlFields": ["description", "sourceText"]},
-      "equipment": {"htmlFields": ["description", "sourceText"]},
-      "consumable": {"htmlFields": ["description", "sourceText"]}
+      "weapon": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "shield": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "spell": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "talent": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "trait": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "equipment": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "consumable": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      }
     }
   },
   "initiative": "1d20 + @initiative.bonus",
   "primaryTokenAttribute": "hp",
   "secondaryTokenAttribute": "mana",
   "license": "LICENSE.txt",
-  "grid": {"type": 1, "distance": 1, "units": "Feld"},
+  "grid": {
+    "type": 1,
+    "distance": 1,
+    "units": "Feld"
+  },
   "background": "systems/gothic-tales/assets/gt-background.webp",
   "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp",
   "readme": "https://github.com/striker-sys/gothic-tales-vtt/blob/main/README.md",
