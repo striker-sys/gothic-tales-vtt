@@ -1,8 +1,8 @@
 {
   "id": "gothic-tales",
   "title": "Gothic Tales",
-  "description": "Spielsystem für Gothic Tales mit gehärtetem Foundry-VTT-14-Manifest, bereinigten Release-Prüfungen, NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
-  "version": "0.4.3",
+  "description": "Spielsystem für Gothic Tales mit System-Compendien im Manifest, ohne Legacy-Welt-Importer. Enthält bereinigte Packdaten, V2-Bögen, Nachschlagewerke, Actoren, Ausrüstung, Talente und Karten direkt als Systempacks.",
+  "version": "0.6.3",
   "authors": [
     {
       "name": "Kuberia"
@@ -137,5 +137,76 @@
   "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp",
   "readme": "https://github.com/striker-sys/gothic-tales-vtt/blob/main/README.md",
   "bugs": "https://github.com/striker-sys/gothic-tales-vtt/issues",
-  "type": "system"
+  "type": "system",
+  "packs": [
+    {
+      "name": "gt-nachschlagewerk",
+      "label": "GT Nachschlagewerk",
+      "path": "packs/gt-nachschlagewerk",
+      "type": "JournalEntry",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-actoren",
+      "label": "GT Actoren",
+      "path": "packs/gt-actoren",
+      "type": "Actor",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-ausruestung",
+      "label": "GT Ausrüstung",
+      "path": "packs/gt-ausruestung",
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-talente",
+      "label": "GT Talente",
+      "path": "packs/gt-talente",
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-karten",
+      "label": "GT Karten",
+      "path": "packs/gt-karten",
+      "type": "Scene",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Gothic Tales",
+      "color": "#8f1111",
+      "sorting": "m",
+      "packs": [
+        "gt-nachschlagewerk",
+        "gt-actoren",
+        "gt-ausruestung",
+        "gt-talente",
+        "gt-karten"
+      ]
+    }
+  ]
 }

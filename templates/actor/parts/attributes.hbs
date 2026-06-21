@@ -1,13 +1,16 @@
-{{!-- Attribut-/Fähigkeitszeilen-Partial: rendert bearbeitbare Werte, abgeleitete Würfel-/Bonusfelder und Wurfbuttons. --}}
-<div class="gt-attr-list">
+{{!-- Schlanke Attribut-/Fähigkeitszeilen: kompakt, responsiv und direkt editierbar. --}}
+<div class="gt-attr-list gt-attr-list-{{kind}}">
   {{#each list}}
-  <div class="gt-attr-row">
-    <button type="button" class="gt-roll" data-label="{{label}}" data-formula="{{#if formula}}{{formula}}{{else}}w20 + {{die}} + {{bonus}}{{/if}}"><i class="fas fa-dice-d20"></i></button>
-    <label class="gt-attr-label">{{label}}</label>
-    <label>Wert <input name="system.{{../path}}.{{key}}.value" type="number" value="{{value}}"></label>
-    <label>W <input name="system.{{../path}}.{{key}}.die" type="text" value="{{die}}"></label>
-    <label>B <input name="system.{{../path}}.{{key}}.bonus" type="number" value="{{bonus}}"></label>
-    {{#if grade}}<span class="gt-chip">Grad {{grade}}</span>{{/if}}
+  <div class="gt-attr-row gt-attr-row-{{../kind}}">
+    <button type="button" class="gt-roll gt-attr-roll" data-label="{{label}}" data-formula="{{formula}}" title="{{label}} würfeln: {{formula}}"><i class="fas fa-dice-d20"></i></button>
+    <div class="gt-attr-title">
+      <strong>{{label}}</strong>
+      <small>{{formula}}</small>
+    </div>
+    <label class="gt-attr-value"><span>Wert</span><input class="gt-attr-field" name="system.{{../path}}.{{key}}.value" type="number" value="{{value}}" {{#if (eq ../kind "skill")}}readonly{{/if}}></label>
+    <label class="gt-attr-die"><span>Würfel</span><input name="system.{{../path}}.{{key}}.die" type="text" value="{{die}}" readonly></label>
+    <label class="gt-attr-bonus"><span>Bonus</span><input name="system.{{../path}}.{{key}}.bonus" type="number" value="{{bonus}}" readonly></label>
+    {{#if (eq ../kind "skill")}}<label class="gt-attr-grade"><span>Grad</span><input class="gt-attr-field" name="system.{{../path}}.{{key}}.grade" type="number" value="{{grade}}" min="0" max="3"></label>{{/if}}
   </div>
   {{/each}}
 </div>

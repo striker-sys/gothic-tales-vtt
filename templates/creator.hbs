@@ -1,7 +1,21 @@
 {{!-- Charakterassistent-Formular: sammelt Spielerinfos, Stufe, LP-Ausgaben, Talente, Stärken/Schwächen und Startausrüstung. --}}
-<form class="gothic-tales gt-creator">
-  <section class="gt-panel gt-parchment-panel">
-    <h2>1. Identität & Startstufe</h2>
+<form class="gothic-tales gt-creator gt-v2-form">
+  <header class="gt-app-title gt-paper-header">
+    <div>
+      <h1>Charakter-Editor</h1>
+      <p>Erstelle oder aktualisiere einen Spielercharakter Schritt für Schritt. Das Fenster ist vollständig scrollbar.</p>
+    </div>
+    {{#if targetActor}}<span class="gt-chip wide">Bearbeitet: {{targetActor.name}}</span>{{else}}<span class="gt-chip wide">Neuer Charakter</span>{{/if}}
+  </header>
+  <section class="gt-panel gt-parchment-panel gt-avatar-section">
+    <h2>1. Identität, Avatar & Startstufe</h2>
+    <div class="gt-avatar-editor">
+      <button type="button" class="gt-avatar-picker" title="Charakterbild auswählen"><img class="gt-avatar-preview" src="{{avatar}}" alt="Charakterbild"></button>
+      <div>
+        <label>Charakterbild <input name="img" type="text" value="{{avatar}}" placeholder="systems/gothic-tales/assets/icons/charakter.svg"></label>
+        <p class="gt-help">Klicke auf das Bild, um Foundrys Dateibrowser zu öffnen. Das Bild wird direkt am Actor und am Token hinterlegt.</p>
+      </div>
+    </div>
     <div class="gt-two-col">
       <label>Name des Helden <input name="heroName" type="text" value="{{#if targetActor}}{{targetActor.name}}{{else}}Neuer Held{{/if}}"></label>
       <label>Name des Spielers <input name="playerName" type="text"></label>
@@ -83,7 +97,7 @@
     <textarea name="notes" placeholder="Gewünschte Lehrer, Lernmomente, spätere Talentziele ..."></textarea>
   </section>
 
-  <footer class="sheet-footer flexrow">
+  <footer class="sheet-footer gt-sticky-footer flexrow">
     <button type="submit"><i class="fas fa-user-plus"></i> {{#if targetActor}}Charakter aktualisieren{{else}}Spielercharakter erstellen{{/if}}</button>
   </footer>
 </form>

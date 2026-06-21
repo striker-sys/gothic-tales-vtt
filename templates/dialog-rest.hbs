@@ -1,0 +1,16 @@
+{{!-- ApplicationV2-Rastdialog. --}}
+<form class="gothic-tales gt-rest-dialog gt-v2-form">
+  <section class="gt-panel gt-parchment-panel">
+    <h2>{{actor.name}} ausruhen</h2>
+    <p><strong>Kurze Rast:</strong> Bei voller Mahlzeit werden die Hälfte der maximalen TP und Mana regeneriert.</p>
+    <p><strong>Lange Rast:</strong> Bei voller Mahlzeit werden TP und Mana vollständig regeneriert und Erschöpfung wird um 2 reduziert.</p>
+    <label class="gt-checkbox-label"><input type="radio" name="rest" value="short" checked> Kurze Rast</label>
+    <label class="gt-checkbox-label"><input type="radio" name="rest" value="long"> Lange Rast</label>
+    <label class="gt-checkbox-label"><input type="checkbox" name="meal" checked> Volle Mahlzeit/Wasser verbraucht</label>
+    <label class="gt-checkbox-label"><input type="checkbox" name="healExhaustionShort"> Kurze Rast kuriert 1 Erschöpfung (SL-Entscheid)</label>
+  </section>
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Abbrechen</button>
+    <button type="button" class="gt-rest-submit"><i class="fas fa-bed"></i> Ausruhen</button>
+  </footer>
+</form>

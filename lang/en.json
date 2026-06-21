@@ -5,8 +5,8 @@
   "GOTHICTALES.Roll": "Roll",
   "GOTHICTALES.ImportTitle": "Import Gothic Tales Sources",
   "GOTHICTALES.DeleteItem": "Delete item",
-  "GOTHICTALES.Settings.AutoImport.Name": "Automatically import/update Gothic Tales",
-  "GOTHICTALES.Settings.AutoImport.Hint": "Automatically imports or updates reference books, actors, talents, equipment and maps. The reference library contains each book as a single document.",
+  "GOTHICTALES.Settings.AutoImport.Name": "Run legacy world import automatically",
+  "GOTHICTALES.Settings.AutoImport.Hint": "Deprecated since 0.6.0: Core content is delivered as manifest system compendia. Enable this only if content should additionally be copied into world compendia automatically.",
   "GOTHICTALES.Equipment.Equipped": "Equipped",
   "GOTHICTALES.Equipment.Toggle": "Toggle equipment"
 }

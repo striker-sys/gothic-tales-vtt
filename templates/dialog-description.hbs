@@ -1,0 +1,20 @@
+{{!-- ApplicationV2-Editor für HTML-Felder. --}}
+<form class="gothic-tales gt-description-dialog gt-v2-form">
+  <header class="gt-app-title gt-paper-header">
+    <div>
+      <h1>{{label}} bearbeiten</h1>
+      <p>Speichere normalen Text oder direkt bereinigtes HTML.</p>
+    </div>
+  </header>
+  <section class="gt-panel gt-parchment-panel">
+    <label><strong>Freitext</strong><textarea name="text" rows="10">{{plain}}</textarea></label>
+  </section>
+  <section class="gt-panel gt-parchment-panel">
+    <label><strong>HTML</strong><textarea name="html" rows="10">{{html}}</textarea></label>
+  </section>
+  <footer class="gt-dialog-actions gt-sticky-footer">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Abbrechen</button>
+    <button type="button" class="gt-save-html"><i class="fas fa-code"></i> HTML speichern</button>
+    <button type="button" class="gt-save-text"><i class="fas fa-align-left"></i> Freitext speichern</button>
+  </footer>
+</form>

@@ -1,6 +1,6 @@
 /**
  * Validierungsskript für npm run check. Es liest alle mitgelieferten
- * JSON-Datendateien ein und prüft, ob das Foundry-Manifest die Felder enthält,
+ * noch zur Laufzeit benötigten JSON-Datendateien ein und prüft, ob das Foundry-Manifest die Felder enthält,
  * die ein installierbares v14-Systempaket benötigt.
  */
 import {access, readFile, readdir} from "node:fs/promises";
@@ -10,15 +10,8 @@ const files = [
   "template.json",
   "lang/de.json",
   "lang/en.json",
-  "data/gt-monsters.json",
-  "data/gt-nscs.json",
-  "data/gt-rulebook-sections.json",
   "data/gt-rumpelkammer-items.json",
-  "data/gt-rumpelkammer-sections.json",
-  "data/gt-scenes.json",
-  "data/gt-sources.json",
-  "data/gt-talent-tree-scaffold.json",
-  "data/gt-talents.json"
+  "data/gt-talent-tree-scaffold.json"
 ];
 
 for (const file of files) {

@@ -1,7 +1,21 @@
 {{!-- NSC-Generator-Formular: ermöglicht SL, archetypbasierte NSCs mit Fraktion, Stufe, Bewegung und Ausrüstung zu erstellen. --}}
-<form class="gothic-tales gt-creator gt-npc-generator">
-  <section class="gt-panel gt-parchment-panel">
-    <h2>NSC-Grunddaten</h2>
+<form class="gothic-tales gt-creator gt-v2-form gt-npc-generator">
+  <header class="gt-app-title gt-paper-header">
+    <div>
+      <h1>NSC-Generator</h1>
+      <p>Erzeuge archetypbasierte NSCs mit Werten, Aktionen, Fraktion und Ausrüstung.</p>
+    </div>
+    {{#if targetActor}}<span class="gt-chip wide">Aktualisiert: {{targetActor.name}}</span>{{else}}<span class="gt-chip wide">Neuer NSC</span>{{/if}}
+  </header>
+  <section class="gt-panel gt-parchment-panel gt-avatar-section">
+    <h2>NSC-Grunddaten & Avatar</h2>
+    <div class="gt-avatar-editor">
+      <button type="button" class="gt-avatar-picker" title="NSC-Bild auswählen"><img class="gt-avatar-preview" src="{{avatar}}" alt="NSC-Bild"></button>
+      <div>
+        <label>NSC-Bild <input name="img" type="text" value="{{avatar}}" placeholder="systems/gothic-tales/assets/icons/nsc.svg"></label>
+        <p class="gt-help">Klicke auf das Bild, um Foundrys Dateibrowser zu öffnen. Das Bild wird direkt am NSC und am Token hinterlegt.</p>
+      </div>
+    </div>
     <div class="gt-two-col">
       <label>Name <input name="npcName" type="text" value="{{#if targetActor}}{{targetActor.name}}{{else}}Neuer NSC{{/if}}"></label>
       <label>Stufe / Stärkegrad <select name="level">{{#each levels}}<option value="{{this}}">{{this}}</option>{{/each}}</select></label>
@@ -24,7 +38,7 @@
     <h2>Beschreibung</h2>
     <textarea name="description" placeholder="Verhalten, Rolle im Abenteuer, Hinweise für die Spielleitung ..."></textarea>
   </section>
-  <footer class="sheet-footer flexrow">
+  <footer class="sheet-footer gt-sticky-footer flexrow">
     <button type="submit"><i class="fas fa-users"></i> {{#if targetActor}}NSC aktualisieren{{else}}NSC erstellen{{/if}}</button>
   </footer>
 </form>

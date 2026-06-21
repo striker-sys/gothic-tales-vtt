@@ -5,8 +5,8 @@
   "GOTHICTALES.Roll": "Wurf",
   "GOTHICTALES.ImportTitle": "Gothic Tales Quellen importieren",
   "GOTHICTALES.DeleteItem": "Gegenstand löschen",
-  "GOTHICTALES.Settings.AutoImport.Name": "Gothic Tales automatisch importieren/aktualisieren",
-  "GOTHICTALES.Settings.AutoImport.Hint": "Importiert oder aktualisiert Nachschlagewerk, Actoren, Talente, Ausrüstung und Karten automatisch. Das Nachschlagewerk enthält jedes Buch als ein einzelnes Dokument.",
+  "GOTHICTALES.Settings.AutoImport.Name": "Legacy Welt-Import automatisch ausführen",
+  "GOTHICTALES.Settings.AutoImport.Hint": "Veraltet seit 0.6.0: Die Kerninhalte liegen als System-Compendien im Manifest. Aktiviere dies nur, wenn die Inhalte zusätzlich automatisch in Welt-Compendien kopiert werden sollen.",
   "GOTHICTALES.Equipment.Equipped": "Ausgerüstet",
   "GOTHICTALES.Equipment.Toggle": "Ausrüstung umschalten"
 }

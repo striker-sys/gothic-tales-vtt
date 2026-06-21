@@ -1,58 +1,66 @@
 {{!-- Actor-Bogenlayout: kombiniert abgeleitete Werte, Kampfaktionen, Inventar, Talente, Erstellungswerkzeuge und Quellenangaben für Charaktere, NSCs und Monster. --}}
-<form class="{{cssClass}} gt-sheet actor-sheet {{#if sheetLocked}}gt-locked{{/if}}" autocomplete="off">
-  <header class="gt-header gt-paper-header">
+<form class="{{cssClass}} gt-sheet gt-v2-form actor-sheet {{#if sheetLocked}}gt-locked{{/if}}" autocomplete="off">
+  <header class="gt-header gt-paper-header gt-actor-hero-header">
     <button type="button" class="gt-image-picker gt-document-image-button" title="Bild auswählen"><img class="gt-document-image" src="{{documentImage}}" alt="{{actor.name}}"></button>
-    <div class="gt-title-block">
+
+    <div class="gt-title-block gt-actor-title-block">
       <label class="gt-small-label">{{actorTypeLabel}}</label>
       <input class="gt-name" name="name" type="text" value="{{actor.name}}" placeholder="Name des Helden / der Figur">
-      <div class="gt-subline">
+      <div class="gt-subline gt-actor-subline">
         <label>Name des Spielers <input name="system.playerName" type="text" value="{{system.playerName}}"></label>
         <label>Fraktion <input name="system.faction" type="text" value="{{system.faction}}"></label>
       </div>
+      <div class="gt-header-defense-stack" aria-label="Verteidigung und Rüstungsbonus">
+        <strong>Verteidigung</strong>
+        <div class="gt-defense-row gt-defense-base-row">
+          <span class="gt-defense-row-label">Grund</span>
+          <label><span>RK</span><input name="system.defenses.rk.value" type="number" value="{{system.defenses.rk.value}}" readonly></label>
+          <label><span>ELE</span><input name="system.defenses.ele.value" type="number" value="{{system.defenses.ele.value}}" readonly></label>
+          <label><span>MA</span><input name="system.defenses.ma.value" type="number" value="{{system.defenses.ma.value}}" readonly></label>
+        </div>
+        <div class="gt-defense-row gt-defense-bonus-row">
+          <span class="gt-defense-row-label">Bonus</span>
+          <label class="gt-armor-bonus"><span>RK</span><input name="system.armorBonus.rk" type="number" value="{{system.armorBonus.rk}}"></label>
+          <label class="gt-armor-bonus"><span>ELE</span><input name="system.armorBonus.ele" type="number" value="{{system.armorBonus.ele}}"></label>
+          <label class="gt-armor-bonus"><span>MA</span><input name="system.armorBonus.ma" type="number" value="{{system.armorBonus.ma}}"></label>
+        </div>
+      </div>
     </div>
-    <div class="gt-level-box">
-      <label>Stufe <input name="system.stufe" type="number" value="{{system.stufe}}"></label>
-      {{#if isCharacter}}<label>LP <input name="system.lp.value" type="number" value="{{system.lp.value}}"> / <input name="system.lp.max" type="number" value="{{system.lp.max}}"></label>{{/if}}
+
+    <div class="gt-top-values">
+      <div class="gt-level-strip">
+        <label>Stufe <input name="system.stufe" type="number" value="{{system.stufe}}"></label>
+        {{#if isCharacter}}
+          <label>LP <span><input name="system.lp.value" type="number" value="{{system.lp.value}}"> / <input name="system.lp.max" type="number" value="{{system.lp.max}}"></span></label>
+          <button type="button" class="gt-level-manage"><i class="fas fa-arrow-up-arrow-down"></i> Stufe ändern</button>
+        {{/if}}
+      </div>
+      <div class="gt-vitals-grid">
+        <label class="gt-vital-pair"><span>TP</span><b><input name="system.hp.value" type="number" value="{{system.hp.value}}"> / <input name="system.hp.max" type="number" value="{{system.hp.max}}"></b></label>
+        <label class="gt-vital-pair"><span>Mana</span><b><input name="system.mana.value" type="number" value="{{system.mana.value}}"> / <input name="system.mana.max" type="number" value="{{system.mana.max}}"></b></label>
+        <label><span>Initiative</span><input name="system.initiative.value" type="number" value="{{system.initiative.value}}"></label>
+        <label><span>Bewegung</span><input name="system.movement.value" type="number" value="{{system.movement.value}}"></label>
+        <label class="gt-vital-pair gt-tracker-mini"><span>Erschöpfung</span><b><input name="system.exhaustion.value" type="number" value="{{system.exhaustion.value}}"> / <input name="system.exhaustion.max" type="number" value="{{system.exhaustion.max}}"></b></label>
+        <label class="gt-vital-pair gt-tracker-mini"><span>Todeskampf</span><b><input name="system.deathCounter.value" type="number" value="{{system.deathCounter.value}}"> / <input name="system.deathCounter.max" type="number" value="{{system.deathCounter.max}}"></b></label>
+      </div>
+    </div>
+
+    <div class="gt-header-actions">
       <button type="button" class="gt-recalculate"><i class="fas fa-calculator"></i> Werte</button>
       <button type="button" class="gt-rest-button"><i class="fas fa-bed"></i> Ausruhen</button>
-      <button type="button" class="gt-lock-toggle"><i class="fas {{#if sheetLocked}}fa-lock{{else}}fa-unlock{{/if}}"></i> {{#if sheetLocked}}Werte gesperrt{{else}}Werte bearbeiten{{/if}}</button>
+      <button type="button" class="gt-lock-toggle"><i class="fas {{#if sheetLocked}}fa-lock{{else}}fa-unlock{{/if}}"></i> {{#if sheetLocked}}Gesperrt{{else}}Bearbeiten{{/if}}</button>
     </div>
   </header>
 
   <div class="gt-sheet-layout">
     <section class="sheet-body">
       <div class="tab main" data-group="primary" data-tab="main">
-        <div class="gt-grid-main gt-main-sheet-grid">
+        <div class="gt-grid-main gt-main-sheet-grid gt-main-sheet-grid-vitals-top">
           <section class="gt-panel attributes-panel gt-parchment-panel">
             <h2>Attribute</h2>
             {{> "systems/gothic-tales/templates/actor/parts/attributes.hbs" list=attributeList path="attributes" kind="attr"}}
           </section>
 
-          <section class="gt-panel defense-panel gt-parchment-panel">
-            <h2>Verteidigung</h2>
-            <div class="gt-defenses">
-              <label>RK <input name="system.defenses.rk.value" type="number" value="{{system.defenses.rk.value}}"></label>
-              <label>Elemente <input name="system.defenses.ele.value" type="number" value="{{system.defenses.ele.value}}"></label>
-              <label>Mentale Abwehr <input name="system.defenses.ma.value" type="number" value="{{system.defenses.ma.value}}"></label>
-            </div>
-            <h3>Rüstungsbonus</h3>
-            <div class="gt-defenses small">
-              <label>RK <input name="system.armorBonus.rk" type="number" value="{{system.armorBonus.rk}}"></label>
-              <label>ELE <input name="system.armorBonus.ele" type="number" value="{{system.armorBonus.ele}}"></label>
-              <label>MA <input name="system.armorBonus.ma" type="number" value="{{system.armorBonus.ma}}"></label>
-            </div>
-            <h2>Charakterwerte</h2>
-            <div class="gt-resources">
-              <label>Trefferpunkte <span><input name="system.hp.value" type="number" value="{{system.hp.value}}"> / <input name="system.hp.max" type="number" value="{{system.hp.max}}"></span></label>
-              <label>Mana <span><input name="system.mana.value" type="number" value="{{system.mana.value}}"> / <input name="system.mana.max" type="number" value="{{system.mana.max}}"></span></label>
-              <label>Initiative <input name="system.initiative.value" type="number" value="{{system.initiative.value}}"></label>
-              <label>Bewegung <input name="system.movement.value" type="number" value="{{system.movement.value}}"></label>
-            </div>
-            <div class="gt-trackers">
-              <label>Erschöpfung <span><input name="system.exhaustion.value" type="number" value="{{system.exhaustion.value}}"> / <input name="system.exhaustion.max" type="number" value="{{system.exhaustion.max}}"></span></label>
-              <label>Todeskampf <span><input name="system.deathCounter.value" type="number" value="{{system.deathCounter.value}}"> / <input name="system.deathCounter.max" type="number" value="{{system.deathCounter.max}}"></span></label>
-            </div>
-          </section>
 
           <section class="gt-panel skills-panel gt-parchment-panel">
             <h2>Fähigkeiten</h2>
@@ -72,7 +80,7 @@
             <h2>Schnellwürfe</h2>
             <div class="gt-action-grid">
               {{#each attributeList}}
-                <button type="button" class="gt-roll" data-label="{{label}}" data-formula="{{formula}}">{{label}}</button>
+                <button type="button" class="gt-roll gt-quick-roll" data-label="{{label}}" data-formula="{{formula}}"><span>{{label}}</span><small>{{formula}}</small></button>
               {{/each}}
             </div>
             <h3>Vorteil & Nachteil</h3>
@@ -80,7 +88,7 @@
               <button type="button" class="gt-roll" data-label="kleiner Vorteil/Nachteil" data-formula="w2">w2</button>
               <button type="button" class="gt-roll" data-label="mittlerer Vorteil/Nachteil" data-formula="w6">w6</button>
               <button type="button" class="gt-roll" data-label="großer Vorteil/Nachteil" data-formula="w12">w12</button>
-              <button type="button" class="gt-roll" data-label="Initiative" data-formula="w20 + {{system.initiative.die}} + {{system.initiative.bonus}}">Initiative</button>
+              <button type="button" class="gt-roll" data-label="Initiative" data-formula="{{initiativeFormula}}">Initiative <small>{{initiativeFormula}}</small></button>
             </div>
           </section>
         </div>
