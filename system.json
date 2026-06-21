@@ -1,8 +1,8 @@
 {
   "id": "gothic-tales",
   "title": "Gothic Tales",
-  "description": "Spielsystem für Gothic Tales mit bereinigten NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
-  "version": "0.4.2",
+  "description": "Spielsystem für Gothic Tales mit gehärtetem Foundry-VTT-14-Manifest, bereinigten Release-Prüfungen, NSC-/Monsterbeschreibungen, Talent-Hovertexten, verbessertem Bogenlayout, Kartenpaket, Item-Hilfetexten und erweiterten Talentbäumen für Berufe, Lehren und Künste.",
+  "version": "0.4.3",
   "authors": [
     {
       "name": "Kuberia"
@@ -10,13 +10,15 @@
   ],
   "compatibility": {
     "minimum": "14",
-    "verified": "14.368"
+    "verified": "14.368",
+    "maximum": "14"
   },
   "url": "https://github.com/striker-sys/gothic-tales-vtt",
   "manifest": "https://raw.githubusercontent.com/striker-sys/gothic-tales-vtt/main/system.json",
   "download": "https://github.com/striker-sys/gothic-tales-vtt/releases/latest/download/gothic-tales.zip",
   "esmodules": [
-    "scripts/gothic-tales.mjs"
+    "scripts/gothic-tales.mjs",
+    "scripts/gothic-tales-version.mjs"
   ],
   "styles": [
     "styles/gothic-tales.css"
@@ -134,5 +136,6 @@
   "background": "systems/gothic-tales/assets/gt-background.webp",
   "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp",
   "readme": "https://github.com/striker-sys/gothic-tales-vtt/blob/main/README.md",
-  "bugs": "https://github.com/striker-sys/gothic-tales-vtt/issues"
+  "bugs": "https://github.com/striker-sys/gothic-tales-vtt/issues",
+  "type": "system"
 }
