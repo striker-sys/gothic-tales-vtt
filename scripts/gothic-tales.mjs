@@ -4,7 +4,7 @@
  * game.gothicTales bereitstellen kann.
  */
 const GT = {};
-GT.SYSTEM_VERSION = "0.6.3";
+GT.SYSTEM_VERSION = "0.6.22";
 
 // Foundry-Utility-Aliase halten den folgenden Code lesbar und bündeln Kompatibilitäts-Fallbacks.
 const mergeObject = foundry.utils.mergeObject;
@@ -174,7 +174,10 @@ class GothicTalesActorDataModel extends foundry.abstract.TypeDataModel {
         ele: GT.dataField.number(0),
         ma: GT.dataField.number(0)
       }),
-      talentTree: new dataFields.SchemaField({learned: GT.dataField.object({})}),
+      talentTree: new dataFields.SchemaField({learned: GT.dataField.object({}), uses: GT.dataField.object({})}),
+      magicCircles: new dataFields.SchemaField({learned: GT.dataField.object({}), uses: GT.dataField.object({}), dice: GT.dataField.object({})}),
+      druidArts: new dataFields.SchemaField({learned: GT.dataField.object({}), uses: GT.dataField.object({})}),
+      professions: new dataFields.SchemaField({learned: GT.dataField.object({}), uses: GT.dataField.object({})}),
       sheetLocked: GT.dataField.boolean(false)
     };
   }
@@ -295,7 +298,16 @@ class GothicTalesTalentDataModel extends GothicTalesUsableItemDataModel {
       ...super.defineSchema(),
       lpCost: GT.dataField.number(0),
       actionType: GT.dataField.string(""),
-      effect: GT.dataField.html("")
+      effect: GT.dataField.html(""),
+      attributeRequirements: GT.dataField.object({}),
+      treeId: GT.dataField.string(""),
+      nodeId: GT.dataField.string(""),
+      usesRecovery: GT.dataField.string("combatEnd"),
+      usesPool: GT.dataField.string(""),
+      usesPoolLabel: GT.dataField.string(""),
+      consumeTalentKey: GT.dataField.string(""),
+      consumePoolKey: GT.dataField.string(""),
+      consumeAmount: GT.dataField.number(0)
     };
   }
 }
@@ -579,14 +591,277 @@ GT.talentDisplayLabel = function(node) {
     .trim() || "Talent";
 };
 
+/** Normalisiert optionale Attribut-Mindestwerte an Talentknoten. Unterstützt Objekte, Listen und kurze Textangaben. */
+GT.talentAttributeRequirements = function(node = {}) {
+  const raw = node.attributeRequirements ?? node.attributeRequires ?? node.requiresAttributes ?? {};
+  const out = {};
+  const add = (key, value) => {
+    const normalized = String(key ?? "").toLowerCase().trim();
+    if (!GT.CONFIG.attributes[normalized]) return;
+    const min = Number(value ?? 0);
+    if (Number.isFinite(min) && min > 0) out[normalized] = Math.floor(min);
+  };
+  if (Array.isArray(raw)) {
+    for (const entry of raw) add(entry.attribute ?? entry.key ?? entry.id ?? entry.name, entry.min ?? entry.value ?? entry.required);
+  } else if (typeof raw === "string") {
+    for (const part of raw.split(/[,;|]/)) {
+      const match = part.trim().match(/^([a-zäöüß]+)\s*[:=]?\s*(\d+)$/i);
+      if (match) add(match[1], match[2]);
+    }
+  } else if (raw && typeof raw === "object") {
+    for (const [key, value] of Object.entries(raw)) add(key, value);
+  }
+  return out;
+};
+
+/** Formatiert Mindestattribute für Tooltips, Kompendien und Warnungen. */
+GT.talentAttributeRequirementText = function(node = {}, actor = null) {
+  const requirements = GT.talentAttributeRequirements(node);
+  const parts = [];
+  for (const [key, min] of Object.entries(requirements)) {
+    const label = GT.attributeLabel(key) || key;
+    if (actor) {
+      const current = Number(actor.system?.attributes?.[key]?.value ?? 0);
+      parts.push(`${label} ${current}/${min}`);
+    } else parts.push(`${label} ${min}`);
+  }
+  return parts.join(", ");
+};
+
+/** Prüft Attribut-Mindestwerte. Für NSC/Monster wird diese Voraussetzung bewusst ignoriert. */
+GT.actorMeetsTalentAttributeRequirements = function(actor, node = {}) {
+  if (actor?.type !== "character") return {met: true, missing: []};
+  const requirements = GT.talentAttributeRequirements(node);
+  const missing = [];
+  for (const [key, min] of Object.entries(requirements)) {
+    const current = Number(actor.system?.attributes?.[key]?.value ?? 0);
+    if (current < min) missing.push({key, label: GT.attributeLabel(key), min, current});
+  }
+  return {met: missing.length === 0, missing};
+};
+
+/** Normalisiert optionale Anwendungen von Talenten. max 0 bedeutet: keine Verbrauchsanzeige. */
+GT.talentUsesConfig = function(node = {}) {
+  const raw = node.uses ?? node.applications ?? node.charges ?? {};
+  const max = Number(raw?.max ?? raw?.maximum ?? node.maxUses ?? node.usesMax ?? node.uses?.max ?? 0);
+  const recovery = String(raw?.recovery ?? raw?.recover ?? node.usesRecovery ?? "combatEnd").trim() || "combatEnd";
+  const pool = String(raw?.pool ?? raw?.poolKey ?? node.usesPool ?? "").trim();
+  const poolLabel = String(raw?.poolLabel ?? raw?.label ?? node.usesPoolLabel ?? "").trim();
+  return {max: Number.isFinite(max) && max > 0 ? Math.floor(max) : 0, recovery, pool, poolLabel};
+};
+
+/** Normalisiert den Verbrauch eines anderen Talents. Leer bedeutet: Talent verbraucht eigene Anwendungen. */
+GT.talentConsumeConfig = function(node = {}, defaultTreeId = "") {
+  const raw = node.consumes ?? node.consume ?? {};
+  let treeId = "", nodeId = "", amount = 0, pool = "";
+  if (typeof raw === "string") {
+    const clean = raw.trim();
+    if (!clean.includes(".") && !clean.includes(":")) pool = clean;
+    else {
+      const [tree, talent] = clean.split(/[.:/]/).map(p => String(p || "").trim()).filter(Boolean);
+      treeId = tree || "";
+      nodeId = talent || "";
+    }
+    amount = 1;
+  } else if (raw && typeof raw === "object") {
+    pool = String(raw.pool ?? raw.poolKey ?? raw.usePool ?? node.consumePoolKey ?? "").trim();
+    const key = String(raw.key ?? raw.talent ?? raw.id ?? raw.node ?? node.consumeTalentKey ?? "").trim();
+    if (key.includes(".") || key.includes(":")) {
+      const [tree, talent] = key.split(/[.:]/).map(p => String(p || "").trim()).filter(Boolean);
+      treeId = tree || String(raw.treeId ?? raw.tree ?? defaultTreeId ?? "");
+      nodeId = talent || "";
+    } else if (key && !pool) {
+      treeId = String(raw.treeId ?? raw.tree ?? defaultTreeId ?? "").trim();
+      nodeId = String(raw.nodeId ?? raw.node ?? key ?? "").trim();
+    } else {
+      treeId = String(raw.treeId ?? raw.tree ?? defaultTreeId ?? "").trim();
+      nodeId = String(raw.nodeId ?? raw.node ?? "").trim();
+    }
+    amount = Number(raw.amount ?? raw.value ?? raw.uses ?? node.consumeAmount ?? 0);
+  } else {
+    pool = String(node.consumePoolKey ?? "").trim();
+    const key = String(node.consumeTalentKey ?? "").trim();
+    if (key.includes(".") || key.includes(":")) {
+      const [tree, talent] = key.split(/[.:]/).map(p => String(p || "").trim()).filter(Boolean);
+      treeId = tree || defaultTreeId;
+      nodeId = talent || "";
+    }
+    amount = Number(node.consumeAmount || 0);
+  }
+  if (!treeId && nodeId) treeId = defaultTreeId;
+  amount = Number.isFinite(amount) && amount > 0 ? Math.floor(amount) : 0;
+  return {treeId, nodeId, pool, amount, key: treeId && nodeId ? `${treeId}.${nodeId}` : ""};
+};
+
+GT.talentKey = function(treeId, nodeId) {
+  return `${String(treeId || "").trim()}.${String(nodeId || "").trim()}`;
+};
+
+
+/** Anwendungspool eines Talentknotens. Ohne Pool benutzt das Talent seinen eigenen Talent-Key. */
+GT.talentUsePoolKey = function(treeId, node = {}) {
+  const uses = GT.talentUsesConfig(node);
+  return uses.pool || GT.talentKey(treeId, node.id);
+};
+
+/** Findet den Pool-Key eines Verbrauchsziels. Talent-Keys werden auf deren Pool weitergeleitet. */
+GT.talentConsumePoolKey = function(consume = {}, scaffold = GT._talentScaffold) {
+  if (consume.pool) return consume.pool;
+  if (!consume.key) return "";
+  const found = GT.findTalentNode(...consume.key.split("."), scaffold);
+  return found ? GT.talentUsePoolKey(found.tree.id, found.node) : consume.key;
+};
+
+/** Sammelt die aktiven Anwendungspools aus allen gelernten Talenten. Der höchste gelernte Rang bestimmt das Maximum. */
+GT.talentUsePoolsForSystem = function(system = {}, scaffold = GT._talentScaffold) {
+  const learned = system?.talentTree?.learned ?? {};
+  const pools = {};
+  for (const tree of scaffold?.trees ?? []) {
+    const learnedTree = learned?.[tree.id] ?? {};
+    for (const node of tree.nodes ?? []) {
+      if (!learnedTree[node.id]) continue;
+      const uses = GT.talentUsesConfig(node);
+      if (!uses.max) continue;
+      const poolKey = GT.talentUsePoolKey(tree.id, node);
+      const existing = pools[poolKey];
+      if (!existing || uses.max > existing.max) {
+        pools[poolKey] = {key: poolKey, max: uses.max, recovery: uses.recovery, label: uses.poolLabel || GT.talentDisplayLabel(node), sourceKey: GT.talentKey(tree.id, node.id), sourceName: GT.talentDisplayLabel(node), treeLabel: tree.label};
+      }
+    }
+  }
+  return pools;
+};
+
+GT.talentUsePoolInfo = function(system = {}, poolKey = "", scaffold = GT._talentScaffold) {
+  return GT.talentUsePoolsForSystem(system, scaffold)[poolKey] ?? null;
+};
+
+GT.findTalentNode = function(treeId, nodeId, scaffold = GT._talentScaffold) {
+  const tree = scaffold?.trees?.find(t => t.id === treeId);
+  const node = tree?.nodes?.find(n => n.id === nodeId);
+  return tree && node ? {tree, node} : null;
+};
+
+GT.talentUseMaxForKey = function(key, scaffold = GT._talentScaffold, system = null) {
+  if (system) {
+    const pool = GT.talentUsePoolInfo(system, key, scaffold);
+    if (pool) return pool.max;
+  }
+  const [treeId, nodeId] = String(key || "").split(".");
+  const found = GT.findTalentNode(treeId, nodeId, scaffold);
+  return found ? GT.talentUsesConfig(found.node).max : 0;
+};
+
+GT.talentUseValue = function(system, key, max = 0) {
+  const value = system?.talentTree?.uses?.[key];
+  if (value === undefined || value === null || value === "") return Number(max || 0);
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.max(0, Math.floor(n)) : Number(max || 0);
+};
+
+/** Entfernt typische Rang-Endungen aus Talentnamen, z. B. "Einhand II" -> "Einhand". */
+GT.talentBaseLabel = function(node = {}) {
+  const label = String(GT.talentDisplayLabel(node) || node.label || node.id || "").trim();
+  return label
+    .replace(/\s+(?:I|II|III|IV|V|VI|VII|VIII|IX|X|\d+)$/i, "")
+    .trim() || label;
+};
+
+/** Ermittelt eine numerische Ranghöhe für Talente wie Einhand I, Einhand II, Einhand 3 usw. */
+GT.talentRankValue = function(node = {}, index = 0) {
+  const explicit = Number(node.rank ?? node.tier ?? node.level ?? 0);
+  if (Number.isFinite(explicit) && explicit > 0) return explicit;
+  const label = String(GT.talentDisplayLabel(node) || node.label || "").trim();
+  const id = String(node.id || "").trim();
+  const source = `${label} ${id}`;
+  const roman = source.match(/\b(I|II|III|IV|V|VI|VII|VIII|IX|X)\b/i)?.[1]?.toUpperCase();
+  const romans = {I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7, VIII: 8, IX: 9, X: 10};
+  if (roman && romans[roman]) return romans[roman];
+  const number = source.match(/(?:^|[-_\s])(\d+)\b/)?.[1];
+  if (number) return Number(number);
+  return Number(index || 0);
+};
+
+/** Gruppiert höhere Talentstufen, damit im ActorSheet nur der höchste gelernte Rang erscheint. */
+GT.talentRankGroupKey = function(treeId, node = {}) {
+  const explicit = String(node.rankGroup ?? node.upgradeGroup ?? node.series ?? node.group ?? "").trim();
+  if (explicit) return `${treeId}:${explicit}`;
+  const uses = GT.talentUsesConfig(node);
+  if (uses.pool) return `${treeId}:pool:${uses.pool}`;
+  const base = GT.talentBaseLabel(node).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `${treeId}:base:${base || node.id}`;
+};
+
+/** Liefert die Anzeigenkategorie eines Talents im ActorSheet. */
+GT.talentCategoryLabel = function(tree = {}, node = {}, fallback = "Talente") {
+  return String(node.category || node.groupLabel || tree.category || tree.label || fallback).trim() || fallback;
+};
+
+/** Gruppiert Talentkarten für die ActorSheet-Anzeige. */
+GT.groupTalentCardsByCategory = function(cards = []) {
+  const groups = new Map();
+  for (const card of cards ?? []) {
+    const key = String(card.category || card.treeLabel || "Talente").trim() || "Talente";
+    if (!groups.has(key)) groups.set(key, {label: key, cards: []});
+    groups.get(key).cards.push(card);
+  }
+  return Array.from(groups.values()).map(group => ({
+    ...group,
+    count: group.cards.length,
+    cards: group.cards.sort((a, b) => String(a.name).localeCompare(String(b.name), "de"))
+  })).sort((a, b) => String(a.label).localeCompare(String(b.label), "de"));
+};
+
+GT.talentPlainDescription = function(value = "") {
+  const text = GT.htmlToPlainText(value || "").trim();
+  return text || GT.cleanText(value || "");
+};
+
+GT.talentDescriptionHtml = function(value = "") {
+  return GT.normalizeHtml(String(value || "").trim());
+};
+
+GT.talentDetailsText = function(card = {}) {
+  return [
+    `${card.name || "Talent"}${card.treeLabel ? ` (${card.treeLabel})` : ""}`,
+    card.lpCostText ? `Kosten: ${card.lpCostText}` : "",
+    card.requirementText ? `Voraussetzungen: ${card.requirementText}` : "",
+    card.attributeText ? `Mindestattribute: ${card.attributeText}` : "",
+    card.usageText ? `Anwendungen: ${card.usageText}` : "",
+    card.consumeText ? `Verbrauch: ${card.consumeText}` : "",
+    card.descriptionText ? `\n${card.descriptionText}` : ""
+  ].filter(Boolean).join("\n");
+};
+
+GT.talentDetailsHtml = function(card = {}) {
+  const meta = [
+    card.lpCostText ? ["Kosten", card.lpCostText] : null,
+    card.requirementText ? ["Voraussetzung", card.requirementText] : null,
+    card.attributeText ? ["Mindestattribute", card.attributeText] : null,
+    card.usageText ? ["Anwendungen", card.usageText] : null,
+    card.consumeText ? ["Verbrauch", card.consumeText] : null
+  ].filter(Boolean).map(([label, value]) => `<p class="gt-tooltip-meta"><strong>${GT.escape(label)}:</strong> ${GT.escape(value)}</p>`).join("");
+  const body = card.descriptionHtml || GT.talentDescriptionHtml(card.descriptionText || "");
+  return `${body}${meta}` || GT.textToHtml("Keine weiteren Informationen.");
+};
+
 /** Erzeugt Fallback-Beschreibungen für Talente mit Baum, Kosten und Voraussetzungen. */
 GT.talentNodeDescription = function(tree, node) {
   const label = GT.talentDisplayLabel(node);
-  const explicit = String(node.description ?? "").trim();
-  if (explicit && !explicit.startsWith(`${label} gehört zum Talentbaum`)) return GT.cleanText(explicit);
+  const explicit = String(node.description ?? node.sourceDescription ?? "").trim();
+  if (explicit && !explicit.startsWith(`${label} gehört zum Talentbaum`)) return explicit;
+  const attrReq = GT.talentAttributeRequirementText(node);
   const cost = Number(node.lpCost || 0) > 0 ? `${node.lpCost} LP` : "automatisch oder ohne LP-Kosten";
   const req = (node.requires || []).length ? `Voraussetzung: ${node.requires.join(", ")}.` : "Keine direkte Voraussetzung.";
-  return `${label} gehört zum Talentbaum ${tree.label}. Kosten: ${cost}. ${req}`;
+  const attr = attrReq ? ` Mindestattribute: ${attrReq}.` : "";
+  const uses = GT.talentUsesConfig(node);
+  const consume = GT.talentConsumeConfig(node, tree.id);
+  const useText = uses.max ? ` Anwendungen: ${uses.max} pro Kampf.` : "";
+  const consumeText = consume.key && consume.amount ? ` Verbrauch: ${consume.amount} Anwendung von ${consume.key}.` : "";
+  return `${label} gehört zum Talentbaum ${tree.label}. Kosten: ${cost}. ${req}${attr}${useText}${consumeText}`;
 };
 
 /** Erzeugt eine Zuordnung von Baum-/Knoten-IDs zu Anzeigenamen für gelernte Talente auf Actor-Bögen. */
@@ -606,7 +881,12 @@ GT.flattenTalentScaffold = function(scaffold) {
   return (scaffold?.trees ?? []).flatMap(tree => (tree.nodes ?? []).map(node => {
     const label = GT.talentDisplayLabel(node);
     const description = GT.talentNodeDescription(tree, node);
-    return {treeId: tree.id, nodeId: node.id, treeLabel: tree.label, name: label, type: "talent", category: tree.label, description, lpCost: Number(node.lpCost || 0), requirements: (node.requires || []).join(", ")};
+    const attributeRequirements = GT.talentAttributeRequirements(node);
+    const attrText = GT.talentAttributeRequirementText(node);
+    const requirements = [(node.requires || []).join(", "), attrText ? `Mindestattribute: ${attrText}` : ""].filter(Boolean).join("; ");
+    const uses = GT.talentUsesConfig(node);
+    const consume = GT.talentConsumeConfig(node, tree.id);
+    return {treeId: tree.id, nodeId: node.id, treeLabel: tree.label, name: label, type: "talent", category: tree.label, description, lpCost: Number(node.lpCost || 0), requirements, attributeRequirements, uses: {value: uses.max, max: uses.max}, usesRecovery: uses.recovery, usesPool: uses.pool, usesPoolLabel: uses.poolLabel, consumeTalentKey: consume.key, consumePoolKey: consume.pool, consumeAmount: consume.amount};
   }));
 };
 
@@ -620,7 +900,7 @@ GT.actorEmbeddedTalentItems = function(entry, sourceTalents = []) {
     if (!GT.containsSearchTerm(text, name)) continue;
     const key = GT.normalizedSearch(name);
     if (added.has(key)) continue;
-    const description = GT.textToHtml(GT.talentNodeDescription({label: talent.treeLabel || talent.category || "Talente"}, {...talent, label: name, lpCost: 0}));
+    const description = GT.talentDescriptionHtml(GT.talentNodeDescription({label: talent.treeLabel || talent.category || "Talente"}, {...talent, label: name, lpCost: 0}));
     added.set(key, {
       name,
       type: "talent",
@@ -630,11 +910,15 @@ GT.actorEmbeddedTalentItems = function(entry, sourceTalents = []) {
         description,
         sourceText: description,
         requirements: talent.requirements || "",
+        attributeRequirements: GT.talentAttributeRequirements(talent),
         value: "",
         lpCost: 0,
         treeId: talent.treeId || "",
         nodeId: talent.nodeId || "",
-        uses: {value: 0, max: 0}
+        uses: {value: GT.talentUsesConfig(talent).max, max: GT.talentUsesConfig(talent).max},
+        usesRecovery: GT.talentUsesConfig(talent).recovery,
+        consumeTalentKey: GT.talentConsumeConfig(talent, talent.treeId || "").key,
+        consumeAmount: GT.talentConsumeConfig(talent, talent.treeId || "").amount
       },
       flags: {"gothic-tales": {importedName: name, actorTalent: true}}
     });
@@ -799,8 +1083,14 @@ GT.enrichTalentScaffold = function(scaffold) {
     for (const node of tree.nodes ?? []) {
       node.label = GT.talentDisplayLabel(node);
       node.displayLabel = node.label;
+      node.attributeRequirements = GT.talentAttributeRequirements(node);
+      node.attributeRequirementText = GT.talentAttributeRequirementText(node);
+      node.uses = GT.talentUsesConfig(node);
+      node.consumes = GT.talentConsumeConfig(node, tree.id);
+      node.sourceDescription = String(node.description ?? "");
       node.description = GT.talentNodeDescription(tree, node);
-      node.descriptionHtml = GT.textToHtml(node.description);
+      node.descriptionText = GT.talentPlainDescription(node.description);
+      node.descriptionHtml = GT.talentDescriptionHtml(node.description);
     }
   }
   GT.rebuildTalentLabelIndex(scaffold);
@@ -861,8 +1151,8 @@ GT.parseFormulaTerms = function(formula) {
   return clean.match(/[+-]?[^+-]+/g) || [];
 };
 
-/** Eigener Gothic-Tales-Würfler mit w-Notation und Pasch-Nachwurf-Logik. */
-GT.rollGT = function(formula) {
+/** Eigener Gothic-Tales-Würfler mit w-Notation, Vorteil/Nachteil und Pasch-Nachwurf-Logik. */
+GT.rollGT = function(formula, options = {}) {
   const terms = GT.parseFormulaTerms(formula);
   const dice = [];
   let constant = 0;
@@ -874,16 +1164,34 @@ GT.rollGT = function(formula) {
       const count = Number(m[1] || 1);
       const sides = Number(m[2]);
       const label = sides === 20 ? "Grundwurf" : (sign < 0 ? "Maluswürfel" : (dice.some(d => d.sides === 20) ? "Wertwürfel" : "Zusatzwürfel"));
-      for (let i = 0; i < count; i++) dice.push({sides, label, result: Math.floor(Math.random() * sides) + 1, sign, reroll: null});
+      for (let i = 0; i < count; i++) dice.push({sides, label, result: Math.floor(Math.random() * sides) + 1, sign, reroll: null, ignored: false, kept: false});
       continue;
     }
     const n = Number(term);
     if (!Number.isNaN(n)) constant += sign * n;
   }
+
+  const mode = String(options.advantageMode || options.d20Mode || "none");
+  const level = Math.max(0, Math.min(3, Number(options.advantageLevel || options.d20Level || 0)));
+  const advantageSides = GT.advantageDieSides(level);
+  if ((mode === "advantage" || mode === "disadvantage") && advantageSides) {
+    const label = mode === "advantage" ? "Vorteilswürfel" : "Nachteilwürfel";
+    dice.push({
+      sides: advantageSides,
+      label,
+      result: Math.floor(Math.random() * advantageSides) + 1,
+      sign: mode === "advantage" ? 1 : -1,
+      reroll: null,
+      ignored: false,
+      kept: false,
+      advantageModifier: true
+    });
+  }
+
   const groups = {};
   for (let i = 0; i < dice.length; i++) {
     const d = dice[i];
-    if (d.sides === 20 || d.sides < 2 || d.sides > 12) continue;
+    if (d.ignored || d.advantageModifier || d.sides === 20 || d.sides < 2 || d.sides > 12) continue;
     groups[d.result] ??= [];
     groups[d.result].push(i);
   }
@@ -891,9 +1199,9 @@ GT.rollGT = function(formula) {
     if (indexes.length < 2) continue;
     for (const idx of indexes) dice[idx].reroll = Math.floor(Math.random() * dice[idx].sides) + 1;
   }
-  const diceTotal = dice.reduce((total, d) => total + d.sign * (d.result + (d.reroll || 0)), 0);
+  const diceTotal = dice.reduce((total, d) => d.ignored ? total : total + d.sign * (d.result + (d.reroll || 0)), 0);
   const total = diceTotal + constant;
-  return {formula, dice, constant, total, critical: dice.some(d => d.sides === 20 && d.result === 20)};
+  return {formula, dice, constant, total, critical: dice.some(d => d.sides === 20 && d.result === 20 && !d.ignored), rollOptions: options};
 };
 
 /** Wandelt Gothic-Tales-w-Notation in Foundry-d-Notation um, damit 3D-Würfelmodule dieselben Würfel erkennen. */
@@ -908,7 +1216,7 @@ GT.prepareDiceSoNiceRoll = async function(result) {
   for (const die of result.dice ?? []) {
     if (!supportedSides.has(die.sides)) continue;
     const bucket = buckets.get(die.sides) ?? {initial: [], rerolls: []};
-    bucket.initial.push({result: die.result, active: true, exploded: !!die.reroll});
+    bucket.initial.push({result: die.result, active: !die.ignored, discarded: !!die.ignored, exploded: !!die.reroll});
     if (die.reroll) bucket.rerolls.push({result: die.reroll, active: true});
     buckets.set(die.sides, bucket);
   }
@@ -933,28 +1241,77 @@ GT.showDiceSoNice = async function(result) {
   return game.dice3d.showForRoll(roll, game.user, true, null, false);
 };
 
+GT.advantageDieSides = function(level) {
+  const l = Number(level || 0);
+  if (l === 1) return 2;
+  if (l === 2) return 6;
+  if (l === 3) return 12;
+  return 0;
+};
+
+GT.advantageLabel = function(mode, level) {
+  const m = String(mode || "none");
+  const l = Number(level || 0);
+  if (m !== "advantage" && m !== "disadvantage") return "";
+  const sides = GT.advantageDieSides(l);
+  if (!sides) return "";
+  const height = l === 1 ? "Klein" : (l === 2 ? "Mittel" : "Groß");
+  return `${height}er ${m === "advantage" ? "Vorteil" : "Nachteil"}: 1W${sides}`;
+};
+
+GT.rollDialogFormula = function(baseFormula, diceCounts = {}, bonus = 0) {
+  const parts = [String(baseFormula || "w20").trim() || "w20"];
+  for (const die of [2, 4, 6, 8, 10, 12, 20]) {
+    const count = Number(diceCounts?.[die] || 0);
+    if (count > 0) parts.push(`${count > 1 ? count : ""}w${die}`);
+  }
+  const b = Number(bonus || 0);
+  let formula = parts.join(" + ");
+  if (b > 0) formula += ` + ${b}`;
+  if (b < 0) formula += ` - ${Math.abs(b)}`;
+  return formula;
+};
+
+GT.rollDialogSummary = function({advantageMode = "none", advantageLevel = 0, diceCounts = {}, bonus = 0} = {}) {
+  const parts = [];
+  const adv = GT.advantageLabel(advantageMode, advantageLevel);
+  if (adv) parts.push(adv);
+  const extra = [];
+  for (const die of [2, 4, 6, 8, 10, 12, 20]) {
+    const count = Number(diceCounts?.[die] || 0);
+    if (count > 0) extra.push(`${count}×W${die}`);
+  }
+  if (extra.length) parts.push(`Zusatzwürfel: ${extra.join(", ")}`);
+  const b = Number(bonus || 0);
+  if (b) parts.push(`Bonus: ${b > 0 ? "+" : ""}${b}`);
+  return parts.join(" · ");
+};
+
 /** Gibt eigene Würfelergebnisse als Foundry-Chatkarten aus und synchronisiert 3D-Würfel mit Dice So Nice. */
-GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null, flavor = ""} = {}) {
+GT.executeChatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null, flavor = "", rollOptions = {}, rollSummary = ""} = {}) {
   if (!formula) formula = "w20";
-  const result = GT.rollGT(formula);
+  const result = GT.rollGT(formula, rollOptions);
   GT.showDiceSoNice(result).catch(err => console.warn("Gothic Tales | Dice So Nice konnte den Wurf nicht darstellen.", err));
   const diceHtml = result.dice.map((d, index) => {
     const sign = d.sign < 0 ? "−" : (index === 0 ? "" : "+");
-    const subtotal = d.sign * (d.result + (d.reroll || 0));
-    const signClass = d.sign < 0 ? "negative" : "positive";
+    const subtotal = d.ignored ? 0 : d.sign * (d.result + (d.reroll || 0));
+    const signClass = d.ignored ? "ignored" : (d.sign < 0 ? "negative" : "positive");
     const rr = d.reroll ? `<span class="gt-roll-reroll"><i class="fa-solid fa-repeat"></i> Nachwurf ${d.reroll}</span>` : "";
     const labelText = d.label || (d.sides === 20 ? "Grundwurf" : "Wertwürfel");
+    const kept = d.kept ? `<span class="gt-roll-keep"><i class="fa-solid fa-check"></i> zählt</span>` : "";
+    const ignored = d.ignored ? `<span class="gt-roll-ignored"><i class="fa-solid fa-xmark"></i> ignoriert</span>` : "";
     return `<span class="gt-roll-die ${signClass}">
       <span class="gt-roll-die-label">${GT.escape(labelText)}</span>
       <span class="gt-roll-die-face">${sign}W${d.sides}</span>
       <span class="gt-roll-die-value">${d.result}</span>
-      ${rr}
-      <span class="gt-roll-die-total">${subtotal >= 0 ? "+" : ""}${subtotal}</span>
+      ${kept}${ignored}${rr}
+      <span class="gt-roll-die-total">${d.ignored ? "—" : `${subtotal >= 0 ? "+" : ""}${subtotal}`}</span>
     </span>`;
   }).join("");
   const constHtml = result.constant ? `<span class="gt-roll-bonus"><span>Bonus</span><strong>${result.constant >= 0 ? "+" : ""}${result.constant}</strong></span>` : "";
   const critical = result.critical ? `<div class="gt-critical"><i class="fa-solid fa-burst"></i> Kritischer Treffer/Erfolg</div>` : "";
   const actorName = actor?.name ? `<div class="gt-roll-actor">${GT.escape(actor.name)}</div>` : "";
+  const summaryHtml = rollSummary ? `<div class="gt-roll-options"><i class="fa-solid fa-sliders"></i> ${GT.escape(rollSummary)}</div>` : "";
   const content = `<div class="gothic-tales chat-card gt-roll-card">
     <header class="gt-roll-card-header">
       <div>
@@ -964,6 +1321,7 @@ GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null
       <div class="gt-roll-card-icon"><i class="fa-solid fa-dice-d20"></i></div>
     </header>
     ${flavor ? `<div class="gt-roll-flavor">${GT.escape(flavor)}</div>` : ""}
+    ${summaryHtml}
     <div class="gt-roll-formula"><span>Formel</span><code>${GT.escape(formula)}</code></div>
     <div class="gt-roll-dice-grid">${diceHtml || `<span class="gt-roll-die muted">Keine Würfel</span>`}</div>
     ${constHtml ? `<div class="gt-roll-modifiers">${constHtml}</div>` : ""}
@@ -973,9 +1331,22 @@ GT.chatRoll = async function({formula, label = "Gothic Tales Wurf", actor = null
   return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content});
 };
 
+GT.chatRoll = async function(options = {}) {
+  if (options.configure === false) {
+    const message = await GT.executeChatRoll(options);
+    if (typeof options.onRoll === "function") options.onRoll(message);
+    return message;
+  }
+  return GT.openRollDialog(options);
+};
+
 /** Entfernt ein frei positioniertes Gothic-Tales-Hoverfenster. */
 GT.hideFloatingTooltip = function() {
   document.querySelectorAll(".gt-floating-tooltip").forEach(el => el.remove());
+  document.querySelectorAll(".gt-talent-info.tooltip-open").forEach(el => el.classList.remove("tooltip-open"));
+  document.removeEventListener("mousedown", GT._floatingTooltipOutsideHandler, true);
+  document.removeEventListener("keydown", GT._floatingTooltipKeyHandler, true);
+  window.removeEventListener("resize", GT._floatingTooltipResizeHandler, true);
 };
 
 /** Positioniert einen Talent-Hovertext am Viewport, damit er nicht von Scrollcontainern abgeschnitten wird. */
@@ -1000,14 +1371,32 @@ GT.positionFloatingTooltip = function(trigger, tooltip) {
 
 /** Zeigt einen Talent-Hovertext außerhalb des Sheet-Containers an. */
 GT.showFloatingTooltip = function(trigger, text) {
-  GT.hideFloatingTooltip();
   const clean = String(text || "").trim();
-  if (!clean) return;
+  if (!trigger || !clean) {
+    GT.hideFloatingTooltip();
+    return;
+  }
+  const alreadyOpen = trigger.classList.contains("tooltip-open") && document.querySelector(".gt-floating-tooltip");
+  GT.hideFloatingTooltip();
+  if (alreadyOpen) return;
   const tooltip = document.createElement("div");
   tooltip.className = "gothic-tales gt-floating-tooltip";
-  tooltip.textContent = clean;
+  tooltip.innerHTML = /<[a-z][\s\S]*>/i.test(clean) ? clean : GT.textToHtml(clean);
   document.body.appendChild(tooltip);
+  trigger.classList.add("tooltip-open");
   GT.positionFloatingTooltip(trigger, tooltip);
+  GT._floatingTooltipOutsideHandler = (ev) => {
+    if (trigger.contains(ev.target)) return;
+    if (tooltip.contains?.(ev.target)) return;
+    GT.hideFloatingTooltip();
+  };
+  GT._floatingTooltipKeyHandler = (ev) => {
+    if (ev.key === "Escape") GT.hideFloatingTooltip();
+  };
+  GT._floatingTooltipResizeHandler = () => GT.positionFloatingTooltip(trigger, tooltip);
+  document.addEventListener("mousedown", GT._floatingTooltipOutsideHandler, true);
+  document.addEventListener("keydown", GT._floatingTooltipKeyHandler, true);
+  window.addEventListener("resize", GT._floatingTooltipResizeHandler, true);
 };
 
 /** Liefert eine reine, beschreibbare Kopie der Actor-Systemdaten. */
@@ -1129,7 +1518,19 @@ GT.recalculateSystem = function(system, type = "character", options = {}) {
   s.movement ??= {value: 5};
   s.exhaustion ??= {value: 0, max: 6};
   s.deathCounter ??= {value: 0, max: 6};
-  s.talentTree ??= {learned: {}};
+  s.talentTree ??= {learned: {}, uses: {}};
+  s.talentTree.learned ??= {};
+  s.talentTree.uses ??= {};
+  s.magicCircles ??= {learned: {}, uses: {}, dice: {}};
+  s.magicCircles.learned ??= {};
+  s.magicCircles.uses ??= {};
+  s.magicCircles.dice ??= {};
+  s.druidArts ??= {learned: {}, uses: {}};
+  s.druidArts.learned ??= {};
+  s.druidArts.uses ??= {};
+  s.professions ??= {learned: {}, uses: {}};
+  s.professions.learned ??= {};
+  s.professions.uses ??= {};
   s.sheetLocked = !!s.sheetLocked;
   return s;
 };
@@ -1216,6 +1617,198 @@ GT.getTalentScaffold = async function() {
 };
 
 
+GT.getMagicCircleScaffold = async function() {
+  if (!GT._magicCircleScaffold) GT._magicCircleScaffold = GT.enrichTalentScaffold(await fetchSystemJson("gt-magic-circles-scaffold.json"));
+  return GT._magicCircleScaffold;
+};
+
+GT.getDruidArtsScaffold = async function() {
+  if (!GT._druidArtsScaffold) GT._druidArtsScaffold = GT.enrichTalentScaffold(await fetchSystemJson("gt-druid-arts-scaffold.json"));
+  return GT._druidArtsScaffold;
+};
+
+GT.getProfessionScaffold = async function() {
+  if (!GT._professionScaffold) GT._professionScaffold = GT.enrichTalentScaffold(await fetchSystemJson("gt-profession-scaffold.json"));
+  return GT._professionScaffold;
+};
+
+GT.magicCircleTalentSystem = function(system = {}) {
+  return {...system, talentTree: system.magicCircles ?? {learned: {}, uses: {}}};
+};
+
+GT.actorMagicCircleCards = function(actor, system = {}, scaffold = GT._magicCircleScaffold) {
+  const tempSystem = GT.magicCircleTalentSystem(system);
+  return GT.actorTalentCards(actor, tempSystem, [], scaffold).map(card => ({...card, source: "magic", category: card.category || "Magiekreise"}));
+};
+
+GT.magicCircleDiceConfig = function(node = {}) {
+  const raw = node.magicDice ?? node.dice ?? node.magic?.dice ?? [];
+  const dice = Array.isArray(raw) ? raw : String(raw || "").split(/[ ,;]+/);
+  return dice.map(d => String(d || "").trim().toLowerCase().replace(/^d/, "w")).filter(Boolean).slice(0, 4);
+};
+
+GT.currentMagicCircleNode = function(system = {}, scaffold = GT._magicCircleScaffold) {
+  const learnedRoot = system.magicCircles?.learned ?? {};
+  let best = null;
+  for (const [treeIndex, tree] of (scaffold?.trees ?? []).entries()) {
+    const learnedTree = learnedRoot[tree.id] ?? {};
+    for (const [nodeIndex, node] of (tree.nodes ?? []).entries()) {
+      if (!learnedTree[node.id]) continue;
+      const rankGroup = String(node.rankGroup || "").toLowerCase();
+      const isCircle = rankGroup === "magiekreis" || String(node.id || "").startsWith("kreis-");
+      if (!isCircle) continue;
+      const rank = GT.talentRankValue(node, nodeIndex);
+      const entry = {tree, node, treeIndex, nodeIndex, rank};
+      if (!best || rank > best.rank || (rank === best.rank && nodeIndex > best.nodeIndex)) best = entry;
+    }
+  }
+  return best;
+};
+
+GT.currentMagicDiceNode = function(system = {}, scaffold = GT._magicCircleScaffold) {
+  const learnedRoot = system.magicCircles?.learned ?? {};
+  let best = null;
+  for (const [treeIndex, tree] of (scaffold?.trees ?? []).entries()) {
+    const learnedTree = learnedRoot[tree.id] ?? {};
+    for (const [nodeIndex, node] of (tree.nodes ?? []).entries()) {
+      if (!learnedTree[node.id]) continue;
+      const dice = GT.magicCircleDiceConfig(node);
+      if (!dice.length) continue;
+      const rank = GT.talentRankValue(node, nodeIndex);
+      const entry = {tree, node, treeIndex, nodeIndex, rank, dice};
+      if (!best || rank > best.rank || (rank === best.rank && nodeIndex > best.nodeIndex)) best = entry;
+    }
+  }
+  return best;
+};
+
+GT.magicCircleDiceForSystem = function(system = {}, scaffold = GT._magicCircleScaffold) {
+  const current = GT.currentMagicDiceNode(system, scaffold);
+  return current ? current.dice : [];
+};
+
+GT.magicCircleSlots = function(system = {}, scaffold = GT._magicCircleScaffold) {
+  const dice = GT.magicCircleDiceForSystem(system, scaffold);
+  const stored = system.magicCircles?.dice ?? {};
+  return [0, 1, 2, 3].map(index => {
+    const entry = stored[index] ?? {};
+    const die = String(entry.die || dice[index] || "").trim();
+    const hasResult = entry.result !== undefined && entry.result !== null && entry.result !== "";
+    const used = !!entry.used && hasResult;
+    return {
+      index,
+      die,
+      active: !!dice[index],
+      filled: !!die && hasResult,
+      used,
+      result: hasResult ? entry.result : "",
+      label: die ? die.toUpperCase() : "—"
+    };
+  });
+};
+
+GT.rollMagicDie = function(die) {
+  const formula = String(die || "w4").toLowerCase().replace(/^d/, "w");
+  const result = GT.rollGT(formula);
+  const rolled = result.dice?.[0]?.result ?? result.total;
+  return {die: formula, result: rolled};
+};
+
+GT.rollAllMagicCircleDice = async function(actor) {
+  const scaffold = await GT.getMagicCircleScaffold();
+  const source = GT.actorSystemSource(actor);
+  source.magicCircles ??= {learned: {}, uses: {}, dice: {}};
+  const dice = GT.magicCircleDiceForSystem(source, scaffold);
+  if (!dice.length) return ui.notifications.warn("Es ist noch kein Zauberwürfel gelernt.");
+  const slots = {};
+  dice.slice(0, 4).forEach((die, index) => { slots[index] = {...GT.rollMagicDie(die), used: false}; });
+  source.magicCircles.dice = slots;
+  await actor.update({"system.magicCircles.dice": slots});
+  ui.notifications.info("Magiekreis-Würfel wurden geworfen.");
+};
+
+GT.rerollMagicCircleDie = async function(actor, index) {
+  const source = GT.actorSystemSource(actor);
+  const dice = source.magicCircles?.dice ?? {};
+  const entry = dice[index];
+  if (!entry?.die) return ui.notifications.warn("Dieser Platz enthält keinen aktiven Magiewürfel.");
+  dice[index] = {...GT.rollMagicDie(entry.die), used: false};
+  await actor.update({"system.magicCircles.dice": dice});
+};
+
+GT.useMagicCircleDie = async function(actor, index) {
+  const source = GT.actorSystemSource(actor);
+  const dice = source.magicCircles?.dice ?? {};
+  const entry = dice[index];
+  if (!entry?.die || entry.result === undefined || entry.result === null || entry.result === "") {
+    return ui.notifications.warn("Dieser Magiewürfel wurde noch nicht geworfen.");
+  }
+  if (entry.used) return ui.notifications.warn("Dieser Magiewürfel wurde bereits benutzt. Du kannst ihn nur neu würfeln.");
+  dice[index] = {...entry, used: true};
+  await actor.update({"system.magicCircles.dice": dice});
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({actor}),
+    content: GT.magicCircleDieUsedChatContent(actor, dice[index], Number(index || 0))
+  });
+};
+
+GT.magicCircleDieUsedChatContent = function(actor, entry = {}, index = 0) {
+  const die = String(entry.die || "").toUpperCase();
+  const result = entry.result ?? "—";
+  return `
+    <div class="gothic-tales chat-card gt-magic-die-used-chat-card">
+      <header class="gt-magic-die-used-header">
+        <div class="gt-magic-die-used-rune"><i class="fas fa-dice-d20"></i></div>
+        <div>
+          <div class="gt-talent-chat-kicker">Zauberwürfel benutzt</div>
+          <h3>${GT.escape(actor?.name || "Magiewirker")}</h3>
+        </div>
+      </header>
+      <div class="gt-magic-die-used-body">
+        <span class="gt-magic-die-used-result">${GT.escape(result)}</span>
+        <span class="gt-magic-die-used-label">${GT.escape(die || "Würfel")} · Feld ${Number(index) + 1}</span>
+      </div>
+      <p>Der vorbereitete Zauberwürfel wurde für eine Zauberhandlung eingesetzt.</p>
+    </div>
+  `;
+};
+
+GT.executeMagicCircleSkill = async function(actor, data = {}) {
+  if (!actor?.isOwner) return ui.notifications.warn("Du hast keine Berechtigung, diesen Magiekreis auszuführen.");
+  const scaffold = await GT.getMagicCircleScaffold();
+  const found = GT.findTalentNode(data.treeId, data.nodeId, scaffold);
+  if (!found) return ui.notifications.warn("Magiekreis-Daten nicht gefunden.");
+  const {tree, node} = found;
+  const card = {
+    name: GT.talentDisplayLabel(node),
+    treeLabel: tree.label,
+    descriptionHtml: GT.talentDescriptionHtml(node.description || node.sourceDescription || ""),
+    lpCostText: Number(node.lpCost || 0) ? `${node.lpCost} LP` : "frei / automatisch",
+    requirementText: (node.requires || []).join(", "),
+    attributeText: GT.talentAttributeRequirementText(node, actor),
+    usageText: "Magiekreis",
+    consumeText: "",
+    remainingText: ""
+  };
+  await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content: GT.magicCircleChatContent(actor, card)});
+};
+
+GT.magicCircleChatContent = function(actor, card = {}) {
+  return `
+    <div class="gothic-tales chat-card gt-talent-chat-card gt-magic-chat-card">
+      <header class="gt-talent-chat-header">
+        <div class="gt-talent-chat-rune"><i class="fas fa-wand-sparkles"></i></div>
+        <div class="gt-talent-chat-title">
+          <div class="gt-talent-chat-kicker">Magiekreis angewandt</div>
+          <h3>${GT.escape(card.name || "Magiekreis")}</h3>
+          <div class="gt-talent-chat-subtitle">${GT.escape(card.treeLabel || "Uraltes Wissen")}</div>
+        </div>
+      </header>
+      <section class="gt-talent-chat-body">${card.descriptionHtml || ""}</section>
+    </div>`;
+};
+
+
 /** Erzeugt Gegenstandsdaten für Startpakete aus Quellitems, Spruchrollenmodi oder speziellen Wasserschläuchen. */
 GT.itemFromSource = async function(name, quantity = 1, mode = "normal") {
   const list = await GT.getRumpelkammerItems();
@@ -1259,6 +1852,294 @@ GT.itemsFromPackage = async function(packageId) {
   return docs;
 };
 
+
+GT.actorTalentCards = function(actor, system = {}, itemList = [], scaffold = GT._talentScaffold) {
+  const cards = [];
+  const learned = system.talentTree?.learned ?? {};
+  const pools = GT.talentUsePoolsForSystem(system, scaffold);
+
+  const addTreeCard = (tree, node) => {
+    const key = GT.talentKey(tree.id, node.id);
+    const uses = GT.talentUsesConfig(node);
+    const poolKey = GT.talentUsePoolKey(tree.id, node);
+    const pool = pools[poolKey] ?? (uses.max ? {key: poolKey, max: uses.max, label: uses.poolLabel || GT.talentDisplayLabel(node), sourceName: GT.talentDisplayLabel(node)} : null);
+    const consume = GT.talentConsumeConfig(node, tree.id);
+    const spendKey = GT.talentConsumePoolKey(consume, scaffold) || (uses.max ? poolKey : "");
+    const spendPool = spendKey ? (pools[spendKey] ?? pool) : null;
+    const spendMax = spendPool?.max || (spendKey === poolKey ? uses.max : GT.talentUseMaxForKey(spendKey, scaffold, system));
+    const ownMax = pool?.max || uses.max;
+    const ownCurrent = ownMax ? GT.talentUseValue(system, poolKey, ownMax) : 0;
+    const spendCurrent = spendKey ? GT.talentUseValue(system, spendKey, spendMax) : ownCurrent;
+    const descriptionRaw = node.description || node.sourceDescription || "";
+    const descriptionText = GT.talentPlainDescription(descriptionRaw);
+    const descriptionHtml = GT.talentDescriptionHtml(descriptionRaw);
+    const attrText = GT.talentAttributeRequirementText(node, actor);
+    const reqText = (node.requires || []).join(", ");
+    const lpCostText = Number(node.lpCost || 0) ? `${node.lpCost} LP` : "frei / automatisch";
+    const poolLabel = pool?.label || uses.poolLabel || GT.talentDisplayLabel(node);
+    const spendLabel = spendPool?.label || (consume.key ? consume.key : poolLabel);
+    const usageText = spendKey && (consume.amount || uses.max)
+      ? `${spendCurrent}/${spendMax || 0} ${spendLabel}`
+      : "keine Begrenzung";
+    const consumeText = consume.amount && spendKey ? `${consume.amount} Anwendung von ${spendLabel}` : (uses.max ? `verbraucht ${poolLabel}` : "");
+    const needed = Number(consume.amount || (uses.max ? 1 : 0));
+    const category = GT.talentCategoryLabel(tree, node);
+    const card = {
+      source: "tree",
+      key,
+      poolKey,
+      treeId: tree.id,
+      nodeId: node.id,
+      name: GT.talentDisplayLabel(node),
+      treeLabel: tree.label,
+      category,
+      poolLabel,
+      descriptionText,
+      descriptionHtml,
+      lpCostText,
+      requirementText: reqText,
+      attributeText: attrText,
+      usageText,
+      consumeText,
+      usesCurrent: spendKey ? spendCurrent : ownCurrent,
+      usesMax: spendKey ? spendMax : ownMax,
+      usesLimited: !!(uses.max || spendKey),
+      canExecute: !(uses.max || spendKey) || Number(spendCurrent) >= needed,
+      executeLabel: (uses.max || spendKey) ? "Ausführen" : "In Chat posten"
+    };
+    card.tooltip = GT.talentDetailsHtml(card);
+    cards.push(card);
+  };
+
+  const bestByGroup = new Map();
+  for (const [treeIndex, tree] of (scaffold?.trees ?? []).entries()) {
+    const learnedTree = learned?.[tree.id] ?? {};
+    for (const [nodeIndex, node] of (tree.nodes ?? []).entries()) {
+      if (!learnedTree[node.id]) continue;
+      const groupKey = GT.talentRankGroupKey(tree.id, node);
+      const rank = GT.talentRankValue(node, nodeIndex);
+      const candidate = {tree, node, treeIndex, nodeIndex, groupKey, rank};
+      const current = bestByGroup.get(groupKey);
+      if (!current || candidate.rank > current.rank || (candidate.rank === current.rank && candidate.nodeIndex > current.nodeIndex)) {
+        bestByGroup.set(groupKey, candidate);
+      }
+    }
+  }
+
+  const selectedTreeTalents = Array.from(bestByGroup.values())
+    .sort((a, b) => a.treeIndex - b.treeIndex || a.nodeIndex - b.nodeIndex);
+  for (const entry of selectedTreeTalents) addTreeCard(entry.tree, entry.node);
+
+  const knownTreeKeys = new Set(cards.map(c => c.key));
+  for (const item of itemList ?? []) {
+    if (item.type !== "talent") continue;
+    const treeId = String(item.system?.treeId || "");
+    const nodeId = String(item.system?.nodeId || "");
+    const key = treeId && nodeId ? GT.talentKey(treeId, nodeId) : `item.${item.id}`;
+    if (knownTreeKeys.has(key)) continue;
+    const max = Number(item.system?.uses?.max || 0);
+    const current = Number(item.system?.uses?.value ?? max ?? 0);
+    const consumeKey = String(item.system?.consumePoolKey || item.system?.consumeTalentKey || "").trim();
+    const consumeAmount = Number(item.system?.consumeAmount || 0);
+    const consumeMax = consumeKey ? GT.talentUseMaxForKey(consumeKey, scaffold, system) : max;
+    const consumeCurrent = consumeKey ? GT.talentUseValue(system, consumeKey, consumeMax) : current;
+    const descriptionText = GT.talentPlainDescription(item.system?.description || item.system?.sourceText || "");
+    const category = String(item.system?.category || item.system?.treeLabel || "Talent-Items").trim() || "Talent-Items";
+    const card = {
+      source: "item",
+      itemId: item.id,
+      key,
+      poolKey: item.system?.usesPool || key,
+      name: item.name,
+      treeLabel: category,
+      category,
+      poolLabel: item.system?.usesPoolLabel || item.name,
+      descriptionText,
+      descriptionHtml: GT.normalizeHtml(item.system?.description || GT.textToHtml(descriptionText)),
+      lpCostText: Number(item.system?.lpCost || 0) ? `${item.system.lpCost} LP` : "",
+      requirementText: item.system?.requirements || "",
+      attributeText: GT.talentAttributeRequirementText(item.system || {}, actor),
+      usageText: consumeKey && consumeAmount ? `${consumeCurrent}/${consumeMax || 0} ${consumeKey}` : (max ? `${current}/${max}` : "keine Begrenzung"),
+      consumeText: consumeKey && consumeAmount ? `${consumeAmount} Anwendung von ${consumeKey}` : "",
+      usesCurrent: consumeKey ? consumeCurrent : current,
+      usesMax: consumeKey ? consumeMax : max,
+      usesLimited: !!(max || consumeKey),
+      canExecute: !(consumeKey || max) || Number(consumeKey ? consumeCurrent : current) >= Number(consumeAmount || (max ? 1 : 0)),
+      executeLabel: (consumeKey || max) ? "Ausführen" : "In Chat posten"
+    };
+    card.tooltip = GT.talentDetailsHtml(card);
+    cards.push(card);
+  }
+  return cards.sort((a, b) => String(a.category || a.treeLabel).localeCompare(String(b.category || b.treeLabel), "de") || String(a.name).localeCompare(String(b.name), "de"));
+};
+
+GT.rechargeTalentUses
+GT.rechargeTalentUses = async function(actor, {mode = "combatEnd"} = {}) {
+  if (!actor) return [];
+  const scaffold = await GT.getTalentScaffold();
+  const source = GT.actorSystemSource(actor);
+  source.talentTree ??= {learned: {}, uses: {}};
+  source.talentTree.learned ??= {};
+  source.talentTree.uses ??= {};
+  const messages = [];
+  const pools = GT.talentUsePoolsForSystem(source, scaffold);
+  for (const [poolKey, pool] of Object.entries(pools)) {
+    if (!pool.max) continue;
+    source.talentTree.uses[poolKey] = pool.max;
+    messages.push(`${pool.label} ${pool.max}/${pool.max}`);
+  }
+  await actor.update({"system.talentTree.uses": source.talentTree.uses});
+  const itemUpdates = [];
+  for (const item of actor.items ?? []) {
+    if (item.type !== "talent") continue;
+    const max = Number(item.system?.uses?.max || 0);
+    const recovery = String(item.system?.usesRecovery || "combatEnd");
+    if (max > 0 && recovery !== "none") {
+      itemUpdates.push({_id: item.id, "system.uses.value": max});
+      messages.push(`${item.name} ${max}/${max}`);
+    }
+  }
+  if (itemUpdates.length) await actor.updateEmbeddedDocuments("Item", itemUpdates);
+  return messages;
+};
+
+GT.talentChatContent
+GT.talentChatContent = function(actor, card = {}) {
+  const meta = [
+    card.lpCostText ? {icon: "fa-coins", label: "Kosten", value: card.lpCostText} : null,
+    card.requirementText ? {icon: "fa-link", label: "Voraussetzung", value: card.requirementText} : null,
+    card.attributeText ? {icon: "fa-dumbbell", label: "Attribute", value: card.attributeText} : null,
+    card.usageText ? {icon: "fa-hourglass-half", label: "Anwendungen", value: card.usageText} : null
+  ].filter(Boolean).map(part => `
+    <span class="gt-talent-chat-pill"><i class="fas ${part.icon}"></i><strong>${GT.escape(part.label)}:</strong> ${GT.escape(part.value)}</span>`).join("");
+
+  const spend = card.consumeText || card.spendText || "";
+  const footer = spend ? `
+    <footer class="gt-talent-chat-footer">
+      <span><i class="fas fa-bolt"></i><strong>Verbrauch:</strong> ${GT.escape(spend)}</span>
+      ${card.remainingText ? `<span><i class="fas fa-battery-half"></i><strong>Verbleibend:</strong> ${GT.escape(card.remainingText)}</span>` : ""}
+    </footer>` : (card.remainingText ? `
+    <footer class="gt-talent-chat-footer">
+      <span><i class="fas fa-battery-half"></i><strong>Verbleibend:</strong> ${GT.escape(card.remainingText)}</span>
+    </footer>` : "");
+
+  return `
+    <div class="gothic-tales chat-card gt-talent-chat-card gt-talent-chat-card-v2">
+      <header class="gt-talent-chat-header">
+        <div class="gt-talent-chat-rune"><i class="fas fa-hand-sparkles"></i></div>
+        <div class="gt-talent-chat-title">
+          <div class="gt-talent-chat-kicker">Talent ausgeführt</div>
+          <h2>${GT.escape(card.name || "Talent")}</h2>
+          <div class="gt-talent-chat-subtitle">
+            <span><i class="fas fa-user"></i>${GT.escape(actor?.name || "Unbekannter Actor")}</span>
+            ${card.treeLabel ? `<span><i class="fas fa-sitemap"></i>${GT.escape(card.treeLabel)}</span>` : ""}
+          </div>
+        </div>
+      </header>
+      ${meta ? `<div class="gt-talent-chat-pills">${meta}</div>` : ""}
+      <section class="gt-talent-chat-body">
+        <h3><i class="fas fa-scroll"></i> Beschreibung</h3>
+        <div class="gt-chat-description">${card.descriptionHtml || "<p>Keine Beschreibung hinterlegt.</p>"}</div>
+      </section>
+      ${footer}
+    </div>`;
+};
+
+GT.executeTalent = async function(actor, data = {}) {
+  if (!actor?.isOwner) return ui.notifications.warn("Du hast keine Berechtigung, dieses Talent auszuführen.");
+  const scaffold = await GT.getTalentScaffold();
+  let card = null;
+  let updateActorUses = null;
+  let updateItem = null;
+  if (data.source === "tree") {
+    const found = GT.findTalentNode(data.treeId, data.nodeId, scaffold);
+    if (!found) return ui.notifications.warn("Talentdaten nicht gefunden.");
+    const {tree, node} = found;
+    const system = GT.actorSystemSource(actor);
+    system.talentTree ??= {learned: {}, uses: {}};
+    system.talentTree.uses ??= {};
+    const uses = GT.talentUsesConfig(node);
+    const pools = GT.talentUsePoolsForSystem(system, scaffold);
+    const ownPoolKey = GT.talentUsePoolKey(tree.id, node);
+    const ownPool = pools[ownPoolKey] ?? (uses.max ? {key: ownPoolKey, max: uses.max, label: uses.poolLabel || GT.talentDisplayLabel(node), recovery: uses.recovery} : null);
+    const consume = GT.talentConsumeConfig(node, tree.id);
+    const spendKey = GT.talentConsumePoolKey(consume, scaffold) || (uses.max ? ownPoolKey : "");
+    const spendPool = spendKey ? (pools[spendKey] ?? ownPool) : null;
+    const spendMax = spendPool?.max || (spendKey === ownPoolKey ? uses.max : GT.talentUseMaxForKey(spendKey, scaffold, system));
+    const spendAmount = consume.amount || (uses.max ? 1 : 0);
+    let consumeText = "";
+    let remainingText = ownPool ? `${GT.talentUseValue(system, ownPoolKey, ownPool.max)}/${ownPool.max} ${ownPool.label}` : "";
+    if (spendKey && spendAmount) {
+      const current = GT.talentUseValue(system, spendKey, spendMax);
+      if (current < spendAmount) return ui.notifications.warn("Nicht genug Talent-Anwendungen verfügbar.");
+      const next = current - spendAmount;
+      system.talentTree.uses[spendKey] = next;
+      updateActorUses = system.talentTree.uses;
+      const spentName = spendPool?.label || spendKey;
+      consumeText = `${spendAmount} Anwendung von ${spentName}`;
+      remainingText = `${next}/${spendMax || 0} ${spentName}`;
+    }
+    const reqText = (node.requires || []).join(", ");
+    const attrText = GT.talentAttributeRequirementText(node, actor);
+    const currentOwn = ownPool ? GT.talentUseValue(system, ownPoolKey, ownPool.max) : 0;
+    card = {
+      name: GT.talentDisplayLabel(node),
+      treeLabel: tree.label,
+      descriptionHtml: GT.talentDescriptionHtml(node.description || node.sourceDescription || ""),
+      lpCostText: Number(node.lpCost || 0) ? `${node.lpCost} LP` : "frei / automatisch",
+      requirementText: reqText,
+      attributeText: attrText,
+      usageText: ownPool ? `${currentOwn}/${ownPool.max} ${ownPool.label}` : "keine Begrenzung",
+      consumeText,
+      remainingText
+    };
+  } else if (data.source === "item") {
+    const item = actor.items.get(data.itemId);
+    if (!item) return ui.notifications.warn("Talent-Item nicht gefunden.");
+    const consumeKey = String(item.system?.consumePoolKey || item.system?.consumeTalentKey || "").trim();
+    const consumeAmount = Number(item.system?.consumeAmount || 0);
+    const max = Number(item.system?.uses?.max || 0);
+    const current = Number(item.system?.uses?.value ?? max ?? 0);
+    let consumeText = "";
+    let remainingText = max ? `${current}/${max}` : "";
+    if (consumeKey && consumeAmount > 0) {
+      const system = GT.actorSystemSource(actor);
+      system.talentTree ??= {learned: {}, uses: {}};
+      system.talentTree.uses ??= {};
+      const consumeMax = GT.talentUseMaxForKey(consumeKey, scaffold, system);
+      const consumeCurrent = GT.talentUseValue(system, consumeKey, consumeMax);
+      if (consumeCurrent < consumeAmount) return ui.notifications.warn("Nicht genug Talent-Anwendungen verfügbar.");
+      const next = consumeCurrent - consumeAmount;
+      system.talentTree.uses[consumeKey] = next;
+      updateActorUses = system.talentTree.uses;
+      consumeText = `${consumeAmount} Anwendung von ${consumeKey}`;
+      remainingText = `${next}/${consumeMax || 0} ${consumeKey}`;
+    } else if (max > 0) {
+      if (current < 1) return ui.notifications.warn("Keine Anwendungen dieses Talents mehr verfügbar.");
+      const next = current - 1;
+      updateItem = {_id: item.id, "system.uses.value": next};
+      consumeText = "1 Anwendung";
+      remainingText = `${next}/${max}`;
+    }
+    card = {
+      name: item.name,
+      treeLabel: item.system?.category || "Talent",
+      descriptionHtml: GT.normalizeHtml(item.system?.description || item.system?.sourceText || ""),
+      lpCostText: Number(item.system?.lpCost || 0) ? `${item.system.lpCost} LP` : "",
+      requirementText: item.system?.requirements || "",
+      attributeText: GT.talentAttributeRequirementText(item.system || {}, actor),
+      usageText: consumeKey && consumeAmount ? `${remainingText}` : (max ? `${current}/${max}` : "keine Begrenzung"),
+      consumeText,
+      remainingText
+    };
+  }
+  if (!card) return;
+  if (updateActorUses) await actor.update({"system.talentTree.uses": updateActorUses});
+  if (updateItem) await actor.updateEmbeddedDocuments("Item", [updateItem]);
+  await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content: GT.talentChatContent(actor, card)});
+};
+
+/** Bereitet
 /** Bereitet reine Bogenlisten, gruppierte Items und Anzeigenamen gelernter Talente für Handlebars-Templates vor. */
 function enrichLists(data) {
   const system = data.system ?? {};
@@ -1285,6 +2166,17 @@ function enrichLists(data) {
   for (const [treeId, nodes] of Object.entries(learned)) {
     for (const [nodeId, value] of Object.entries(nodes ?? {})) if (value) data.learnedTalentLabels.push(labelIndex.get(`${treeId}.${nodeId}`) || `${treeId}: ${nodeId}`);
   }
+  data.talentCards = GT.actorTalentCards(data.actor, system, items);
+  data.talentCategories = GT.groupTalentCardsByCategory(data.talentCards);
+  data.hasTalentCards = !!data.talentCards.length;
+  data.hasTalentCategories = !!data.talentCategories.length;
+  data.magicCircleCards = GT.actorMagicCircleCards(data.actor, system);
+  data.magicCircleCategories = GT.groupTalentCardsByCategory(data.magicCircleCards);
+  data.hasMagicCircleCategories = !!data.magicCircleCategories.length;
+  data.magicCircleSlots = GT.magicCircleSlots(system);
+  data.currentMagicCircle = GT.currentMagicCircleNode(system);
+  data.currentMagicCircleLabel = data.currentMagicCircle ? GT.talentDisplayLabel(data.currentMagicCircle.node) : "Kein Magiekreis gelernt";
+  data.currentMagicCircleDiceText = GT.magicCircleDiceForSystem(system).map(d => d.toUpperCase()).join(" · ") || "Keine Würfel";
   data.isCharacter = data.actor?.type === "character";
   data.isNpcOrMonster = data.actor?.type === "npc" || data.actor?.type === "monster";
   data.sheetLocked = !!system.sheetLocked;
@@ -1360,7 +2252,7 @@ class GothicTalesConfirmDialog extends GothicTalesApplicationV2 {
   static DEFAULT_OPTIONS = {
     classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window"],
     window: {title: "Gothic Tales", resizable: false},
-    position: {width: 420}
+    position: {width: 500}
   };
   static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-confirm.hbs"}};
   getData() { return {content: this.content, yesLabel: this.yesLabel, noLabel: this.noLabel}; }
@@ -1378,6 +2270,133 @@ class GothicTalesConfirmDialog extends GothicTalesApplicationV2 {
 
 GT.confirm = function(options = {}) {
   return new Promise(resolve => new GothicTalesConfirmDialog({...options, resolve}).render(true));
+};
+
+/** Dialog für kontrollierte Würfe: Vorteil/Nachteil, Zusatzbonus und weitere Würfel. */
+class GothicTalesRollDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super({window: {title: options.label || "Wurf vorbereiten"}, position: {width: 560, height: "auto"}});
+    this.roll = {...options, formula: options.formula || "w20", label: options.label || "Gothic Tales Wurf"};
+    this.rollState = {advantageMode: "none", advantageLevel: 1, bonus: 0, diceCounts: {2: 0, 4: 0, 6: 0, 8: 0, 10: 0, 12: 0, 20: 0}};
+  }
+  static DEFAULT_OPTIONS = {
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-roll-dialog-window"],
+    window: {title: "Wurf vorbereiten", resizable: false},
+    position: {width: 560}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-roll.hbs"}};
+  getData() {
+    return {
+      label: this.roll.label,
+      formula: this.roll.formula,
+      flavor: this.roll.flavor || "",
+      diceButtons: [2, 4, 6, 8, 10, 12, 20].map(die => ({die, label: `W${die}`, count: Number(this.rollState.diceCounts[die] || 0)})),
+      finalFormula: GT.rollDialogFormula(this.roll.formula, this.rollState.diceCounts, this.rollState.bonus),
+      summary: GT.rollDialogSummary(this.rollState) || "Ohne Modifikatoren"
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    const sync = () => {
+      const bonus = root.querySelector(".gt-roll-dialog-bonus");
+      this.rollState.bonus = Number(bonus?.value || 0);
+      this.rollState.advantageMode = root.querySelector('input[name="advantageMode"]:checked')?.value || "none";
+      this.rollState.advantageLevel = Number(root.querySelector(".gt-roll-dialog-level")?.value || 1);
+      const finalFormula = GT.rollDialogFormula(this.roll.formula, this.rollState.diceCounts, this.rollState.bonus);
+      const summary = GT.rollDialogSummary(this.rollState) || "Ohne Modifikatoren";
+      const formulaEl = root.querySelector(".gt-roll-dialog-final code");
+      if (formulaEl) formulaEl.textContent = finalFormula;
+      const summaryEl = root.querySelector(".gt-roll-dialog-summary");
+      if (summaryEl) summaryEl.textContent = summary;
+      for (const die of [2, 4, 6, 8, 10, 12, 20]) {
+        const button = root.querySelector(`.gt-roll-dialog-die[data-die="${die}"]`);
+        if (!button) continue;
+        const count = Number(this.rollState.diceCounts[die] || 0);
+        button.classList.toggle("active", count > 0);
+        const counter = button.querySelector("span");
+        if (counter) counter.textContent = count ? String(count) : "+";
+      }
+    };
+    root.querySelectorAll('input[name="advantageMode"], .gt-roll-dialog-level, .gt-roll-dialog-bonus').forEach(el => el.addEventListener("change", sync));
+    root.querySelector(".gt-roll-dialog-bonus")?.addEventListener("input", sync);
+    root.querySelectorAll(".gt-roll-dialog-die").forEach(button => button.addEventListener("click", ev => {
+      ev.preventDefault();
+      const die = Number(ev.currentTarget.dataset.die || 0);
+      if (!die) return;
+      this.rollState.diceCounts[die] = Number(this.rollState.diceCounts[die] || 0) + 1;
+      sync();
+    }));
+    root.querySelectorAll(".gt-roll-dialog-die").forEach(button => button.addEventListener("contextmenu", ev => {
+      ev.preventDefault();
+      const die = Number(ev.currentTarget.dataset.die || 0);
+      if (!die) return;
+      this.rollState.diceCounts[die] = Math.max(0, Number(this.rollState.diceCounts[die] || 0) - 1);
+      sync();
+    }));
+    root.querySelector(".gt-roll-dialog-clear-dice")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.rollState.diceCounts = {2: 0, 4: 0, 6: 0, 8: 0, 10: 0, 12: 0, 20: 0};
+      sync();
+    });
+    root.querySelector(".gt-roll-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+    root.querySelector(".gt-roll-dialog-submit")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      sync();
+      const formula = GT.rollDialogFormula(this.roll.formula, this.rollState.diceCounts, this.rollState.bonus);
+      const rollSummary = GT.rollDialogSummary(this.rollState);
+      await GT.chatRoll({
+        ...this.roll,
+        formula,
+        configure: false,
+        rollOptions: {advantageMode: this.rollState.advantageMode, advantageLevel: this.rollState.advantageLevel},
+        rollSummary
+      });
+      await this.close();
+    });
+    sync();
+  }
+}
+
+GT.openRollDialog = function(options = {}) {
+  return new GothicTalesRollDialog(options).render(true);
+};
+
+class GothicTalesMagicDieDialog extends GothicTalesApplicationV2 {
+  constructor(actor, index, slot = {}) {
+    super({window: {title: "Magiewürfel"}, position: {width: 500, height: "auto"}});
+    this.actor = actor;
+    this.index = Number(index || 0);
+    this.slot = slot;
+  }
+  static DEFAULT_OPTIONS = {
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-magic-die-dialog-window"],
+    window: {title: "Magiewürfel", resizable: false},
+    position: {width: 500}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-magic-die.hbs"}};
+  getData() { return {slot: this.slot, index: this.index}; }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-magic-die-use")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      if (this.slot?.used) return ui.notifications.warn("Dieser Magiewürfel wurde bereits benutzt. Du kannst ihn nur neu würfeln.");
+      await GT.useMagicCircleDie(this.actor, this.index);
+      await this.close();
+      this.actor.sheet?.render(false);
+    });
+    root.querySelector(".gt-magic-die-reroll")?.addEventListener("click", async ev => { ev.preventDefault(); await GT.rerollMagicCircleDie(this.actor, this.index); await this.close(); this.actor.sheet?.render(false); });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+GT.openMagicDieDialog = function(actor, index) {
+  const system = GT.actorSystemSource(actor);
+  const slot = GT.magicCircleSlots(system)[Number(index || 0)] ?? {};
+  if (!slot.active) return ui.notifications.warn("Dieser Magiewürfel ist noch nicht verfügbar.");
+  if (!slot.filled) return ui.notifications.warn("Dieser Magiewürfel wurde noch nicht geworfen.");
+  new GothicTalesMagicDieDialog(actor, index, slot).render(true);
 };
 
 /** ApplicationV2-Editor für Beschreibungsfelder. */
@@ -1537,6 +2556,10 @@ class GothicTalesActorSheet extends BaseActorSheet {
     data.items = Array.from(this.actor.items ?? [])
       .sort((a,b) => (a.sort ?? 0) - (b.sort ?? 0) || a.name.localeCompare(b.name))
       .map(item => ({id: item.id, name: item.name, type: item.type, sort: item.sort, img: GT.isPlaceholderImage(item.img) ? GT.itemImage(item.type, item.name, item.system?.category || "") : item.img, system: item.system}));
+    await GT.getTalentScaffold();
+    await GT.getMagicCircleScaffold();
+    await GT.getDruidArtsScaffold();
+    await GT.getProfessionScaffold();
     data.system = GT.recalculateSystem(GT.actorSystemSource(this.actor), this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)});
     data.editable = this.isEditable;
     data.actorTypeLabel = GT.CONFIG.actorTypes[this.actor.type] || this.actor.type;
@@ -1562,7 +2585,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
     if (locked) {
       root.querySelectorAll("input, textarea, select").forEach(el => { el.disabled = true; });
       root.querySelectorAll('input[name="system.hp.value"], input[name="system.mana.value"], input[name="system.exhaustion.value"], input[name="system.deathCounter.value"]').forEach(el => { el.disabled = false; el.classList.add("gt-resource-editable"); });
-      root.querySelectorAll(".gt-lock-toggle, .gt-roll, .gt-open-talent-tree, .gt-open-creator, .gt-open-npc-creator, .gt-rest-button, .gt-recalculate, .gt-level-manage, .gt-description-edit").forEach(el => { el.disabled = false; });
+      root.querySelectorAll(".gt-lock-toggle, .gt-roll, .gt-open-talent-tree, .gt-open-creator, .gt-open-npc-creator, .gt-rest-button, .gt-combat-end-button, .gt-recalculate, .gt-level-manage, .gt-description-edit, .gt-talent-info, .gt-use-talent").forEach(el => { el.disabled = false; });
       root.querySelectorAll(".item-create, .item-edit, .item-delete, .item-equip").forEach(el => { el.disabled = true; el.classList.add("disabled"); });
     }
     root.querySelectorAll(".gt-roll").forEach(el => el.addEventListener("click", ev => {
@@ -1603,7 +2626,16 @@ class GothicTalesActorSheet extends BaseActorSheet {
       ev.preventDefault();
       GT.openRestDialog(this.actor);
     }));
+    root.querySelectorAll(".gt-combat-end-button").forEach(el => el.addEventListener("click", async ev => {
+      ev.preventDefault();
+      await GT.confirmCombatEndRecharge(this.actor);
+      this.render(false);
+    }));
     root.querySelectorAll(".gt-open-talent-tree").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesTalentTree(this.actor).render(true); }));
+    root.querySelectorAll(".gt-open-magic-tree").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesMagicCircleTree(this.actor).render(true); }));
+    root.querySelectorAll(".gt-magic-roll-all").forEach(el => el.addEventListener("click", async ev => { ev.preventDefault(); await GT.rollAllMagicCircleDice(this.actor); this.render(false); }));
+    root.querySelectorAll(".gt-magic-die-slot").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); if (ev.currentTarget.disabled) return; GT.openMagicDieDialog(this.actor, ev.currentTarget.dataset.slotIndex); }));
+    root.querySelectorAll(".gt-use-magic-skill").forEach(el => el.addEventListener("click", async ev => { ev.preventDefault(); const button = ev.currentTarget; await GT.executeMagicCircleSkill(this.actor, {treeId: button.dataset.treeId, nodeId: button.dataset.nodeId}); this.render(false); }));
     root.querySelectorAll(".gt-open-creator").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesCharacterCreator({targetActor: this.actor}).render(true); }));
     root.querySelectorAll(".gt-open-npc-creator").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesNPCGenerator({targetActor: this.actor}).render(true); }));
     root.querySelectorAll(".gt-description-edit").forEach(el => el.addEventListener("click", ev => {
@@ -1615,6 +2647,17 @@ class GothicTalesActorSheet extends BaseActorSheet {
     root.querySelectorAll(".gt-image-picker").forEach(el => el.addEventListener("click", ev => {
       ev.preventDefault();
       GT.openImagePicker(this.actor, "img");
+    }));
+    root.querySelectorAll(".gt-talent-info").forEach(el => el.addEventListener("click", ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      GT.showFloatingTooltip(ev.currentTarget, ev.currentTarget.dataset.gtTooltip || "Keine weiteren Informationen.");
+    }));
+    root.querySelectorAll(".gt-use-talent").forEach(el => el.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const button = ev.currentTarget;
+      await GT.executeTalent(this.actor, {source: button.dataset.source, treeId: button.dataset.treeId, nodeId: button.dataset.nodeId, itemId: button.dataset.itemId});
+      this.render(false);
     }));
     if (!this.isEditable || locked) return;
     root.querySelectorAll(".item-create").forEach(el => el.addEventListener("click", async ev => {
@@ -1658,6 +2701,25 @@ GT.openRestDialog = function(actor) {
   new GothicTalesRestDialog(actor).render(true);
 };
 
+/** Fragt nach Kampfende ab und füllt alle Talent-Anwendungen nach Regelwerk wieder auf. */
+GT.confirmCombatEndRecharge = async function(actor) {
+  if (!actor?.isOwner) return ui.notifications.warn("Du hast keine Berechtigung, diesen Actor zu ändern.");
+  const confirmed = await GT.confirm({
+    title: "Kampf vorbei",
+    message: "Sollen alle Talent-Anwendungen dieses Actors wieder vollständig hergestellt werden?",
+    yes: "Talente auffüllen",
+    no: "Abbrechen"
+  });
+  if (!confirmed) return;
+  const recharged = await GT.rechargeTalentUses(actor, {mode: "combatEnd"});
+  const summary = recharged.length ? GT.escape(recharged.join(", ")) : "Keine begrenzten Talent-Anwendungen vorhanden.";
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({actor}),
+    content: `<div class="gothic-tales chat-card gt-combat-end-card"><h2><i class="fas fa-flag-checkered"></i> Kampf vorbei</h2><p>${GT.escape(actor.name)} stellt seine Talent-Anwendungen wieder her.</p><p><strong>Aufgefüllt:</strong> ${summary}</p></div>`
+  });
+  ui.notifications.info("Talent-Anwendungen wurden wiederhergestellt.");
+};
+
 /** Gegenstandsbogen für Waffen, Rüstungen, Zauber, Talente und Ausrüstungsmetadaten. */
 class GothicTalesItemSheet extends BaseItemSheet {
   static DEFAULT_OPTIONS = {
@@ -1687,6 +2749,7 @@ class GothicTalesItemSheet extends BaseItemSheet {
     data.editable = this.isEditable;
     data.descriptionText = GT.htmlToPlainText(this.item.system?.description || "");
     data.attributeOptions = Object.entries(GT.CONFIG.attributes).map(([key, label]) => ({key, label, selected: key === String(this.item.system?.attribute || "").toLowerCase()}));
+    data.attributeRequirementOptions = Object.entries(GT.CONFIG.attributes).map(([key, label]) => ({key, label, value: Number(this.item.system?.attributeRequirements?.[key] || 0)}));
     return data;
   }
 
@@ -1735,7 +2798,7 @@ class GothicTalesCharacterCreator extends GothicTalesFormApplicationV2 {
     const items = await GT.getRumpelkammerItems();
     const traits = items.filter(i => i.type === "trait").map(i => ({name: i.name, kind: i.kind, points: i.points, category: i.category}));
     const scaffold = await GT.getTalentScaffold();
-    const talents = scaffold.trees.flatMap(t => t.nodes.map(n => ({tree: t.label, id: `${t.id}__${n.id}`, label: n.label, lpCost: Number(n.lpCost || 0), requirements: (n.requires || []).join(", ")}))).filter(t => t.lpCost > 0);
+    const talents = scaffold.trees.flatMap(t => t.nodes.map(n => ({tree: t.label, id: `${t.id}__${n.id}`, label: n.label, lpCost: Number(n.lpCost || 0), requirements: (n.requires || []).join(", "), attrRequirements: GT.talentAttributeRequirementText(n)}))).filter(t => t.lpCost > 0);
     const basicItems = items.filter(i => ["weapon", "shield", "armor", "consumable", "equipment"].includes(i.type) && Number(String(i.value).replace(/[^0-9]/g,"")) <= 120)
       .slice(0, 180).map(i => ({name: i.name, type: i.type, category: i.folderCategory || i.category, value: i.value}));
     return {
@@ -1777,10 +2840,19 @@ class GothicTalesCharacterCreator extends GothicTalesFormApplicationV2 {
       learned[tree][node] = true;
     }
     const scaffold = await GT.getTalentScaffold();
+    const selectedTalentNodes = [];
     for (const [tree, nodes] of Object.entries(learned)) {
       const t = scaffold.trees.find(x => x.id === tree);
-      for (const node of Object.keys(nodes)) spent += Number(t?.nodes.find(n => n.id === node)?.lpCost || 0);
+      for (const node of Object.keys(nodes)) {
+        const nodeData = t?.nodes.find(n => n.id === node);
+        if (!nodeData) continue;
+        selectedTalentNodes.push({tree: t, node: nodeData});
+        spent += Number(nodeData.lpCost || 0);
+      }
     }
+    const tempActorForReqs = {type: "character", system: {attributes: attrs}};
+    const missingTalentAttrs = selectedTalentNodes.flatMap(({tree, node}) => GT.actorMeetsTalentAttributeRequirements(tempActorForReqs, node).missing.map(m => `${tree.label}: ${GT.talentDisplayLabel(node)} benötigt ${m.label} ${m.min} (aktuell ${m.current})`));
+    if (missingTalentAttrs.length) return ui.notifications.warn(`Talent-Mindestattribute fehlen: ${missingTalentAttrs.join("; ")}.`);
     const weaknesses = [formData.weakness1, formData.weakness2, formData.weakness3].filter(Boolean);
     const strengths = [formData.strength1, formData.strength2, formData.strength3].filter(Boolean);
     if (weaknesses.length !== new Set(weaknesses).size || strengths.length !== new Set(strengths).size) return ui.notifications.warn("Bitte Stärken und Schwächen nicht doppelt auswählen.");
@@ -1908,8 +2980,24 @@ class GothicTalesTalentTree extends GothicTalesApplicationV2 {
       const learned = learnedRoot[tree.id] ?? {};
       const nodes = tree.nodes.map(n => {
         const reqsMet = (n.requires ?? []).every(r => learned[r]);
+        const attrCheck = GT.actorMeetsTalentAttributeRequirements(this.actor, n);
+        const attrText = GT.talentAttributeRequirementText(n, this.actor);
         const cost = isCharacter ? Number(n.lpCost || 0) : 0;
-        return {...n, displayLabel: GT.talentDisplayLabel(n), learned: !!learned[n.id], available: !!learned[n.id] || (reqsMet && (!isCharacter || lp >= cost)), displayCost: isCharacter ? (Number(n.lpCost || 0) ? `${n.lpCost} LP` : "frei") : "NSC/Monster"};
+        const enoughLp = !isCharacter || lp >= cost;
+        const available = !!learned[n.id] || (reqsMet && attrCheck.met && enoughLp);
+        const displayCost = isCharacter ? (Number(n.lpCost || 0) ? `${n.lpCost} LP` : "frei") : "NSC/Monster";
+        const missingReason = [];
+        if (!reqsMet) missingReason.push("Talentpfad fehlt");
+        if (!attrCheck.met) missingReason.push(`Attribute fehlen: ${attrCheck.missing.map(m => `${m.label} ${m.current}/${m.min}`).join(", ")}`);
+        if (!enoughLp) missingReason.push("nicht genug LP");
+        const uses = GT.talentUsesConfig(n);
+        const consume = GT.talentConsumeConfig(n, tree.id);
+        const usageInfo = uses.max ? `Anwendungen: ${uses.max} pro Kampf` : "";
+        const consumeInfo = consume.key && consume.amount ? `Verbraucht: ${consume.amount} Anwendung von ${consume.key}` : "";
+        const tooltip = GT.talentDetailsHtml({descriptionHtml: n.descriptionHtml || GT.talentDescriptionHtml(n.description || ""), usageText: usageInfo, consumeText: consumeInfo, attributeText: attrText});
+        const lockedInfo = missingReason.length ? `Gesperrt: ${missingReason.join("; ")}` : "";
+        const tooltipHtml = `${tooltip}${lockedInfo ? `<p class="gt-tooltip-meta"><strong>Gesperrt:</strong> ${GT.escape(missingReason.join("; "))}</p>` : ""}`;
+        return {...n, displayLabel: GT.talentDisplayLabel(n), learned: !!learned[n.id], available, displayCost, attrRequirementText: attrText, usesText: usageInfo, consumeText: consumeInfo, tooltip: tooltipHtml, missingReason: missingReason.join("; ")};
       });
       return {...tree, active: tree.id === this.activeTree, nodes};
     });
@@ -1919,7 +3007,7 @@ class GothicTalesTalentTree extends GothicTalesApplicationV2 {
     super.activateListeners(html);
     html.find(".gt-tree-select").on("click", ev => { this.activeTree = ev.currentTarget.dataset.tree; GT.hideFloatingTooltip(); this.render(false); });
     html.find(".gt-talent-node")
-      .on("mouseenter focus", ev => GT.showFloatingTooltip(ev.currentTarget, ev.currentTarget.dataset.tooltip))
+      .on("mouseenter focus", ev => GT.showFloatingTooltip(ev.currentTarget, ev.currentTarget.dataset.gtTooltip))
       .on("mouseleave blur", () => GT.hideFloatingTooltip());
     html.find(".gt-talent-node").on("click", async ev => {
       ev.preventDefault();
@@ -1937,6 +3025,14 @@ class GothicTalesTalentTree extends GothicTalesApplicationV2 {
       if (isLearned) {
         const isCharacter = this.actor.type === "character";
         update[`system.${path}`] = false;
+        const usesMap = deepClone(this.actor.system?.talentTree?.uses ?? {});
+        const removedPoolKey = GT.talentUsePoolKey(tree, nodeData);
+        const tempSystem = deepClone(this.actor.system ?? {});
+        setProperty(tempSystem, path, false);
+        const nextPools = GT.talentUsePoolsForSystem(tempSystem, data);
+        if (!nextPools[removedPoolKey]) delete usesMap[removedPoolKey];
+        else usesMap[removedPoolKey] = Math.min(Number(usesMap[removedPoolKey] ?? nextPools[removedPoolKey].max), nextPools[removedPoolKey].max);
+        update["system.talentTree.uses"] = usesMap;
         if (isCharacter) update["system.lp.value"] = Number(this.actor.system?.lp?.value ?? 0) + Number(nodeData.lpCost || 0);
         await this.actor.update(update); return this.render(false);
       }
@@ -1944,10 +3040,20 @@ class GothicTalesTalentTree extends GothicTalesApplicationV2 {
       const reqsMet = (nodeData.requires ?? []).every(r => learnedTree[r]);
       if (!reqsMet) return ui.notifications.warn("Voraussetzungen sind noch nicht erfüllt.");
       const isCharacter = this.actor.type === "character";
+      const attrCheck = GT.actorMeetsTalentAttributeRequirements(this.actor, nodeData);
+      if (isCharacter && !attrCheck.met) return ui.notifications.warn(`Mindestattribute nicht erfüllt: ${attrCheck.missing.map(m => `${m.label} ${m.current}/${m.min}`).join(", ")}.`);
       const cost = isCharacter ? Number(nodeData.lpCost || 0) : 0;
       const lp = Number(this.actor.system?.lp?.value ?? 0);
       if (isCharacter && lp < cost) return ui.notifications.warn("Nicht genug Lernpunkte.");
       update[`system.${path}`] = true;
+      const uses = GT.talentUsesConfig(nodeData);
+      if (uses.max) {
+        const usesMap = deepClone(this.actor.system?.talentTree?.uses ?? {});
+        const poolKey = GT.talentUsePoolKey(tree, nodeData);
+        const current = Number(usesMap[poolKey] ?? 0);
+        usesMap[poolKey] = Math.max(current, uses.max);
+        update["system.talentTree.uses"] = usesMap;
+      }
       if (isCharacter) update["system.lp.value"] = lp - cost;
       await this.actor.update(update);
       this.render(false);
@@ -2024,8 +3130,7 @@ GT.rollManualDice = function() {
     ui.notifications?.warn?.("Bitte wähle mindestens einen Würfel oder Bonus aus.");
     return;
   }
-  GT.chatRoll({formula, label: "Manueller Wurf"});
-  GT.clearManualDice();
+  GT.chatRoll({formula, label: "Manueller Wurf", onRoll: () => GT.clearManualDice()});
 };
 
 /** Fügt die manuelle Würfeltabelle unter dem Chatformular ein und hängt lokale Eventhandler einmalig an. */
@@ -2138,6 +3243,87 @@ GT.installGlobalClickHandlers = function() {
 };
 
 /** Foundry-init: registriert Helfer, Einstellungen, Bögen, Templates und öffentliche game.gothicTales-APIs. */
+
+class GothicTalesMagicCircleTree extends GothicTalesApplicationV2 {
+  constructor(actor, options = {}) { super(options); this.actor = actor; this.activeTree = "magie"; }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-magic-circle-tree",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-talent-tree-window", "gt-magic-tree-window"],
+    window: {title: "Gothic Tales Magiekreise", resizable: true},
+    position: {width: 1040, height: 780}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/talent-tree.hbs", scrollable: [".gt-talent-app"]}};
+  async getData() {
+    const data = await GT.getMagicCircleScaffold();
+    const learnedRoot = this.actor.system?.magicCircles?.learned ?? {};
+    const lp = Number(this.actor.system?.lp?.value ?? 0);
+    const isCharacter = this.actor.type === "character";
+    const trees = data.trees.map(tree => {
+      const learned = learnedRoot[tree.id] ?? {};
+      const nodes = tree.nodes.map(n => {
+        const reqsMet = (n.requires ?? []).every(r => learned[r]);
+        const attrCheck = GT.actorMeetsTalentAttributeRequirements(this.actor, n);
+        const attrText = GT.talentAttributeRequirementText(n, this.actor);
+        const cost = isCharacter ? Number(n.lpCost || 0) : 0;
+        const enoughLp = !isCharacter || lp >= cost;
+        const available = !!learned[n.id] || (reqsMet && attrCheck.met && enoughLp);
+        const displayCost = isCharacter ? (Number(n.lpCost || 0) ? `${n.lpCost} LP` : "frei") : "NSC/Monster";
+        const diceText = GT.magicCircleDiceConfig(n).map(d => d.toUpperCase()).join(" · ");
+        const missingReason = [];
+        if (!reqsMet) missingReason.push("Magiekreis fehlt");
+        if (!attrCheck.met) missingReason.push(`Attribute fehlen: ${attrCheck.missing.map(m => `${m.label} ${m.current}/${m.min}`).join(", ")}`);
+        if (!enoughLp) missingReason.push("nicht genug LP");
+        const tooltip = GT.talentDetailsHtml({descriptionHtml: n.descriptionHtml || GT.talentDescriptionHtml(n.description || ""), usageText: diceText ? `Würfel: ${diceText}` : "", attributeText: attrText});
+        const lockedInfo = missingReason.length ? `Gesperrt: ${missingReason.join("; ")}` : "";
+        const tooltipHtml = `${tooltip}${lockedInfo ? `<p class="gt-tooltip-meta"><strong>Gesperrt:</strong> ${GT.escape(missingReason.join("; "))}</p>` : ""}`;
+        return {...n, displayLabel: GT.talentDisplayLabel(n), learned: !!learned[n.id], available, displayCost, attrRequirementText: attrText, usesText: diceText ? `Würfel: ${diceText}` : "", consumeText: "", tooltip: tooltipHtml, missingReason: missingReason.join("; ")};
+      });
+      return {...tree, active: tree.id === this.activeTree, nodes};
+    });
+    return {actor: this.actor, system: this.actor.system, trees, isCharacter};
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find(".gt-tree-select").on("click", ev => { this.activeTree = ev.currentTarget.dataset.tree; GT.hideFloatingTooltip(); this.render(false); });
+    html.find(".gt-talent-node")
+      .on("mouseenter focus", ev => GT.showFloatingTooltip(ev.currentTarget, ev.currentTarget.dataset.gtTooltip))
+      .on("mouseleave blur", () => GT.hideFloatingTooltip());
+    html.find(".gt-talent-node").on("click", async ev => {
+      ev.preventDefault();
+      if (this.actor.system?.sheetLocked) return ui.notifications.warn("Der Charakterbogen ist gesperrt.");
+      const button = ev.currentTarget;
+      const tree = button.dataset.tree;
+      const node = button.dataset.node;
+      const data = await GT.getMagicCircleScaffold();
+      const treeData = data.trees.find(t => t.id === tree);
+      const nodeData = treeData?.nodes.find(n => n.id === node);
+      if (!nodeData) return;
+      const path = `magicCircles.learned.${tree}.${node}`;
+      const isLearned = !!getProperty(this.actor.system, path);
+      const update = {};
+      if (isLearned) {
+        const isCharacter = this.actor.type === "character";
+        update[`system.${path}`] = false;
+        if (isCharacter) update["system.lp.value"] = Number(this.actor.system?.lp?.value ?? 0) + Number(nodeData.lpCost || 0);
+        await this.actor.update(update); return this.render(false);
+      }
+      const learnedTree = getProperty(this.actor.system, `magicCircles.learned.${tree}`) ?? {};
+      const reqsMet = (nodeData.requires ?? []).every(r => learnedTree[r]);
+      if (!reqsMet) return ui.notifications.warn("Voraussetzungen sind noch nicht erfüllt.");
+      const isCharacter = this.actor.type === "character";
+      const attrCheck = GT.actorMeetsTalentAttributeRequirements(this.actor, nodeData);
+      if (isCharacter && !attrCheck.met) return ui.notifications.warn(`Mindestattribute nicht erfüllt: ${attrCheck.missing.map(m => `${m.label} ${m.current}/${m.min}`).join(", ")}.`);
+      const cost = isCharacter ? Number(nodeData.lpCost || 0) : 0;
+      const lp = Number(this.actor.system?.lp?.value ?? 0);
+      if (isCharacter && lp < cost) return ui.notifications.warn("Nicht genug Lernpunkte.");
+      update[`system.${path}`] = true;
+      if (isCharacter) update["system.lp.value"] = lp - cost;
+      await this.actor.update(update);
+      this.render(false);
+    });
+  }
+}
+
 Hooks.once("init", async function() {
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("not", a => !a);
@@ -2157,6 +3343,7 @@ Hooks.once("init", async function() {
   game.gothicTales.creator = {open: actor => new GothicTalesCharacterCreator({targetActor: actor}).render(true)};
   game.gothicTales.npcGenerator = {open: actor => new GothicTalesNPCGenerator({targetActor: actor}).render(true)};
   game.gothicTales.talentTree = {open: actor => new GothicTalesTalentTree(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character).render(true)};
+  game.gothicTales.magicCircles = {open: actor => new GothicTalesMagicCircleTree(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character).render(true)};
   GT.installGlobalClickHandlers();
   await foundry.applications.handlebars.loadTemplates([
     "systems/gothic-tales/templates/actor/parts/attributes.hbs",
@@ -2198,7 +3385,13 @@ GT.activateSheetTabs = function(root, options = {}) {
   const activate = (group = "primary", tab = "main", {notify = true} = {}) => {
     const target = tab || findFirstTab(group);
     root.querySelectorAll(`.tab[data-group="${group}"]`).forEach(panel => panel.classList.toggle("active", panel.dataset.tab === target));
-    root.querySelectorAll(`.tabs[data-group="${group}"] [data-tab]`).forEach(link => link.classList.toggle("active", link.dataset.tab === target));
+    root.querySelectorAll(`.tabs[data-group="${group}"] [data-tab]`).forEach(link => {
+      const isActive = link.dataset.tab === target;
+      link.classList.toggle("active", isActive);
+      link.setAttribute("aria-selected", isActive ? "true" : "false");
+      if (isActive) link.setAttribute("aria-current", "page");
+      else link.removeAttribute("aria-current");
+    });
     if (notify) options.onChange?.(target, group);
   };
 

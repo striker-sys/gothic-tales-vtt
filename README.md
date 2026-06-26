@@ -1,5 +1,60 @@
 # Gothic Tales für Foundry VTT
 
+## Release 0.6.22
+
+Version 0.6.17 stellt die Talentbeschreibungen aus dem zuletzt hochgeladenen Talentbaum-JSON wieder her und trennt Magiekreise, Druidenkunst und Berufe vom normalen Talentbaum. Der Actorbogen erhält eigene Bereiche für Zauber, Magiekreise und Druidenkunst. Magiekreise besitzen nun eine eigene JSON-Datei, einen eigenen Lernbaum und vier magische Würfelfelder, die abhängig vom aktuell gelernten Magiekreis gefüllt werden.
+
+
+### 0.6.22 – Benutzte Zauberwürfel
+
+- Benutzte Zauberwürfel werden nicht mehr gelöscht.
+- Benutzte Zauberwürfel bleiben sichtbar und bekommen ein `Benutzt`-Wasserzeichen.
+- Benutzte Zauberwürfel können nur noch neu geworfen, aber nicht erneut benutzt werden.
+- Beim Benutzen eines Zauberwürfels wird eine Chatkarte mit Würfelart und Ergebnis erzeugt.
+- Der Magiewürfel-Dialog wurde breiter und die Buttons sind sauberer angeordnet.
+
+### 0.6.21 – Magiekreis-Würfelerkennung korrigiert
+
+- Magiekreis-Anzeige und Zauberwürfel-Auswahl sind jetzt getrennt.
+- Der aktuelle Kreis wird nur noch aus Knoten der Ranggruppe `magiekreis` ermittelt.
+- Die vorbereiteten Zauberwürfel werden aus dem höchsten gelernten Knoten mit nicht leerem `magicDice` gelesen.
+- Dadurch werden `Zauberwürfel I`, `II` und `III` nicht mehr von höheren leeren Kreisknoten überdeckt.
+- Die hochgeladene `gt-magic-circles-scaffold.json` wurde übernommen.
+
+### 0.6.20 – Aktiver Menüpunkt hervorgehoben
+
+- Der aktuell aktive Bereich in der kompakten Charakterbogen-Navigation ist jetzt deutlich markiert.
+- Aktiver Menüpunkt erhält roten Pergament-/Siegel-Look, Goldrand, Leuchteffekt und seitliche Markierung.
+- Die Tab-Logik setzt zusätzlich `aria-selected` und `aria-current`, damit der aktive Zustand zuverlässiger gestylt werden kann.
+
+### 0.6.19 – Vorteil-/Nachteilwürfel angepasst
+
+- Kleiner Vorteil/Nachteil verwendet jetzt `1W2`.
+- Mittlerer Vorteil/Nachteil verwendet jetzt `1W6`.
+- Großer Vorteil/Nachteil verwendet jetzt `1W12`.
+- Vorteil wird als positiver Zusatzwürfel gerechnet.
+- Nachteil wird als negativer Zusatzwürfel gerechnet.
+- Diese Vorteil-/Nachteilwürfel lösen keine Pasch-Nachwürfe aus.
+
+### 0.6.18 – Roll-Dialog-Fix
+
+- Fehler beim Öffnen des neuen Würfeldialogs behoben.
+- Der interne Dialogzustand heißt jetzt `rollState`, weil `ApplicationV2.state` in Foundry bereits ein schreibgeschützter Getter ist.
+- Vorteil/Nachteil, Zusatzbonus und Zusatzwürfel bleiben unverändert nutzbar.
+
+### 0.6.17 – Description-Restore
+
+- Die `description`-Felder wurden aus dem zuletzt hochgeladenen `gt-talent-tree-scaffold.json` erneut als Quelle übernommen.
+- Die Trennung in normale Talente, Magiekreise, Druidenkunst und Berufe bleibt erhalten.
+- Keine automatische Textkorrektur oder HTML-Bereinigung der Beschreibungen.
+
+### 0.6.14 – ActorSheet-Politur
+
+- Die Seiten-Navigation im Charakterbogen ist nun kompakter und zeigt standardmäßig nur Icons.
+- Beim Hover fährt die jeweilige Bezeichnung als kleiner Notizzettel nach rechts aus.
+- Der Magiekreis-Bereich hat mehr Abstand zwischen Würfelfeldern, Beschriftung und Aktionsbuttons.
+- Talentkarten haben mehr Luft; Aktionen liegen sauber unter dem Text und überschneiden sich nicht mehr.
+
 ## Release 0.6.3
 
 Version 0.6.3 entfernt den alten Legacy-Welt-Importer vollständig. Die Gothic-Tales-Inhalte werden nun ausschließlich über die im Manifest registrierten System-Compendien ausgeliefert. Nicht mehr benötigte Importdaten, das Importer-Template und alte Pack-Logreste wurden aus dem Release entfernt.

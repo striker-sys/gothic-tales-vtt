@@ -9,7 +9,23 @@
           "label": "Einhand I",
           "lpCost": 10,
           "requires": [],
-          "description": "Einhand I gehört zum Talentbaum Einhändiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "4 Anwendungen. Du bist nun geübt mit Einhandwaffen",
+          "uses": {
+            "max": 4,
+            "recovery": "combatEnd",
+            "pool": "einhand",
+            "poolLabel": "Einhand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "einhand",
+          "rank": 1
         },
         {
           "id": "stoss",
@@ -18,7 +34,23 @@
           "requires": [
             "einhand-1"
           ],
-          "description": "Stoß gehört zum Talentbaum Einhändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: einhand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, Angriff. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Einhand. Mach einen Angriff. Der Schadenwurf hat +1w4.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "finte",
@@ -27,7 +59,23 @@
           "requires": [
             "einhand-1"
           ],
-          "description": "Finte gehört zum Talentbaum Einhändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: einhand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Reaktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Einhand I. Du würfelst bei einem beliebigen Angriffswurf erneut. Pro Angriff nur einmal anwendbar.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "einhand-2",
@@ -36,7 +84,26 @@
           "requires": [
             "einhand-1"
           ],
-          "description": "Einhand II gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 20,
+            "ge": 20
+          },
+          "description": "6 Anwendungen. Kosten: 5 LP. Voraussetzung: Einhand I. Du kannst die Einhandwaffe nun besser einsetzten.",
+          "uses": {
+            "max": 6,
+            "recovery": "combatEnd",
+            "pool": "einhand",
+            "poolLabel": "Einhand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "einhand",
+          "rank": 2
         },
         {
           "id": "parade",
@@ -45,7 +112,26 @@
           "requires": [
             "einhand-2"
           ],
-          "description": "Parade gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 25,
+            "ge": 25
+          },
+          "description": "Reaktion. Kosten: 5 LP. Voraussetzung: Einhand II. Wenn dich ein Nahkampfangriff trifft, kannst du mit dem Waffen W&B deiner Einhandwaffe die Reaktion Blocken ausführen. Ist mit anderen Blocken-Reaktionen kombinierbar.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "einhand-3",
@@ -54,7 +140,26 @@
           "requires": [
             "einhand-2"
           ],
-          "description": "Einhand III gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 30,
+            "ge": 30
+          },
+          "description": "Anwendungen 8. Kosten: 5 LP. Voraussetzung: Einhand II. Dein Umgang mit dem Schwert wird profesioneller.",
+          "uses": {
+            "max": 8,
+            "recovery": "combatEnd",
+            "pool": "einhand",
+            "poolLabel": "Einhand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "einhand",
+          "rank": 3
         },
         {
           "id": "parade-konter",
@@ -64,7 +169,26 @@
             "parade",
             "einhand-3"
           ],
-          "description": "Parade & Konter gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: parade, einhand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 35,
+            "ge": 35
+          },
+          "description": "Passiver Effekt. Kosten: 5 LP. Voraussetzung: Parade, Einhand III. Machst du eine erfolgrteiche Parade erhälst du einen Gelegenheitsangriff gegen den Angreifer.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": "einhand"
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "einhand-4",
@@ -73,7 +197,26 @@
           "requires": [
             "einhand-3"
           ],
-          "description": "Einhand IV gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 40,
+            "ge": 40
+          },
+          "description": "10 Anwendungen. Kosten: 5 LP. Voraussetzung: Einhand III. Dein Schwert schwingst du nun auf meisterhafte Weise.",
+          "uses": {
+            "max": 10,
+            "recovery": "combatEnd",
+            "pool": "einhand",
+            "poolLabel": "Einhand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "einhand",
+          "rank": 4
         },
         {
           "id": "schwertmeister",
@@ -82,7 +225,54 @@
           "requires": [
             "einhand-4"
           ],
-          "description": "Schwertmeister gehört zum Talentbaum Einhändiger Kampf. Kosten: 5 LP. Voraussetzung: einhand-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 50,
+            "ge": 45
+          },
+          "description": "Passiver Effekt. Kosten: 5 LP. Voraussetzung: Einhand IV. Machst du einen erfolgreichen Konter, wähle eins dieser 3. +2 Anwendungen Einhändiger Kampf, +1 Anwendungen Beidhändiger Kampf, +1 Anwendungen Kampf mit Schilden.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": "einhand"
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "ausfall",
+          "label": "Ausfall",
+          "lpCost": 5,
+          "requires": [
+            "einhand-4"
+          ],
+          "attributeRequirements": {
+            "intu": 25,
+            "erf": 20
+          },
+          "description": "Reaktion. Kosten: 5 LP. Voraussetzung: Einhand IV. Wenn ein Ziel ein Feld betritt, das 1 Feld außerhalb deiner bedrohten Zone ist, machst du einen Schritt und erhälst einen Gelegenheitsangriff gegen dieses Ziel.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Einhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -95,7 +285,23 @@
           "label": "Zweihand I",
           "lpCost": 10,
           "requires": [],
-          "description": "Zweihand I gehört zum Talentbaum Zweihändiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "6 Anwendungen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Du kannst jetzt mit Zweihandwaffen umgehen.",
+          "uses": {
+            "max": 6,
+            "recovery": "combatEnd",
+            "pool": "zweihand",
+            "poolLabel": "Zweihand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "zweihand",
+          "rank": 1
         },
         {
           "id": "knaufschlag",
@@ -104,7 +310,23 @@
           "requires": [
             "zweihand-1"
           ],
-          "description": "Knaufschlag gehört zum Talentbaum Zweihändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: zweihand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Reaktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Zweihand I. Wenn du einen Treffer machst, wirf den w20 erneut (AttW liegen lassen): Trifft dieser Angriffswurf auch, füge dem Schadenwurf 1w2+StB hinzu.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "zweihand"
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "schwerer-schlag",
@@ -113,7 +335,23 @@
           "requires": [
             "zweihand-1"
           ],
-          "description": "Schwerer Schlag gehört zum Talentbaum Zweihändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: zweihand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, Angirff. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Zweihand I. Mach einen Angriff. Du erhälst einen kleinen Vorteil auf den Angriffswurf und verdoppelst beim Schadenswurf alle Boni.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "zweihand"
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "zweihand-2",
@@ -122,7 +360,26 @@
           "requires": [
             "zweihand-1"
           ],
-          "description": "Zweihand II gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 20,
+            "ausd": 15
+          },
+          "description": "8 Anwendungen. Kosten: 5 LP. Voraussetzung: Zweihand I. Du bist geübter im führen Zweihändiger Waffen.",
+          "uses": {
+            "max": 8,
+            "recovery": "combatEnd",
+            "pool": "zweihand",
+            "poolLabel": "Zweihand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "zweihand",
+          "rank": 2
         },
         {
           "id": "ansturm",
@@ -131,16 +388,52 @@
           "requires": [
             "zweihand-2"
           ],
-          "description": "Ansturm gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 20
+          },
+          "description": "Passiver Effekt. Kosten: 5 LP. Voraussetzung: Zweihand II. Immer wenn du dich 3 Felder auf ein Ziel zu bewegst und dann einen Angriff machst, erhälst du +1w4 zum Angriffs- und Schadenswurf hinzu.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
-          "id": "ausholen",
+          "id": "ausholen-1",
           "label": "Ausholen I",
           "lpCost": 0,
           "requires": [
             "zweihand-2"
           ],
-          "description": "Ausholen I gehört zum Talentbaum Zweihändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: zweihand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 25
+          },
+          "description": "<p>Freie Aktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Zweihand II. Vor Angriffen kannst du ausholen: Dein ANgriffswurf hat einen Nachteil, dafür erhälst du einen Würfel zum Schadenswurf dazu.</p><ul><li>Wenig: Kleiner Nachteil & 1w2</li><li>Mehr: Mittlerer Nachteil & 1w4</li><li>Weit: Großer Nachteil & 1w6</li></ul>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "zweihand"
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "ausholen",
+          "rank": 1
         },
         {
           "id": "zweihand-3",
@@ -149,7 +442,26 @@
           "requires": [
             "zweihand-2"
           ],
-          "description": "Zweihand III gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 30,
+            "ausd": 15
+          },
+          "description": "11 Anwendungen. Kosten: 5 LP. Voraussetzung: Zweihand II. Die Führung der Zwihandwaffen wird Profesioneller.",
+          "uses": {
+            "max": 11,
+            "recovery": "combatEnd",
+            "pool": "zweihand",
+            "poolLabel": "Zweihand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "zweihand",
+          "rank": 3
         },
         {
           "id": "wirbelwind",
@@ -158,7 +470,51 @@
           "requires": [
             "zweihand-3"
           ],
-          "description": "Wirbelwind gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, Angirff. Kosten: 5 LP. Voraussetzung: Zweihand III. Mach einen Angriff: Er betrifft alle Figuren in deiner bedrohten Zone, auch Verbündete.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "zweihand"
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "ausholen-2",
+          "label": "Ausholen II",
+          "lpCost": 0,
+          "requires": [
+            "zweihand-2",
+            "ausholen-1"
+          ],
+          "attributeRequirements": {
+            "st": 35
+          },
+          "description": "<p>Freie Aktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Zweihand II. Vor Angriffen kannst du ausholen: Dein ANgriffswurf hat einen Nachteil, dafür erhälst du einen Würfel zum Schadenswurf dazu.</p><ul><li>Wenig: Kleiner Nachteil & 1w4</li><li>Mehr: Mittlerer Nachteil & 1w6</li><li>Weit: Großer Nachteil & 1w8</li></ul>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "zweihand"
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "ausholen",
+          "rank": 2
         },
         {
           "id": "zweihand-4",
@@ -167,7 +523,54 @@
           "requires": [
             "zweihand-3"
           ],
-          "description": "Zweihand IV gehört zum Talentbaum Zweihändiger Kampf. Kosten: 10 LP. Voraussetzung: zweihand-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 45,
+            "ausd": 20
+          },
+          "description": "14 Anwendungen. Kosten: 10 LP. Voraussetzung: zweihand III. Du schwingst die Zweihandwaffe mit der unaufhaltsamen Wucht eines wahren Meisters",
+          "uses": {
+            "max": 14,
+            "recovery": "combatEnd",
+            "pool": "zweihand",
+            "poolLabel": "Zweihand"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "zweihand",
+          "rank": 4
+        },
+        {
+          "id": "ausholen-3",
+          "label": "Ausholen III",
+          "lpCost": 0,
+          "requires": [
+            "zweihand-3",
+            "ausholen-2"
+          ],
+          "attributeRequirements": {
+            "st": 50
+          },
+          "description": "Passiver Effekt. Für alle 20 Schaden, die du mit einem Angriff, bei dem du ausgeholt hast, machst, erhältst du +1 Anwendung.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "schildbrecher",
@@ -176,7 +579,25 @@
           "requires": [
             "zweihand-4"
           ],
-          "description": "Schildbrecher gehört zum Talentbaum Zweihändiger Kampf. Kosten: 5 LP. Voraussetzung: zweihand-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 25
+          },
+          "description": "Aktion, Angriff. Kosten: 5 LP. Voraussetzung: Zweihand IV. Mach einen Angriff: Bei diesem Angriff kann das Ziel nicht Blocken. Bei einem Treffer kann das Ziel bis zu Beginn deines nächsten Zuges nicht Blocken.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "zweihand"
+          },
+          "category": "Zweihändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -189,7 +610,23 @@
           "label": "Bogen I",
           "lpCost": 10,
           "requires": [],
-          "description": "Bogen I gehört zum Talentbaum Bogen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "6 Anwendungen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Du kannst nun mit Bögen umgehen.",
+          "uses": {
+            "max": 6,
+            "recovery": "combatEnd",
+            "pool": "bogen",
+            "poolLabel": "Bogen"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "bogen",
+          "rank": 1
         },
         {
           "id": "schnellschuss",
@@ -198,7 +635,23 @@
           "requires": [
             "bogen-1"
           ],
-          "description": "Schnellschuss gehört zum Talentbaum Bogen. Kosten: automatisch oder über den Talentpfad. Voraussetzung: bogen-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Bogen I. Auf beliebigen Angriff anwendbar. Du musst keine 2w20 wegen Folgeangriffen werfen.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "bogen"
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "fokus",
@@ -207,7 +660,23 @@
           "requires": [
             "bogen-1"
           ],
-          "description": "Fokus gehört zum Talentbaum Bogen. Kosten: automatisch oder über den Talentpfad. Voraussetzung: bogen-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Bogen I. Ein Angriffswurf erhält +3. Dieses Talent ist mehrfach auf einen Angriff anwendbar.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "bogen"
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "bogen-2",
@@ -216,7 +685,26 @@
           "requires": [
             "bogen-1"
           ],
-          "description": "Bogen II gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 15,
+            "ge": 20
+          },
+          "description": "8 ANwendungen. Kosten: 5 LP. Voraussetzung: Bogen I. Du bist geübter im umgang mit dem Bogen.",
+          "uses": {
+            "max": 8,
+            "recovery": "combatEnd",
+            "pool": "bogen",
+            "poolLabel": "Bogen"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "bogen",
+          "rank": 2
         },
         {
           "id": "festnageln",
@@ -225,7 +713,25 @@
           "requires": [
             "bogen-2"
           ],
-          "description": "Festnageln gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 25
+          },
+          "description": "Aktion, Angriff. Kosten: 5 LP. Voraussetzung: Bogen II. Mache einen Angriffswurf. <p>Bei einem Treffer kann das Ziel sich nicht bewegen, bis es sich mit einer Standardaktion befreit hat: St- / Ge- WUrf gegen deinen Angriffswurf.</p> <p>Der dritte Versuch gelingt automatisch. Trisst du ein fliegendes Ziel, stürzt es unkontrolliert zu Boden.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "bogen"
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "duck-dich",
@@ -234,7 +740,25 @@
           "requires": [
             "bogen-2"
           ],
-          "description": "Duck dich! gehört zum Talentbaum Bogen. Kosten: automatisch oder über den Talentpfad. Voraussetzung: bogen-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 15
+          },
+          "description": "Reaktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Bogen II. Wenn ein Verbündeter sich in deiner Schusslinie befindet, verwende dieses Talent und schieß am Verbündeten vorbei: Dein nächster Angriffswurf hat +IntuB und der Schadenswurf +IntuW.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "bogen"
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "bogen-3",
@@ -243,7 +767,26 @@
           "requires": [
             "bogen-2"
           ],
-          "description": "Bogen III gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 20,
+            "ge": 30
+          },
+          "description": "10 Anwendungen. Kosten: 5 LP. Voraussetzung: Bogen II. Du kannst den bogen jetzt deutlich Profesioneller benutzten.",
+          "uses": {
+            "max": 10,
+            "recovery": "combatEnd",
+            "pool": "bogen",
+            "poolLabel": "Bogen"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "bogen",
+          "rank": 3
         },
         {
           "id": "scharfschuetze",
@@ -252,7 +795,26 @@
           "requires": [
             "bogen-3"
           ],
-          "description": "Scharfschütze gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 35,
+            "konz": 15
+          },
+          "description": "3 Aktionen, Angriff. Kosten: 5 LP. Voraussetzung: Bogen III. Mach einen Angriff: Du hast einen großen Vorteil und +3xKonzW auf den Schadenswurf. Ist dieser Angriff tödlich, erhälst du 2 Aktionen zurück.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 3,
+            "pool": "bogen"
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "mehrfachschuss",
@@ -261,7 +823,26 @@
           "requires": [
             "bogen-3"
           ],
-          "description": "Mehrfachschuss gehört zum Talentbaum Bogen. Kosten: 10 LP. Voraussetzung: bogen-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 35,
+            "intu": 20
+          },
+          "description": "2 Aktionen, Angirff. Kosten: 10 LP. Voraussetzung: Bogen III. <p>Mach einen Angriff mit Nachteil gegen eine Anzahl verschiedener Ziele:</p> <ul><li>2 Ziele mit kleinem Nachteil.</li><li>3 Ziele mit mittlerem Nachteil.</li><li>4 Ziele mit großem Nachteil</li></ul> Triffst du alle Ziele erhälst du 1 Aktion zurück.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 2,
+            "pool": "bogen"
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "bogen-4",
@@ -270,7 +851,26 @@
           "requires": [
             "bogen-3"
           ],
-          "description": "Bogen IV gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 25,
+            "ge": 40
+          },
+          "description": "12 Anwendungen. Kosten: 5 LP. Voraussetzung: Bogen III. DU nutzt den Bogen wie ein richtiger Profi.",
+          "uses": {
+            "max": 12,
+            "recovery": "combatEnd",
+            "pool": "bogen",
+            "poolLabel": "Bogen"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "bogen",
+          "rank": 4
         },
         {
           "id": "praezision",
@@ -279,7 +879,78 @@
           "requires": [
             "bogen-4"
           ],
-          "description": "Präzision gehört zum Talentbaum Bogen. Kosten: 5 LP. Voraussetzung: bogen-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 50,
+            "konz": 20
+          },
+          "description": "Passiver Effekt. Kosten: 5 LP. Voraussetzung: Bogen IV. Angriffe auf eine Entfernung von 7 Feldern oder mehr haben +KonzW auf den Angriffs- und Schadenswurf.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "folgeschuss",
+          "label": "Folgeschuss",
+          "lpCost": 0,
+          "requires": [
+            "bogen-4"
+          ],
+          "attributeRequirements": {
+            "intu": 30
+          },
+          "description": "Passiver Effekt. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Bogen IV. Benutzt du Fokus und Schnellschuss bei einem Angriff zugleich, wirf 1w20 mehr. Das höhere Ergebnis zählt.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "tiefer-fokus",
+          "label": "Tiefer Fokus",
+          "lpCost": 10,
+          "requires": [
+            "bogen-4"
+          ],
+          "attributeRequirements": {},
+          "description": "Passiver Effekt. Kosten: 10LP. Voraussetzung: Bogen IV. Der Bonus von Fokus ist nun +InuB+3 ",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Bogen",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -292,7 +963,23 @@
           "label": "Armbrust I",
           "lpCost": 10,
           "requires": [],
-          "description": "Armbrust I gehört zum Talentbaum Armbrust. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "6 Anwendungen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. DU kannst nun mit Armbrüsten umgehen.",
+          "uses": {
+            "max": 6,
+            "recovery": "combatEnd",
+            "pool": "armbrust",
+            "poolLabel": "Armbrust"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Armbrust",
+          "rankGroup": "armbrust",
+          "rank": 1
         },
         {
           "id": "schwachstelle-1",
@@ -301,7 +988,23 @@
           "requires": [
             "armbrust-1"
           ],
-          "description": "Schwachstelle I gehört zum Talentbaum Armbrust. Kosten: automatisch oder über den Talentpfad. Voraussetzung: armbrust-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, ANgriff. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Armbrust I. Mach einen Angriff. Du erhälst +4 auf den ANgriffswurf.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "armbrust"
+          },
+          "category": "Armbrust",
+          "rankGroup": "schwachstelle",
+          "rank": 1
         },
         {
           "id": "blitzschuss",
@@ -310,7 +1013,25 @@
           "requires": [
             "armbrust-1"
           ],
-          "description": "Blitzschuss gehört zum Talentbaum Armbrust. Kosten: automatisch oder über den Talentpfad. Voraussetzung: armbrust-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 15
+          },
+          "description": "Reaktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Armbrust I. Will dein Ziel die Reaktion Blocken nutzen, kannst du dies durch diese Reaktion verhindern.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "armbrust"
+          },
+          "category": "Armbrust",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "armbrust-2",
@@ -319,7 +1040,26 @@
           "requires": [
             "armbrust-1"
           ],
-          "description": "Armbrust II gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 15,
+            "st": 15
+          },
+          "description": "8 Anwendungen. Kosten: 5 LP. Voraussetzung: Armbrust I. Du bist besser im nutzen der Armbrust.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Armbrust",
+          "rankGroup": "armbrust",
+          "rank": 2
         },
         {
           "id": "durchbohren",
@@ -328,7 +1068,53 @@
           "requires": [
             "armbrust-2"
           ],
-          "description": "Durchbohren gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 20
+          },
+          "description": "Passiver Effekt. Kosten: 5 LP. Voraussetzung: Armbrust II. <p>Bei einem Pasch auf den Schadenswurf gilt der schaden auch für ein Ziel bis zu 3 Felder dahinter. </p><p>Achte auf den Winkel: Die Schusslinie verläuft durch die Mitte des Feldes des ersten Ziels.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Armbrust",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "schwachstelle-2",
+          "label": "Schwachstelle II",
+          "lpCost": 0,
+          "requires": [
+            "armbrust-2",
+            "schachstelle-1"
+          ],
+          "attributeRequirements": {
+            "ge": 20
+          },
+          "description": "Aktion, Angriff. Kosten: 5LP. Voraussetzung: Armbrust II, Schachstelle I. Mach einen Angriff. Du erhälst +4 auf den Angriffswurf und fügst dem Schadenswurf deinen IntuW hinzu.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "armbrust"
+          },
+          "category": "Armbrust",
+          "rankGroup": "schwachstelle",
+          "rank": 2
         },
         {
           "id": "armbrust-3",
@@ -337,7 +1123,26 @@
           "requires": [
             "armbrust-2"
           ],
-          "description": "Armbrust III gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 20,
+            "intu": 25
+          },
+          "description": "10 Anwendungen. Kosten: 5 LP. Voraussetzung: Armbrust II. Der umgang mit der Armbrust ist deutlich Profesioneller geworden.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Armbrust",
+          "rankGroup": "armbrust",
+          "rank": 3
         },
         {
           "id": "rueckenschuss",
@@ -346,7 +1151,25 @@
           "requires": [
             "armbrust-3"
           ],
-          "description": "Rückenschuss gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 25
+          },
+          "description": "Passiver Effekt. Kosten: 5 LP. Voraussetzung: Armbrust III. Trifft ein Angriff von hinten, füge einem einzelnen Waffenwürfel hinzu.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Armbrust",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "scharfschuetze-armbrust",
@@ -355,7 +1178,25 @@
           "requires": [
             "armbrust-3"
           ],
-          "description": "Scharfschütze gehört zum Talentbaum Armbrust. Kosten: 5 LP. Voraussetzung: armbrust-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 30
+          },
+          "description": "2 Aktionen, Angriff. Kosten: 5 LP. Voraussetzung: Armbrust III. Wende 2 Aktionen auf und mache einen Angriff. Dieser Schuss hat +10 auf den Angriffswurf, beim Schadenwurf außerdem den IntuW+B und keine Mali auf mittlere Reichweite.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 2,
+            "pool": "armbrust"
+          },
+          "category": "Armbrust",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -368,7 +1209,26 @@
           "label": "Schild I",
           "lpCost": 5,
           "requires": [],
-          "description": "Schild I gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 15,
+            "st": 15
+          },
+          "description": "5 Anwendungen. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Du kannst nun Schilde benutzen.",
+          "uses": {
+            "max": 5,
+            "recovery": "combatEnd",
+            "pool": "Schild",
+            "poolLabel": "Schild"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schild",
+          "rank": 1
         },
         {
           "id": "spott",
@@ -377,7 +1237,23 @@
           "requires": [
             "schild-1"
           ],
-          "description": "Spott gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schild-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Schild I. <p>Einschüchtern vs. MA, Reichweite: 8</p><p>Bei einem Treffer hat das Ziel großen Nachteil auf Angriffe, wenn es <strong>nicht dich</strong> angreift. Der Effekt hält an bis das Ziel dich einmal getroffen hat</p><p>Regeln für Folgeangriffe gelten für Spott nicht.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "spott",
+          "rank": 1
         },
         {
           "id": "schutzwall",
@@ -386,7 +1262,23 @@
           "requires": [
             "schild-1"
           ],
-          "description": "Schutzwall gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schild-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, Standard. Kosten: automatisch oder über den Talentpfad. Voraussetzung: Schild I. Wähle drei zusammenhängende Felder in deiner bedrohten Zone. Bis zu Beginn deines nächsten Zuges kannst du Angriffswürfe gegen dich, die durch oder von diesen Feldern kommen, mit 2xSchildW blocken. Wirst du bewegt, bricht dein Schutzwall zusammen. Bewegst du dich aus freien Stücken, bewegt er sich mit dir.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "schild-2",
@@ -395,16 +1287,50 @@
           "requires": [
             "schild-1"
           ],
-          "description": "Schild II gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "7 Anwendungen. Kosten: 5 LP. Voraussetzung: Schild I. Du wirst besser beim Umgang mit dem Schild.",
+          "uses": {
+            "max": 7,
+            "recovery": "combatEnd",
+            "pool": "schild",
+            "poolLabel": "Schild"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schild",
+          "rank": 2
         },
         {
-          "id": "intervention",
+          "id": "intervention-1",
           "label": "Intervention",
           "lpCost": 0,
           "requires": [
             "schild-2"
           ],
-          "description": "Intervention gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schild-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 15
+          },
+          "description": "Reaktion. Kosten: Keine. Voraussetzung: Schild II. <p>Mache einen Schritt(optional) und lenk einen Angriff auf dich:</p><p>Einen Nahkampfangriff gegen eine Figur neben dir oder einen Fernkampfangriff mit Schusslinie durch deine bedrohte Zone.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "intervention",
+          "rank": 1
         },
         {
           "id": "schildschlag",
@@ -413,7 +1339,23 @@
           "requires": [
             "schild-2"
           ],
-          "description": "Schildschlag gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Reaktion. Kosten: 5 LP. Voraussetzung: Schild II. <p>Blockst du einen Nahkampfangriff, mache einen Angriffswurf vs. RK mit den soeben verwendeten Blocknwürfeln +w20: Bei einem Treffer ist das Ziel verspottet und sein nächster Angriff hat mittleren Nachteil.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schildschlag",
+          "rank": 1
         },
         {
           "id": "schild-3",
@@ -422,7 +1364,26 @@
           "requires": [
             "schild-2"
           ],
-          "description": "Schild III gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 25,
+            "st": 25
+          },
+          "description": "9 Anwendungen. Kosten: 5 LP. Voraussetzung: Schild II. Du wirst profesioneller im Umgang mit Schilden.",
+          "uses": {
+            "max": 9,
+            "recovery": "combatEnd",
+            "pool": "schild",
+            "poolLabel": "Schild"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schild",
+          "rank": 3
         },
         {
           "id": "beissender-spott",
@@ -432,7 +1393,25 @@
             "spott",
             "schild-3"
           ],
-          "description": "Beißender Spott gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: spott, schild-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "st": 30
+          },
+          "description": "Freie Aktion. Kosten: 5 LP. Voraussetzung: Spott, Schild III. <p><ul><li><Einschüchtern vs. MA</li><li>Reichweite: 10</li><li>Ziele: 2</li></lu></p><p>Bei einem Treffer hat das Ziel großen Nachteil auf Angriffe, wenn es <strong>nicht dich</strong> angreift. Der Effekt hält an bis das Ziel dich einmal getroffen hat</p><p>Regeln für Folgeangriffe gelten für Spott nicht.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "spott",
+          "rank": 2
         },
         {
           "id": "schutzwall-2",
@@ -442,7 +1421,25 @@
             "schutzwall",
             "schild-3"
           ],
-          "description": "Schutzwall II gehört zum Talentbaum Kampf mit Schilden. Kosten: automatisch oder über den Talentpfad. Voraussetzung: schutzwall, schild-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 30
+          },
+          "description": "Aktion, Standard. Kosten: Keine. Voraussetzung: Schutzwall, Schild III. <p>Wähle drei zusammenhängende Felder in deiner bedrohten Zone. Bis zu Beginn deines nächsten Zuges kannst du Angriffswürfe gegen dich, die durch oder von diesen Feldern kommen, mit 2xSchildW blocken. Wirst du bewegt, bricht dein Schutzwall zusammen. Bewegst du dich aus freien Stücken, bewegt er sich mit dir.</p><p>Blockst du <strong>in einer Runde</strong> mit Schutzwall 3 Angriffe, erhälst du +1 Anwendung. Blockst du 5 Angriffe, erhälst du eine weitere.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schutzwall",
+          "rank": 2
         },
         {
           "id": "schild-4",
@@ -451,16 +1448,109 @@
           "requires": [
             "schild-3"
           ],
-          "description": "Schild IV gehört zum Talentbaum Kampf mit Schilden. Kosten: 10 LP. Voraussetzung: schild-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 35,
+            "st": 35
+          },
+          "description": "12 Anwendungen. Kosten: 10 LP. Voraussetzung: Schild III. Du bist nun Meisterhaft im umgang mit dem Schilden.",
+          "uses": {
+            "max": 12,
+            "recovery": "combatEnd",
+            "pool": "schild",
+            "poolLabel": "Schild"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schild",
+          "rank": 4
+        },
+        {
+          "id": "laecherlich",
+          "label": "Lächerlich",
+          "lpCost": 0,
+          "requires": [
+            "schild-4",
+            "beissender-spott"
+          ],
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: Keine. Voraussetzung: Schild IV, Beissender Spott. <p><ul><li><Einschüchtern vs. MA</li><li>Reichweite: 10</li><li>Ziele: 2</li></lu></p><p>Wenn dich ein verspotteter Gegner angreift, kannst du diesen Angriff absichtlich treffen lassen (vorm Angriffswurf ansagen!). Er bleibt verspottet und du erhältst +1 Anwendung.</p><p>Bei einem Treffer hat das Ziel großen Nachteil auf Angriffe, wenn es <strong>nicht dich</strong> angreift. Der Effekt hält an bis das Ziel dich einmal getroffen hat</p><p>Regeln für Folgeangriffe gelten für Spott nicht.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "spott",
+          "rank": 3
         },
         {
           "id": "schnelle-rache",
           "label": "Schnelle Rache",
           "lpCost": 5,
           "requires": [
-            "schild-4"
+            "schild-4",
+            "schildschlag"
           ],
-          "description": "Schnelle Rache gehört zum Talentbaum Kampf mit Schilden. Kosten: 5 LP. Voraussetzung: schild-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 45,
+            "st": 45
+          },
+          "description": "Reaktion. Kosten: 5LP. Voraussetzung: Schild IV, Schildschlag. <p>Blockst du einen Nahkampfangriff, mache einen Angriffswurf vs. RK mit den soeben verwendeten Blocknwürfeln +w20: Bei einem Treffer ist das Ziel verspottet und sein nächster Angriff hat mittleren Nachteil.</p><p>Schildschlag hat nun +IntuW. Pascht dieser Wurf, machen deine BlockenW Schaden am Ziel.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "schildschlag",
+          "rank": 2
+        },
+        {
+          "id": "intervention-2",
+          "label": "Intervention II",
+          "lpCost": 5,
+          "requires": [
+            "schild-4",
+            "intervention-1"
+          ],
+          "attributeRequirements": {
+            "intu": 25
+          },
+          "description": "Reaktion. Kosten: 5LP. Voraussetzung: Schild IV, Intervention I. <p>Intervention kostet keine Anwendung, wenn der ANgriff geblockt wird.</p><p>Mache einen Schritt(optional) und lenk einen Angriff auf dich:</p><p>Einen Nahkampfangriff gegen eine Figur neben dir oder einen Fernkampfangriff mit Schusslinie durch deine bedrohte Zone.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "schild"
+          },
+          "category": "Kampf mit Schilden",
+          "rankGroup": "intervention",
+          "rank": 2
         }
       ]
     },
@@ -471,45 +1561,160 @@
         {
           "id": "hinterlist-1",
           "label": "Hinterlist I",
-          "lpCost": 10,
+          "lpCost": 5,
           "requires": [],
-          "description": "Hinterlist I gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 15,
+            "intu": 15
+          },
+          "description": "4 Anwendungen. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Du kannst nun Hinterhältig Kämpfen.",
+          "uses": {
+            "max": 4,
+            "recovery": "combatEnd",
+            "pool": "hinterlist",
+            "poolLabel": "Hinterlist"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "hinterlist",
+          "rank": 1
         },
         {
-          "id": "meucheln",
-          "label": "Meucheln",
+          "id": "schatten",
+          "label": "Zurück in die Schatten",
           "lpCost": 0,
           "requires": [
             "hinterlist-1"
           ],
-          "description": "Meucheln gehört zum Talentbaum Hinterlistiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: hinterlist-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Reaktion. Kosten: Keine. Voraussetzung: Hinterlist I. <p>Schaltest du eine Figur aus, erhälst du eine freie Bewegungsaktion</p>.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "hinterlist"
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         },
         {
-          "id": "schattenschritt",
-          "label": "Schattenschritt",
-          "lpCost": 5,
+          "id": "hinterhealtige-angriffe-1",
+          "label": "Hinterhältige Angriffe I",
+          "lpCost": 0,
           "requires": [
             "hinterlist-1"
           ],
-          "description": "Schattenschritt gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Hinterlist I. <p>Dein <strong>erster Angriff des Kampfes</strong> ist hinterhältig, wenn das Ziel dich bis zum Angriff noch nicht entdeckt hat oder das Ziel <strong>überrascht</strong> ist (siehe Regelwerk: Überraschungsrunde)!</p><ul><li><strong>+1w4</strong> für Fernkampfangriffe</li><li><strong>+3w4</strong> für Nahkampfangriffe.</li></lu>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "hinterhealtige-angriffe",
+          "rank": 1
         },
         {
           "id": "hinterlist-2",
           "label": "Hinterlist II",
-          "lpCost": 5,
+          "lpCost": 10,
           "requires": [
             "hinterlist-1"
           ],
-          "description": "Hinterlist II gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 20,
+            "intu": 20
+          },
+          "description": "5 Anwendungen. Kosten: 10 LP. Voraussetzung: Hinterlist I. Du bist geübter im Hinterhältigen Kampf.",
+          "uses": {
+            "max": 5,
+            "recovery": "combatEnd",
+            "pool": "hinterlist",
+            "poolLabel": "Hinterlist"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "hinterlist",
+          "rank": 2
         },
         {
-          "id": "hinterhalt",
-          "label": "Hinterhalt",
-          "lpCost": 5,
+          "id": "ablenken",
+          "label": "Ablenken",
+          "lpCost": 0,
           "requires": [
             "hinterlist-2"
           ],
-          "description": "Hinterhalt gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: Keine. Voraussetzung: Hinterlist II. <p>Mach einen Heimlichkeitswurf vs MA.</p><p>Reichweite: 10</p><p>Bei einem Treffer darfst du die Blickrichtung des Ziels verändern und alle Heimlichkeitswürfe gegen dieses Ziel haben in diesem Zug kleine Vorteile.</p><p>Regeln für Folgeangriffe gelten für Ablenken nicht.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "hinterlist"
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "hinterhealtige-angriffe-2",
+          "label": "Hinterhältige Angriffe II",
+          "lpCost": 0,
+          "requires": [
+            "hinterlist-2",
+            "hinterhealtige-angriffe-1"
+          ],
+          "attributeRequirements": {
+            "ge": 25,
+            "intu": 25
+          },
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Hinterlist I. <p>Dein <strong>erster Angriff des Kampfes</strong> ist hinterhältig, wenn das Ziel dich bis zum Angriff noch nicht entdeckt hat oder das Ziel <strong>überrascht</strong> ist (siehe Regelwerk: Überraschungsrunde)!</p><ul><li><strong>+1w4</strong> für Fernkampfangriffe</li><li><strong>+3w4</strong> für Nahkampfangriffe.</li></lu>Du kannst nun auch während des Kampfes Figuren hinterhältig angreifen. Dafür gelten diese Regeln:<lu><li>Es ist der erste Angriff deines Zuges.</li><lu><li>Der Angriff kommt von hinten:<li>Nahkampf: Die 3 Felder im Rücken der Figur.</li><li>Fernkampf: Schusslinie geht über Kante im Rücken der Figur.</li></lu><li>Die Figur darf dich <strong>vom Ende ihres Zuges bis zu deinem Angriff nicht verortet</strong> haben:</li><lu><li>Bewege dich, wie für deinen Angriff nötig, und mach dann einen Heimlichkeits-Wurf vs. MA des Ziels.</li><li>Bei Erfolg ist der Angriff hinterhältig.</li></lu></lu>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "hinterhealtige-angriffe",
+          "rank": 2
         },
         {
           "id": "hinterlist-3",
@@ -518,16 +1723,107 @@
           "requires": [
             "hinterlist-2"
           ],
-          "description": "Hinterlist III gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 30,
+            "intu": 30
+          },
+          "description": "7 Anwendungen. Kosten: 5 LP. Voraussetzung: Hinterlist II. Du bist profesioneller im umgang im Hinterheltigen Kampf.",
+          "uses": {
+            "max": 7,
+            "recovery": "combatEnd",
+            "pool": "hinterlist",
+            "poolLabel": "Hinterlist"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "hinterlist",
+          "rank": 3
         },
         {
-          "id": "meisterdieb",
-          "label": "Meisterdieb",
+          "id": "blitzattacke",
+          "label": "Blitzattacke",
           "lpCost": 5,
           "requires": [
             "hinterlist-3"
           ],
-          "description": "Meisterdieb gehört zum Talentbaum Hinterlistiger Kampf. Kosten: 5 LP. Voraussetzung: hinterlist-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 35
+          },
+          "description": "Aktion, Angriff. Kosten: 5 LP. Voraussetzung: Hinterlist II. <p>Mache einen Schritt, dann einen ANgriff und danach einen zweiten Schritt.</p><p>Mit Blitzattacke darfst du weitere <strong>hinterhältige Angriffe</strong> auf andere Ziele in einem Zug machen. Weitere Regeln für hinterhöltige Angriffe gelten und:<br>Der Heimlichkeitswurf dieses Angriffs hat <strong>mittleren Nachteil.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "hinterlist"
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "hinterhealtige-angriffe-3",
+          "label": "Hinterhältige Angriffe III",
+          "lpCost": 0,
+          "requires": [
+            "hinterlist-3"
+          ],
+          "attributeRequirements": {
+            "ge": 35
+          },
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Hinterlist I. <p>Dein <strong>erster Angriff des Kampfes</strong> ist hinterhältig, wenn das Ziel dich bis zum Angriff noch nicht entdeckt hat oder das Ziel <strong>überrascht</strong> ist (siehe Regelwerk: Überraschungsrunde)!</p><p><ul><li><strong>+1w6</strong> für Fernkampfangriffe</li><li><strong>+3w6</strong> für Nahkampfangriffe.</li></lu></p><p>Du kannst nun auch während des Kampfes Figuren hinterhältig angreifen. Dafür gelten diese Regeln:<lu><li>Es ist der erste Angriff deines Zuges.</li><li>Der Angriff kommt von hinten:<li>Nahkampf: Die 3 Felder im Rücken der Figur.</li><li>Fernkampf: Schusslinie geht über Kante im Rücken der Figur.</li></li><li>Die Figur darf dich <strong>vom Ende ihres Zuges bis zu deinem Angriff nicht verortet</strong> haben:<li>Bewege dich, wie für deinen Angriff nötig, und mach dann einen Heimlichkeits-Wurf vs. MA des Ziels.</li><li>Bei Erfolg ist der Angriff hinterhältig.</li></li></lu>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "hinterlist"
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "hinterhealtige-angriffe",
+          "rank": 3
+        },
+        {
+          "id": "meister-der-schatten",
+          "label": "Meister der Schatten",
+          "lpCost": 0,
+          "requires": [
+            "hinterlist-3"
+          ],
+          "attributeRequirements": {
+            "erf": 20
+          },
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Hinterlist III. Heimlichkeit hat bei allen Würfen einen kleinen Vorteil.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Hinterlistiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -539,17 +1835,76 @@
           "id": "beidhaendig-1",
           "label": "Beidhändig I",
           "lpCost": 10,
-          "requires": [],
-          "description": "Beidhändig I gehört zum Talentbaum Beidhändiger Kampf. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "requires": [
+            "einhand-1"
+          ],
+          "attributeRequirements": {},
+          "description": "4 Anwendungen. Kosten: 10 LP. Voraussetzung: Einhand I. Du kannst nun zwei Einhandwaffen führen.",
+          "uses": {
+            "max": 4,
+            "recovery": "combatEnd",
+            "pool": "beidhaendig",
+            "poolLabel": "Beidhändig"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhändig",
+          "rank": 1
         },
         {
-          "id": "zweite-klinge",
-          "label": "Zweite Klinge",
+          "id": "klingensturm",
+          "label": "Klingensturm",
           "lpCost": 0,
           "requires": [
             "beidhaendig-1"
           ],
-          "description": "Zweite Klinge gehört zum Talentbaum Beidhändiger Kampf. Kosten: automatisch oder über den Talentpfad. Voraussetzung: beidhaendig-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Beidhändig I. <p>Folgeangriff (wirf nach einem Treffer mit 2w20 beim Angriffswurf...) gelten für deine zwei Waffen getrennt.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "beidhaendige-vereidigung-1",
+          "label": "Beidhändige Verteidigung I",
+          "lpCost": 0,
+          "requires": [
+            "beidhaendig-1"
+          ],
+          "attributeRequirements": {},
+          "description": "Reaktion. Kosten: Keine. Voraussetzung: Beidhändig I. <p>Du darfst die Reaktion Blocken gegen Nahkampfangriffe machen. Du verwendest dafür einen <strong>w4</strong>.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "beidhaendig"
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhaendige-vereidigung",
+          "rank": 1
         },
         {
           "id": "beidhaendig-2",
@@ -558,16 +1913,80 @@
           "requires": [
             "beidhaendig-1"
           ],
-          "description": "Beidhändig II gehört zum Talentbaum Beidhändiger Kampf. Kosten: 5 LP. Voraussetzung: beidhaendig-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 25
+          },
+          "description": "5 Anwendungen. Kosten: 5 LP. Voraussetzung: Beidhändig I. Du bist geübter im Beidhändigen Kampf.",
+          "uses": {
+            "max": 5,
+            "recovery": "combatEnd",
+            "pool": "beidhaendig",
+            "poolLabel": "Beidhändig"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhändig",
+          "rank": 2
         },
         {
-          "id": "klingentanz",
-          "label": "Klingentanz",
+          "id": "doppelschlag-1",
+          "label": "Doppelschlag I",
           "lpCost": 5,
           "requires": [
             "beidhaendig-2"
           ],
-          "description": "Klingentanz gehört zum Talentbaum Beidhändiger Kampf. Kosten: 5 LP. Voraussetzung: beidhaendig-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 30
+          },
+          "description": "Aktion, Angriff. Kosten: 5 LP. Voraussetzung: Beidhändig II. Mach einen Angriff. Nimm beim Schadenswurf den WaffenW&B der anderen Waffe hinzu. Dies gilt als ein Angriff mit nur einer Waffe.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "beidhaendig"
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "doppelschlag",
+          "rank": 2
+        },
+        {
+          "id": "beidhaendige-vereidigung-2",
+          "label": "Beidhändige Verteidigung II",
+          "lpCost": 0,
+          "requires": [
+            "beidhaendig-1",
+            "beidhaendige-vereidigung-1"
+          ],
+          "attributeRequirements": {
+            "intu": 15
+          },
+          "description": "Reaktion. Kosten: Keine. Voraussetzung: Beidhändig II, Beidhändige Verteidigung II. <p>Du darfst die Reaktion Blocken gegen Nahkampfangriffe machen. Du verwendest dafür einen <strong>w4</strong>.</p><p><strong>Passiver Effekt</strong></p><p>Die Reaktion Blocken bei beidhändiger Verteidigung kostet dich keine Anwendung mehr.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": "beidhaendig"
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhaendige-vereidigung",
+          "rank": 2
         },
         {
           "id": "beidhaendig-3",
@@ -576,65 +1995,161 @@
           "requires": [
             "beidhaendig-2"
           ],
-          "description": "Beidhändig III gehört zum Talentbaum Beidhändiger Kampf. Kosten: 5 LP. Voraussetzung: beidhaendig-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
-        }
-      ]
-    },
-    {
-      "id": "magie",
-      "label": "Kreis der Magie 1-6",
-      "nodes": [
-        {
-          "id": "kreis-1",
-          "label": "1. Kreis der Magie",
-          "lpCost": 10,
-          "requires": [],
-          "description": "1. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 30
+          },
+          "description": "6 Anwendung. Kosten: 5 LP. Voraussetzung: Beidhändig III. Du bist nun Profesioneller im umgang mit zwei Einhandwaffen im Kampf.",
+          "uses": {
+            "max": 6,
+            "recovery": "combatEnd",
+            "pool": "beidhaendig",
+            "poolLabel": "Beidhändig"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhändig",
+          "rank": 3
         },
         {
-          "id": "kreis-2",
-          "label": "2. Kreis der Magie",
-          "lpCost": 10,
+          "id": "beidhaendige-vereidigung-3",
+          "label": "Beidhändige Verteidigung III",
+          "lpCost": 0,
           "requires": [
-            "kreis-1"
+            "beidhaendig-3",
+            "beidhaendige-vereidigung-2"
           ],
-          "description": "2. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 25
+          },
+          "description": "Reaktion. Kosten: Keine. Voraussetzung: Beidhändig III, Beidhändige Verteidigung II. <p>Du darfst die Reaktion Blocken gegen Nahkampfangriffe machen. Du verwendest dafür einen <strong>w6</strong>.<br>Beidhändige Verteidigung ist nun auch bei Fernkampfangriffen gegen RK anwendbar.</p><p><strong>Passiver Effekt</strong></p><p>Die Reaktion Blocken bei beidhändiger Verteidigung kostet dich keine Anwendung mehr.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": "beidhaendig"
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhaendige-vereidigung",
+          "rank": 3
         },
         {
-          "id": "kreis-3",
-          "label": "3. Kreis der Magie",
-          "lpCost": 10,
+          "id": "doppelschlag-2",
+          "label": "Doppelschlag II",
+          "lpCost": 0,
           "requires": [
-            "kreis-2"
+            "beidhaendig-3",
+            "doppelschlag-1"
           ],
-          "description": "3. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, Angriff. Kosten: Keine. Voraussetzung: Beidhändig III, Doppelschlag I. <p>Mach einen Angriff. Nimm beim Schadenswurf den WaffenW&B der anderen Waffe hinzu. Dies gilt als ein Angriff mit nur einer Waffe.</p><p>Wirf beim Angriffswurf 1w20 mehr: Das höhere Ergebnis zählt. Außerdem darfst du nun Stoß & Doppelschlag kombinieren (für je 1 Anwendung).</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "beidhaendig"
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "doppelschlag",
+          "rank": 2
         },
         {
-          "id": "kreis-4",
-          "label": "4. Kreis der Magie",
-          "lpCost": 10,
+          "id": "beidhaendig-4",
+          "label": "Beidhändig IV",
+          "lpCost": 5,
           "requires": [
-            "kreis-3"
+            "beidhaendig-3"
           ],
-          "description": "4. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-3. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 40
+          },
+          "description": "7 Anwendung. Kosten: 5 LP. Voraussetzung: Beidhändig IV. Du bist nun Meisterhaft im umgang mit zwei Einhandwaffen im Kampf.",
+          "uses": {
+            "max": 7,
+            "recovery": "combatEnd",
+            "pool": "beidhaendig",
+            "poolLabel": "Beidhändig"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhändig",
+          "rank": 4
         },
         {
-          "id": "kreis-5",
-          "label": "5. Kreis der Magie",
-          "lpCost": 10,
+          "id": "endloser-klingensturm",
+          "label": "Endloser Klingensturm",
+          "lpCost": 0,
           "requires": [
-            "kreis-4"
+            "beidhaendig-4",
+            "klingensturm"
           ],
-          "description": "5. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-4. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 30
+          },
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Beidhändig IV, Klingensturm. <p>Bei einem Treffer mit einer Waffe erhälst du für diesen Zug einen kleinen Vorteil für weitere Waffenangriffe</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "beidhändig",
+          "rank": 4
         },
         {
-          "id": "kreis-6",
-          "label": "6. Kreis der Magie",
-          "lpCost": 10,
+          "id": "saebeltaenzer",
+          "label": "Säbeltänzer",
+          "lpCost": 0,
           "requires": [
-            "kreis-5"
+            "beidhaendig-4"
           ],
-          "description": "6. Kreis der Magie gehört zum Talentbaum Kreis der Magie 1-6. Kosten: 10 LP. Voraussetzung: kreis-5. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "erf": 25
+          },
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Beidhändig IV. <p>Bei jeder Verwendung von Doppelschlag oder beidhändiger Verteidigung darfst du einen Schritt machen.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Beidhändiger Kampf",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -645,18 +2160,78 @@
         {
           "id": "akrobatik-1",
           "label": "Akrobatik I",
-          "lpCost": 5,
+          "lpCost": 10,
           "requires": [],
-          "description": "Akrobatik I gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 15,
+            "ausd": 15
+          },
+          "description": "4 Anwendung. Kosten: 10 LP. Voraussetzung: Keine. Du bist Akrobatischer.",
+          "uses": {
+            "max": 4,
+            "recovery": "combatEnd",
+            "pool": "akrobatik",
+            "poolLabel": "Akrobatik"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Akrobatik",
+          "rankGroup": "akrobatik",
+          "rank": 1
         },
         {
-          "id": "rollen",
-          "label": "Abrollen",
+          "id": "taenzelnde-schritte-1",
+          "label": "Tänzelnde Schritte I",
           "lpCost": 0,
           "requires": [
             "akrobatik-1"
           ],
-          "description": "Abrollen gehört zum Talentbaum Akrobatik. Kosten: automatisch oder über den Talentpfad. Voraussetzung: akrobatik-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Aktion, Bewegung. Kosten: Keine. Voraussetzung: Akrobakit I. <p>Du machst eine Aktion Bewegung. Verlässt du Felder der bedrohten Zome, provoziert dies keine Gelegenheitsangriffe.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "akrobatik"
+          },
+          "category": "Akrobatik",
+          "rankGroup": "taenzelnde-schritte",
+          "rank": 1
+        },
+        {
+          "id": "aufspringen",
+          "label": "Aufspringen",
+          "lpCost": 0,
+          "requires": [
+            "akrobatik-1"
+          ],
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: Keine. Voraussetzung: Akrobatik I. <p>Du kommst von der liegenden in die stehende Position.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "akrobatik"
+          },
+          "category": "Akrobatik",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "akrobatik-2",
@@ -665,16 +2240,80 @@
           "requires": [
             "akrobatik-1"
           ],
-          "description": "Akrobatik II gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: akrobatik-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 20,
+            "st": 15
+          },
+          "description": "5 Anwendungen. Kosten: 5 LP. Voraussetzung: Akrobatik II. Du bist noch Akrobatischer als vorher.",
+          "uses": {
+            "max": 5,
+            "recovery": "combatEnd",
+            "pool": "akrobatik",
+            "poolLabel": "Akrobatik"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Akrobatik",
+          "rankGroup": "akrobatik",
+          "rank": 2
         },
         {
-          "id": "wandlauf",
-          "label": "Wandlauf",
+          "id": "taenzelnde-schritte-2",
+          "label": "Tänzelnde Schritte II",
           "lpCost": 5,
+          "requires": [
+            "akrobatik-1",
+            "taenzelnde-schritte-1"
+          ],
+          "attributeRequirements": {
+            "ge": 20,
+            "intu": 25
+          },
+          "description": "Aktion, Bewegung. Kosten: 5LP. Voraussetzung: Akrobakit II, Tänzelnde Schritte I. <p>Du machst eine Aktion Bewegung. Verlässt du Felder der bedrohten Zome, provoziert dies keine Gelegenheitsangriffe.</p><p>Wendest du Tänzelnde Schritte an, hast du +1 BW für diesen Zug.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "akrobatik"
+          },
+          "category": "Akrobatik",
+          "rankGroup": "taenzelnde-schritte",
+          "rank": 2
+        },
+        {
+          "id": "falltechnik",
+          "label": "Falltechnik",
+          "lpCost": 0,
           "requires": [
             "akrobatik-2"
           ],
-          "description": "Wandlauf gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: akrobatik-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Akrobatik II. <lu><li>Fällst du unkontrolliert, darfst du dennoch einen Springen-Wurf machen, um den Fallschaden zu reduzieren.</li><li>Fällst du kontrolliert, reduzierst du den Fallschaden um 2w6 pro 5er-Stelle deines Springen-Wurfes.</li></lu>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Akrobatik",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "akrobatik-3",
@@ -683,7 +2322,102 @@
           "requires": [
             "akrobatik-2"
           ],
-          "description": "Akrobatik III gehört zum Talentbaum Akrobatik. Kosten: 5 LP. Voraussetzung: akrobatik-2. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 25,
+            "ausd": 25,
+            "st": 20
+          },
+          "description": "7 Anwendungen. Kosten: 5 LP. Voraussetzung: Akrobatik III. Du bist nun ein Profi in der Akrobatik.",
+          "uses": {
+            "max": 7,
+            "recovery": "combatEnd",
+            "pool": "akrobatik",
+            "poolLabel": "Akrobatik"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Akrobatik",
+          "rankGroup": "akrobatik",
+          "rank": 3
+        },
+        {
+          "id": "kampfrolle",
+          "label": "Kampfrolle",
+          "lpCost": 5,
+          "requires": [
+            "akrobatik-3"
+          ],
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: Keine. Voraussetzung: Akrobatik III. <p>Du bewegst dich 2 Felder in eine Richtung (diafonal oder gerade). Provoziert keine Gelegenheitsangriffe.</p><p>Ein Angriff direkt nach einer Kampfrolle gilt als überraschend und hat entsprechenden Vorteil.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "akrobatik"
+          },
+          "category": "Akrobatik",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "hechtsprung",
+          "label": "Hechtsprung",
+          "lpCost": 0,
+          "requires": [
+            "akrobatik-3"
+          ],
+          "attributeRequirements": {},
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Akrobatik III. <p>Alle Sprünge reichen nun 1 Meter weiter und 50cm höher</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Akrobatik",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "maechtiger-sprungangriff",
+          "label": "Mächtiger Sprungangriff",
+          "lpCost": 0,
+          "requires": [
+            "akrobatik-3"
+          ],
+          "attributeRequirements": {},
+          "description": "Passiver Effekt. Kosten: Keine. Voraussetzung: Akrobatik III. <p>Sprungangriffe haben einen großen Vorteil</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Akrobatik",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -692,43 +2426,428 @@
       "label": "Weitere Waffen",
       "nodes": [
         {
-          "id": "stabkampf-1",
-          "label": "Stabkampf I",
-          "lpCost": 10,
+          "id": "staebe-1",
+          "label": "Stäbe I",
+          "lpCost": 5,
           "requires": [],
-          "description": "Stabkampf I gehört zum Talentbaum Weitere Waffen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Du bist nun mit Stäben geübt. Du kannst nun mit Stäben Nahkampfangriffe gegen RK blocken. Verwende dafür den Waffenwürfel (ohne Bonus).",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "stab",
+            "poolLabel": "Stab"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "stabkampf",
+          "rank": 1
         },
         {
-          "id": "stabkampf-2",
-          "label": "Stabkampf II",
+          "id": "staebe-2",
+          "label": "Stäbe II",
           "lpCost": 5,
           "requires": [
-            "stabkampf-1"
+            "staebe-1"
           ],
-          "description": "Stabkampf II gehört zum Talentbaum Weitere Waffen. Kosten: 5 LP. Voraussetzung: stabkampf-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 15,
+            "st": 15
+          },
+          "description": "<p>Du bist nun mit Stäben geübt. Du kannst nun mit Stäben Nahkampfangriffe gegen RK blocken. Verwende dafür den Waffenwürfel (ohne Bonus).</p><p>Alle Stäbe haben für dich nun die Eigenschaft Lang. Mit Stäben kannst du nun Talente des <strong>Zweihändigen Kampfes</strong> benutzen.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "stabkampf",
+          "rank": 2
+        },
+        {
+          "id": "staebe-3",
+          "label": "Stäbe III",
+          "lpCost": 5,
+          "requires": [
+            "staebe-1"
+          ],
+          "attributeRequirements": {
+            "intu": 30,
+            "konz": 25,
+            "erf": 25
+          },
+          "description": "<p>Du bist nun mit Stäben geübt. Du kannst nun mit Stäben Nahkampfangriffe gegen RK blocken. Verwende dafür den Waffenwürfel (ohne Bonus).</p><p>Alle Stäbe haben für dich nun die Eigenschaft Lang. Mit Stäben kannst du nun Talente des <strong>Zweihändigen Kampfes</strong> benutzen.</p><p>Blocken mit Stäben ist nun auch bei Fernkampfangriffen vs. RK möglich.<br>Hältst du einen magischen Stab, kannst du auch Angriffszauber vs. ELE oder MA blockieren.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "stabkampf",
+          "rank": 3
+        },
+        {
+          "id": "wurfwaffen-1",
+          "label": "Wurfwaffen I",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "<p>Die Reichweite (5/10) für Wurfwaffen hat auf normale & maximale Reichweite +IntuB & +GeB.<br>Einhand- & Zweihandwaffen kannst du nun auch so werfen. Benutze ihr übliches Attribut. Sie gehen nicht zu Bruch.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "wurfwaffen",
+          "rank": 1
+        },
+        {
+          "id": "wurfwaffen-2",
+          "label": "Wurfwaffen II",
+          "lpCost": 5,
+          "requires": [
+            "wurfwaffen-1"
+          ],
+          "attributeRequirements": {
+            "erf": 20
+          },
+          "description": "<p>Die Reichweite (5/10) für Wurfwaffen hat auf normale & maximale Reichweite +IntuB & +GeB.<br>Einhand- & Zweihandwaffen kannst du nun auch so werfen. Benutze ihr übliches Attribut. Sie gehen nicht zu Bruch.</p><p>Regeln für Folgeangriffe gelten für Wurfwaffen nicht länger.<br>Wurfwaffen gehen dir seltener zu Bruch: Du verlierst nur noch jede Fünfte(zuvor jede Dritte).</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "wurfwaffen",
+          "rank": 2
+        },
+        {
+          "id": "nadelstiche",
+          "label": "Nadelstiche",
+          "lpCost": 5,
+          "requires": [
+            "wurfwaffen-1"
+          ],
+          "attributeRequirements": {
+            "ge": 20,
+            "intu": 20
+          },
+          "description": "Triffst du auf ein Ziel 2 <strong>direkt aufeinander folgende</strong> Angriffe, ist das Ziel gehindert.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "aus-dem-handgelenk",
+          "label": "Aus dem Handgelenk",
+          "lpCost": 10,
+          "requires": [
+            "wurfwaffen-2"
+          ],
+          "attributeRequirements": {},
+          "description": "Freie Aktion, Angriff. Kosten: 10 LP. Voraussetzung: Wurfwaffen III, Übung in Gewandheit.<p>Pro Zug darfst du 1 Wurf auf Gewandheit machen. Du erhälst dafür eine Anzahl Angriffe als freie Aktionen: <lu><li>Gewandheit vs. 20 - 1 Angriff</li><li>Kritischer Erfolg - 2 Angriffe</li><lu>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "",
+          "rank": 0
         },
         {
           "id": "speere-1",
           "label": "Speere I",
-          "lpCost": 10,
+          "lpCost": 5,
           "requires": [],
-          "description": "Speere I gehört zum Talentbaum Weitere Waffen. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "Kosten: 5LP. <p>Du bist nun mit Speeren geübt. Mit Speeren kannst du Talente des \"Einhändigen Kampfes\" benutzen: Speertalente verbrauchen Anwendungen dieses Talentbaums</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "speere",
+          "rank": 1
         },
         {
           "id": "speere-2",
           "label": "Speere II",
-          "lpCost": 5,
+          "lpCost": 10,
           "requires": [
             "speere-1"
           ],
-          "description": "Speere II gehört zum Talentbaum Weitere Waffen. Kosten: 5 LP. Voraussetzung: speere-1. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "intu": 20
+          },
+          "description": "Kosten: 10 LP. Bonus: +2 Anwendungen für Einhandtalentbaum. </p>Du bist nun besser mit Speeren geübt. Mit Speeren kannst du Talente des \"Einhändigen Kampfes\" benutzen: Speertalente verbrauchen Anwendungen dieses Talentbaums</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "speere",
+          "rank": 2
         },
         {
-          "id": "waffenlos",
-          "label": "Waffenloser Kampf",
+          "id": "speere-3",
+          "label": "Speere III",
           "lpCost": 5,
-          "requires": [],
-          "description": "Waffenloser Kampf gehört zum Talentbaum Weitere Waffen. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "requires": [
+            "speere-2"
+          ],
+          "attributeRequirements": {
+            "intu": 25,
+            "ge": 30
+          },
+          "description": "Kosten: 10 LP. Bonus: +3 Anwendungen für Einhandtalentbaum. </p>Du bist nun professionel mit Speeren geübt. Mit Speeren kannst du Talente des \"Einhändigen Kampfes\" benutzen: Speertalente verbrauchen Anwendungen dieses Talentbaums</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "speere",
+          "rank": 3
+        },
+        {
+          "id": "federtanz-1",
+          "label": "Federtanz I",
+          "lpCost": 0,
+          "requires": [
+            "speere-1"
+          ],
+          "attributeRequirements": {
+            "erf": 10
+          },
+          "description": "Freie Aktion. Kosten: Keine. Voraussetzung: Speere I.<p>Bis zu Beginn deines nächsten Zuges darfst du bei jedem Treffer mit deinem Speer <strong>einen</strong> Schritt machen.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "federtanz",
+          "rank": 1
+        },
+        {
+          "id": "federtanz-2",
+          "label": "Federtanz II",
+          "lpCost": 5,
+          "requires": [
+            "speere-3",
+            "federtanz-1"
+          ],
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: 5 LP. Voraussetzung: Speere III, Federtanz I.<p>Bis zu Beginn deines nächsten Zuges darfst du bei jedem Treffer mit deinem Speer <strong>zwei</strong> Schritt machen.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "federtanz",
+          "rank": 2
+        },
+        {
+          "id": "spinnentanz-1",
+          "label": "Spinnentanz I",
+          "lpCost": 0,
+          "requires": [
+            "speere-2",
+            "federtanz-1"
+          ],
+          "attributeRequirements": {
+            "erf": 20
+          },
+          "description": "Freie Aktion. Kosten: Keine. Voraussetzung: Speere II, Federtanz I.<p>Bis zu Beginn deines nächsten Zuges darfst du 1 Gelegenheitsangriff auf Figuren machen, die ein Feld in deiner Nahkampfreichweite verlassen. Gilt auch für forcierte Bewegungen. <strong>Maximal 1 Angriff pro Figur pro Runde.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "spinnentanz",
+          "rank": 1
+        },
+        {
+          "id": "spinnentanz-2",
+          "label": "Spinnentanz II",
+          "lpCost": 5,
+          "requires": [
+            "speere-3",
+            "spinnentanz-1"
+          ],
+          "attributeRequirements": {},
+          "description": "Freie Aktion. Kosten: 5LP. Voraussetzung: Speere III, Spinnentanz I.<p>Bis zu Beginn deines nächsten Zuges darfst du 1 Gelegenheitsangriff auf Figuren machen, die ein Feld in deiner Nahkampfreichweite verlassen. Gilt auch für forcierte Bewegungen. <strong>Maximal 2 Angriff pro Figur pro Runde.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "spinnentanz",
+          "rank": 2
+        },
+        {
+          "id": "schlangenbiss",
+          "label": "Schlangenbiss",
+          "lpCost": 5,
+          "requires": [
+            "speere-3"
+          ],
+          "attributeRequirements": {
+            "ge": 35
+          },
+          "description": "Aktion, Angriff. Kosten: 5LP. Voraussetzung: Speere III.<p>Wirf auf den Angriffswurf 5w20. Würfelst du einen kritischen Treffer, zählt dieser Wurf. Sonst zählt das mittlere Ergebnis.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "einhand"
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "schneller-waffenwechsel",
+          "label": "Schneller Waffenwechsel",
+          "lpCost": 5,
+          "requires": [
+            ""
+          ],
+          "attributeRequirements": {
+            "ge": 15,
+            "intu": 15,
+            "erf": 15
+          },
+          "description": "Kosten: 5LP. Voraussetzung: Keine.<p>Waffen zu ziehen, sie wegzustecken oder zu wechseln ist nun eine freie Aktion(zuvor Standardaktion).</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Weitere Waffen",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     },
@@ -737,134 +2856,262 @@
       "label": "Sonstige Talente",
       "nodes": [
         {
-          "id": "kampffokus",
-          "label": "Kampffokus",
+          "id": "leichte-ruestung",
+          "label": "Leichte Rüstung",
           "lpCost": 5,
           "requires": [],
-          "description": "Kampffokus gehört zum Talentbaum Sonstige Talente. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 25,
+            "ge": 25
+          },
+          "description": "Rüstungen mit max. +8 in den Verteidigungsboni insgesamt haben für dich die Eigenschaft \"Sicherer Tritt 1, Klettern 1 \" und du hast einen kleinen Vorteil auf Gewandheit und Springen&Klettern.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "",
+          "rank": 0
         },
         {
-          "id": "zauberfokus",
-          "label": "Zauberfokus",
+          "id": "schwere-ruestung",
+          "label": "Schwere Rüstung",
           "lpCost": 5,
           "requires": [],
-          "description": "Zauberfokus gehört zum Talentbaum Sonstige Talente. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 35,
+            "st": 25
+          },
+          "description": "Trägst du eine Rüstung mit der Eigenschaft \"Schwer\", hast du keinen -1 BW Malus.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "",
+          "rank": 0
         },
         {
-          "id": "zaehigkeit",
-          "label": "Zähigkeit",
+          "id": "kampftrinker",
+          "label": "Kampftrinker",
           "lpCost": 5,
           "requires": [],
-          "description": "Zähigkeit gehört zum Talentbaum Sonstige Talente. Kosten: 5 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
-        }
-      ]
-    },
-    {
-      "id": "druiden-riten",
-      "label": "Riten der Druiden",
-      "nodes": [
-        {
-          "id": "riten-der-druiden",
-          "label": "Riten der Druiden",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Riten der Druiden gehört zum Talentbaum Riten der Druiden. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ausd": 15,
+            "konz": 15
+          },
+          "description": "Tränke zu trinken ist für dich eine freie Aktion.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "",
+          "rank": 0
         },
         {
-          "id": "seelenweber",
-          "label": "Schule des Seelenwebers",
+          "id": "baumstammwerfer",
+          "label": "Baumstammwerfer",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {
+            "ausd": 25,
+            "st": 20
+          },
+          "description": "Um einen großen Gegenstand zu heben und zu werfen, benötigst du nur eine Aktion (normalerweise 2 Aktionen). Es gelten die Regeln unter \"Improvisierte Waffe\".",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "seilwurf-1",
+          "label": "Seilwurf I",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Aktion, Standard. Kosten: 5 LP. <p>Du kannst ohne Mühe ein Seil mit einer Schlinge oder Haken so werfen, dass es an einem Objekt sicher verankert ist. Das Objekt muss dafür geeignet sein.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "seilwurf",
+          "rank": 1
+        },
+        {
+          "id": "seilwurf-2",
+          "label": "Seilwurf I",
           "lpCost": 5,
           "requires": [
-            "riten-der-druiden"
+            "seilwurf-1"
           ],
-          "description": "Schule des Seelenwebers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {
+            "ge": 25
+          },
+          "description": "<p><strong>Aktion, Standard</strong><br>Du kannst ohne Mühe ein Seil mit einer Schlinge oder Haken so werfen, dass es an einem Objekt sicher verankert ist. Das Objekt muss dafür geeignet sein.</p><p><strong>Aktion, Angriff</strong><br>Du kannst nun Seilwurf gegen FIguren versuchen. Mach einen Angriffswurf mit Geschick vs. RK. Bei einem Treffer ist das Ziel gepackt. Mit einer Standardaktion kann es sich befreien.</p><p><strong>Aktion, Standard</strong><br>Jeder, der das Seil hält, kann mit einer Standardaktion das Ziel zu Boden werfen oder es 3 Felder weit zu sich ziehen.</p><p><strong>Freie Aktion</strong><br>Du kannst als freie Aktion das Seil von deinem Ziel oder Objekt lösen</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "seilwurf",
+          "rank": 2
         },
         {
-          "id": "wurzelwirker",
-          "label": "Schule des Wurzelwirkers",
+          "id": "waffenloser-kampf-1",
+          "label": "Waffenloser Kampf I",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "<strong>Passiver Effekt</strong><p>Angriffswürfe auf Stoßen und Packen haben einen kleinen Vorteil.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "waffenloser-kampf",
+          "rank": 1
+        },
+        {
+          "id": "waffenloser-kampf-2",
+          "label": "Waffenloser Kampf II",
           "lpCost": 5,
           "requires": [
-            "riten-der-druiden"
+            "waffenloser-kampf-1"
           ],
-          "description": "Schule des Wurzelwirkers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
+          "attributeRequirements": {},
+          "description": "<strong>Passiver Effekt</strong><p>Angriffswürfe auf Stoßen und Packen haben einen kleinen Vorteil.</p><lu><li>Bei einem Treffer mit Stoßen oder Packen (gilt nicht für Waffeneffekte) machst du den Schaden eines unbewaffneten Angriffs.</li><li>Unbewaffnete Angriffe auf gepackte Ziele haben großen Vorteil.</li></lu>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "waffenloser-kampf",
+          "rank": 2
         },
         {
-          "id": "gestaltwandler",
-          "label": "Schule des Gestaltwandlers",
+          "id": "sprungtritt",
+          "label": "Sprungtritt",
+          "lpCost": 0,
+          "requires": [
+            "waffenloser-kampf-1"
+          ],
+          "attributeRequirements": {
+            "ge": 25,
+            "st": 25
+          },
+          "description": "<strong>Passiver Effekt</strong><p>Unbewaffnete Sprungangriffe haben nun Stoßen 3.<br>Du machst außerdem mehr Schaden:<br><strong>+1w6 pro gefallenen Meter des Sprungs auf den Schadenswurf.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "scheppernde-schlaege",
+          "label": "Scheppernde Schläge",
           "lpCost": 5,
           "requires": [
-            "riten-der-druiden"
+            "waffenloser-kampf-2"
           ],
-          "description": "Schule des Gestaltwandlers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden."
-        }
-      ]
-    },
-    {
-      "id": "berufe-kuenste",
-      "label": "Berufe, Lehren & Künste",
-      "nodes": [
-        {
-          "id": "schloesserknacken",
-          "label": "Schlösserknacken",
-          "lpCost": 5,
-          "requires": [],
-          "description": "Schlösserknacken aus dem Kapitel Berufe, Lehren & Künste. Geschick & Erfahrung – 5 LP Um ein Schloss zu knacken, benötigt man Dietriche, mit denen man die Schalter betätigt. Schalter sind entweder links oder rechts und jedes Schloss hat eine bestimmte Anzahl von Schaltern."
-        },
-        {
-          "id": "taschendiebstahl",
-          "label": "Taschendiebstahl",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Taschendiebstahl aus dem Kapitel Berufe, Lehren & Künste. Intuition & Geschick – 10 LP Mit Taschendiebstahl kann man Figuren bestehlen. Man kann auf konkrete Gegenstände abzielen (ein Schlüssel am Gürtel oder einen Geldbeutel) oder auf gut Glück aus Behältnissen wie Hosentaschen oder Rucksäcken stehlen."
-        },
-        {
-          "id": "feilschen",
-          "label": "Feilschen",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Feilschen aus dem Kapitel Berufe, Lehren & Künste. Intuition & Erfahrung – 10 LP Man kann nun mit Händlern zu feilschen, um (nur!) beim Einkaufen den Preis zu drücken. Doch Achtung, das Ganze kann auch nach hinten losgehen!"
-        },
-        {
-          "id": "wildtiere-ausnehmen",
-          "label": "Wildtiere Ausnehmen",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Wildtiere Ausnehmen aus dem Kapitel Berufe, Lehren & Künste. Erfahrung & Geschick – 10 LP Mit dieser Fähigkeit können Spieler die ‚Beute‘ von erlegten Wildtieren erlangen. Auf jedem Monsterbogen findet man dafür unten rechts einen Kasten."
-        },
-        {
-          "id": "kraeuterkunde",
-          "label": "Kräuterkunde",
-          "lpCost": 5,
-          "requires": [],
-          "description": "Kräuterkunde aus dem Kapitel Berufe, Lehren & Künste. Intuition & Konzentration – 5 LP Kräuterkunde ergänzt sich mit Alchemie. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Kräutern."
-        },
-        {
-          "id": "alchemie",
-          "label": "Alchemie",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Alchemie aus dem Kapitel Berufe, Lehren & Künste. Konzentration & Geschick – 10 LP Alchemie ergänzt sich mit Kräuterkunde. Alchemie ist die Kunst Tränke zu brauen."
-        },
-        {
-          "id": "schuerfen",
-          "label": "Schürfen",
-          "lpCost": 5,
-          "requires": [],
-          "description": "Schürfen aus dem Kapitel Berufe, Lehren & Künste. Stärke & Ausdauer – 5 LP Schürfen ergänzt sich mit Schmiedekunst. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Erzen."
-        },
-        {
-          "id": "schmiedekunst",
-          "label": "Schmiedekunst",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Schmiedekunst aus dem Kapitel Berufe, Lehren & Künste. Stärke & Erfahrung – 10 LP Schmiedekunst ergänzt sich mit Schürfen. Schmiedekunst ist die Fähigkeit Nahkampfwaffen herzustellen."
-        },
-        {
-          "id": "schnitzkunst",
-          "label": "Schnitzkunst",
-          "lpCost": 10,
-          "requires": [],
-          "description": "Schnitzkunst aus dem Kapitel Berufe, Lehren & Künste. Geschick & Ausdauer – 10 LP Schnitzkunst ist die Fähigkeit Pfeile zu schnitzen und Bögen zu bauen. Man benötigt ein Schnitzmesser."
+          "attributeRequirements": {
+            "ge": 30,
+            "st": 30
+          },
+          "description": "<strong>Passiver Effekt</strong><p>Trifft ein unbewaffneter Angriff mit einer 11-19 auf dem w20, ist dein Ziel gehindert: Es hat in seinem Zug -1 Aktion. Bei einer 20: -2 Aktionen.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Sonstige Talente",
+          "rankGroup": "",
+          "rank": 0
         }
       ]
     }

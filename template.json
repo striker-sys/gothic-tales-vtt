@@ -205,7 +205,8 @@
           "ma": 0
         },
         "talentTree": {
-          "learned": {}
+          "learned": {},
+          "uses": {}
         }
       }
     },
@@ -336,7 +337,13 @@
       "properties": "",
       "value": "",
       "quantity": 1,
-      "equipped": false
+      "equipped": false,
+      "attributeRequirements": {},
+      "treeId": "",
+      "nodeId": "",
+      "usesRecovery": "longRest",
+      "consumeTalentKey": "",
+      "consumeAmount": 0
     },
     "trait": {
       "templates": [

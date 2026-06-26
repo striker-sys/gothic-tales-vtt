@@ -2896,3 +2896,1402 @@ body.gt-system-ui {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* v0.6.4: Attribut-Mindestwerte für Talente kompakt anzeigen */
+.gt-talent-tree-window .gt-talent-node .gt-talent-attrreq,
+.application.gothic-tales.gt-talent-tree-window .gt-talent-node .gt-talent-attrreq {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 1.15;
+  opacity: .85;
+  font-weight: 700;
+}
+
+.gt-fieldset.gt-full-row { grid-column: 1 / -1; }
+.gt-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 6px;
+  margin-top: 6px;
+}
+
+/* v0.6.6: Talent-Anwendungen im ActorSheet */
+.gothic-tales .gt-talent-control-panel .gt-open-talent-tree {
+  margin-bottom: 10px;
+}
+
+.gothic-tales .gt-talent-card-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.gothic-tales .gt-actor-talent-card {
+  border: 1px solid rgba(80, 54, 38, 0.45);
+  border-radius: 12px;
+  background: rgba(255, 246, 221, 0.78);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+}
+
+.gothic-tales .gt-actor-talent-card.depleted {
+  opacity: .72;
+  filter: grayscale(.35);
+}
+
+.gothic-tales .gt-actor-talent-card header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gothic-tales .gt-actor-talent-card h3 {
+  margin: 0;
+  font-size: 1.02rem;
+  color: var(--gt-red, #68231b);
+}
+
+.gothic-tales .gt-actor-talent-card header small,
+.gothic-tales .gt-talent-consumes {
+  color: var(--gt-ink-soft, #5f4d3d);
+  font-weight: 700;
+}
+
+.gothic-tales .gt-actor-talent-card p {
+  margin: 0;
+  max-height: 4.6em;
+  overflow: hidden;
+  color: var(--gt-ink, #2b2119);
+}
+
+.gothic-tales .gt-talent-uses {
+  min-width: 66px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(80, 54, 38, .35);
+  background: rgba(120, 76, 44, .14);
+  text-align: center;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.gothic-tales .gt-talent-uses.unlimited {
+  background: rgba(80, 80, 80, .09);
+}
+
+.gothic-tales .gt-talent-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.gothic-tales .gt-talent-card-actions button {
+  min-height: 28px;
+  padding: 4px 8px;
+}
+
+.gothic-tales .gt-fieldset .gt-help code {
+  background: rgba(255,255,255,.55);
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card .gt-chat-description {
+  margin-top: 8px;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card footer {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(80, 54, 38, .35);
+}
+
+/* v0.6.7: Schöne Chatkarte für Talent-Ausführung */
+.gothic-tales.chat-card.gt-talent-chat-card-v2 {
+  overflow: hidden !important;
+  padding: 0 !important;
+  border-radius: 10px !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255,255,255,.55), transparent 11rem),
+    linear-gradient(145deg, #f3e3bd 0%, #e4c58d 58%, #c99a5b 100%) !important;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.25), 0 2px 8px rgba(0,0,0,.28) !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-header {
+  display: grid !important;
+  grid-template-columns: 48px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: center !important;
+  padding: 12px 13px !important;
+  background:
+    linear-gradient(90deg, rgba(74,47,29,.95), rgba(125,72,42,.82)),
+    repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 2px, transparent 2px 7px) !important;
+  border-bottom: 2px solid rgba(43,29,21,.45) !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-rune {
+  width: 44px !important;
+  height: 44px !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 50% !important;
+  border: 2px solid #f0d69b !important;
+  background: radial-gradient(circle, #f8e7b7, #bc7c38) !important;
+  box-shadow: inset 0 0 0 2px rgba(80,48,25,.35), 0 0 10px rgba(246,210,138,.28) !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-rune i {
+  color: #6f1a14 !important;
+  font-size: 21px !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-title {
+  min-width: 0 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-kicker {
+  color: #f3e3bd !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+  opacity: .92 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 h2 {
+  margin: 1px 0 3px !important;
+  color: #fff4d2 !important;
+  font-size: 19px !important;
+  line-height: 1.15 !important;
+  text-shadow: 1px 1px 0 rgba(0,0,0,.55) !important;
+  border: 0 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-subtitle {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px 10px !important;
+  color: #f3e3bd !important;
+  font-size: 12px !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-subtitle span,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-subtitle i {
+  color: #f3e3bd !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-subtitle i {
+  margin-right: 4px !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-pills {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  padding: 10px 12px 0 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  max-width: 100% !important;
+  padding: 4px 7px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(74,47,29,.38) !important;
+  background: rgba(255,255,255,.34) !important;
+  color: var(--gt-ink) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-pill i,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-pill strong {
+  color: var(--gt-red) !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-body {
+  margin: 10px 12px 12px !important;
+  padding: 10px 11px !important;
+  border: 1px solid rgba(74,47,29,.4) !important;
+  border-radius: 9px !important;
+  background: rgba(255,248,229,.58) !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-body h3 {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  margin: 0 0 7px !important;
+  padding-bottom: 5px !important;
+  color: var(--gt-red) !important;
+  font-size: 14px !important;
+  border-bottom: 1px solid rgba(74,47,29,.28) !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-chat-description,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-chat-description p,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-chat-description li {
+  font-size: 13px !important;
+  line-height: 1.42 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-chat-description p:last-child,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-chat-description ul:last-child,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-chat-description ol:last-child {
+  margin-bottom: 0 !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-footer {
+  display: grid !important;
+  gap: 4px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  border-top: 2px solid rgba(74,47,29,.35) !important;
+  background: rgba(74,47,29,.13) !important;
+  font-size: 12px !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-footer span {
+  display: flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+}
+
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-footer i,
+.gothic-tales.chat-card.gt-talent-chat-card-v2 .gt-talent-chat-footer strong {
+  color: var(--gt-red) !important;
+}
+
+/* v0.6.8: Sichtbare Gelernt-Markierung im Talentbaum und kompakter Talentbereich */
+.gt-talent-tree-window .gt-talent-node.learned,
+.application.gothic-tales.gt-talent-tree-window .gt-talent-node.learned {
+  position: relative !important;
+  border-color: #426b2f !important;
+  background: linear-gradient(180deg, #dcefc0 0%, #91b76c 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 0 0 2px rgba(83, 124, 54, .22), 0 2px 8px rgba(0,0,0,.28) !important;
+}
+
+.gt-talent-tree-window .gt-talent-node .gt-talent-learned-badge,
+.application.gothic-tales.gt-talent-tree-window .gt-talent-node .gt-talent-learned-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 2px 7px !important;
+  border: 1px solid rgba(33, 83, 31, .42) !important;
+  border-radius: 999px !important;
+  background: rgba(42, 101, 38, .88) !important;
+  color: #fff7dd !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: .03em !important;
+  text-transform: uppercase !important;
+  line-height: 1.1 !important;
+}
+
+.gt-talent-tree-window .gt-talent-node.learned .gt-talent-cost,
+.application.gothic-tales.gt-talent-tree-window .gt-talent-node.learned .gt-talent-cost {
+  background: rgba(255, 250, 225, .88) !important;
+  color: #2c521f !important;
+  border-color: rgba(33, 83, 31, .36) !important;
+}
+
+.gothic-tales .gt-actor-talent-card {
+  align-content: start;
+}
+
+.gothic-tales .gt-actor-talent-card header {
+  margin-bottom: 0;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-consumes {
+  display: inline-flex;
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(120, 76, 44, .12);
+  border: 1px solid rgba(80, 54, 38, .25);
+}
+
+
+
+/* v0.6.9: Talentkarten im ActorSheet eingerückt und Tooltip sauber schließbar */
+.gothic-tales .gt-talent-card-list {
+  gap: 12px;
+}
+
+.gothic-tales .gt-actor-talent-card {
+  padding: 12px 14px;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-text {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.gothic-tales .gt-actor-talent-card h3 {
+  margin: 0;
+  line-height: 1.1;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-text > small {
+  display: block;
+  line-height: 1.15;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-side {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-uses {
+  min-width: 74px;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-actions {
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-actions button {
+  min-width: 118px;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-consumes {
+  margin-top: 2px;
+}
+
+.gothic-tales .gt-talent-info.tooltip-open {
+  box-shadow: 0 0 0 2px rgba(184,137,70,.22);
+}
+
+@media (max-width: 760px) {
+  .gothic-tales .gt-actor-talent-card .gt-talent-card-main {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .gothic-tales .gt-actor-talent-card .gt-talent-card-side {
+    justify-items: start;
+  }
+  .gothic-tales .gt-actor-talent-card .gt-talent-card-actions {
+    justify-content: flex-start;
+  }
+}
+
+
+/* v0.6.11: Gemeinsame Anwendungspools für Talent-Ränge */
+.gothic-tales .gt-actor-talent-card .gt-talent-uses:not(.unlimited) {
+  background: linear-gradient(180deg, rgba(214, 174, 99, .34), rgba(126, 78, 43, .2));
+  border-color: rgba(93, 56, 34, .45);
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-uses[title]:not([title=""])::before {
+  content: attr(title) " ";
+  font-size: 10px;
+  font-weight: 900;
+  opacity: .78;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+}
+
+
+/* v0.6.11: Kampf-vorbei-Auffüllung für Talent-Anwendungen */
+.gothic-tales .gt-combat-end-button {
+  border-color: rgba(88, 105, 51, .55);
+}
+
+.gothic-tales .gt-combat-end-button i {
+  color: #46682f;
+}
+
+.chat-message .gothic-tales.gt-combat-end-card,
+.gothic-tales.gt-combat-end-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #f3e5bf, #d6bd82);
+  border: 1px solid rgba(75, 50, 31, .45);
+}
+
+.gothic-tales.gt-combat-end-card h2 {
+  margin: 0 0 6px;
+}
+
+
+/* v0.6.12: Talent-Ranggruppen und Kategorien im ActorSheet */
+.gothic-tales .gt-talent-category-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.gothic-tales .gt-talent-category {
+  border: 1px solid rgba(92, 62, 41, .32);
+  border-radius: 14px;
+  background: rgba(255, 248, 224, .36);
+  padding: 10px;
+}
+
+.gothic-tales .gt-talent-category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 7px 9px;
+  border-radius: 10px;
+  border: 1px solid rgba(92, 62, 41, .25);
+  background: linear-gradient(90deg, rgba(94, 51, 38, .18), rgba(208, 164, 94, .12));
+}
+
+.gothic-tales .gt-talent-category-header h3 {
+  margin: 0;
+  color: var(--gt-red, #68231b);
+  font-size: 1rem;
+  letter-spacing: .02em;
+}
+
+.gothic-tales .gt-talent-category-header span {
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 250, 235, .76);
+  border: 1px solid rgba(92, 62, 41, .22);
+  color: var(--gt-ink-soft, #5f4d3d);
+  font-size: .78rem;
+  font-weight: 900;
+}
+
+.gothic-tales .gt-talent-category .gt-talent-card-list {
+  margin-top: 0;
+}
+
+.gothic-tales .gt-actor-talent-card .gt-talent-card-text > small:first-of-type {
+  opacity: .86;
+}
+
+
+/* v0.6.13: Magiekreise als eigener, magischer Sheet-Bereich */
+.gothic-tales .gt-magic-circle-panel {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(70, 43, 92, .62) !important;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(111, 78, 166, .28), transparent 34%),
+    radial-gradient(circle at 86% 20%, rgba(212, 177, 88, .24), transparent 28%),
+    linear-gradient(160deg, rgba(34, 20, 45, .96), rgba(78, 48, 88, .92) 48%, rgba(26, 17, 33, .96)) !important;
+  color: #f7e8bf !important;
+  box-shadow: inset 0 0 0 1px rgba(255,235,170,.25), 0 0 22px rgba(104,75,168,.25) !important;
+}
+
+.gothic-tales .gt-magic-circle-panel::before {
+  content: "✦";
+  position: absolute;
+  right: 18px;
+  top: -18px;
+  font-size: 104px;
+  line-height: 1;
+  color: rgba(255, 235, 170, .10);
+  pointer-events: none;
+}
+
+.gothic-tales .gt-magic-circle-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+.gothic-tales .gt-magic-circle-header h2,
+.gothic-tales .gt-magic-skills-panel h2,
+.gothic-tales .gt-druid-panel h2 {
+  color: #ffd98a !important;
+  text-shadow: 0 0 9px rgba(255, 205, 112, .30) !important;
+}
+
+.gothic-tales .gt-magic-circle-header p {
+  margin: 0;
+  color: rgba(255, 240, 204, .82);
+}
+
+.gothic-tales .gt-magic-current {
+  min-width: 180px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 222, 156, .34);
+  border-radius: 12px;
+  background: rgba(0,0,0,.22);
+  text-align: right;
+}
+
+.gothic-tales .gt-magic-current span,
+.gothic-tales .gt-magic-current small {
+  display: block;
+  color: rgba(255, 240, 204, .74);
+}
+
+.gothic-tales .gt-magic-current strong {
+  display: block;
+  color: #fff2c7;
+  font-size: 1.08rem;
+}
+
+.gothic-tales .gt-magic-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(86px, 1fr));
+  gap: 12px;
+  margin: 18px 0 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.gothic-tales .gt-magic-die-slot {
+  min-height: 96px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 228, 158, .45);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,241,185,.24), transparent 38%),
+    linear-gradient(180deg, rgba(68, 36, 90, .96), rgba(24, 16, 34, .98));
+  color: #ffe9a8;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.12), 0 0 18px rgba(113,82,176,.22);
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  cursor: pointer;
+}
+
+.gothic-tales .gt-magic-die-slot strong {
+  font-size: 2.25rem;
+  line-height: 1;
+  color: #fff4c8;
+  text-shadow: 0 0 12px rgba(255, 216, 132, .45);
+}
+
+.gothic-tales .gt-magic-die-slot small {
+  font-size: .78rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255, 232, 174, .78);
+}
+
+.gothic-tales .gt-magic-die-slot.inactive {
+  opacity: .42;
+  filter: grayscale(.55);
+  cursor: not-allowed;
+}
+
+.gothic-tales .gt-magic-die-slot.filled {
+  border-color: rgba(255, 221, 128, .74);
+}
+
+.gothic-tales .gt-magic-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.gothic-tales .gt-magic-actions button,
+.gothic-tales .gt-use-magic-skill {
+  border-color: rgba(255, 218, 134, .45) !important;
+}
+
+.gothic-tales .gt-magic-skills-panel {
+  border-color: rgba(70, 43, 92, .42) !important;
+}
+
+.gothic-tales .gt-magic-skill-card {
+  background:
+    linear-gradient(180deg, rgba(253,241,210,.92), rgba(231,211,174,.86)) !important;
+  border-color: rgba(91, 61, 128, .34) !important;
+}
+
+.gothic-tales .gt-magic-die-dialog {
+  text-align: center;
+}
+
+.gothic-tales .gt-magic-die-dialog-orb {
+  width: 116px;
+  height: 116px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 45% 30%, rgba(255,247,205,.95), rgba(188,126,255,.46) 42%, rgba(25,14,38,.95) 72%);
+  border: 2px solid rgba(255, 224, 144, .72);
+  box-shadow: 0 0 24px rgba(110, 70, 180, .35);
+  color: #fff5ce;
+}
+
+.gothic-tales .gt-magic-die-dialog-orb strong {
+  display: block;
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+.gothic-tales .gt-magic-die-dialog-orb small {
+  display: block;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 760px) {
+  .gothic-tales .gt-magic-circle-header { display: grid; }
+  .gothic-tales .gt-magic-current { text-align: left; }
+  .gothic-tales .gt-magic-dice-grid { grid-template-columns: repeat(2, minmax(86px, 1fr)); }
+}
+
+/* v0.6.14: ActorSheet-Politur – kompakte Icon-Navigation, mehr Luft in Magie- und Talentbereichen */
+.gt-v2-window .gt-sheet-layout,
+.application.gothic-tales .gt-sheet-layout,
+.gothic-tales .gt-sheet-layout {
+  grid-template-columns: minmax(0, 1fr) 58px !important;
+  gap: 14px !important;
+}
+
+.gt-v2-window .gt-side-tabs,
+.application.gothic-tales .gt-side-tabs,
+.gothic-tales .gt-side-tabs {
+  width: 58px !important;
+  min-width: 58px !important;
+  overflow: visible !important;
+  max-height: none !important;
+  padding: 7px !important;
+  gap: 8px !important;
+  z-index: 25 !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item,
+.application.gothic-tales .gt-side-tabs a.item,
+.gothic-tales .gt-side-tabs a.item {
+  position: relative !important;
+  width: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  height: 42px !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  overflow: visible !important;
+  border-radius: 10px !important;
+  isolation: isolate !important;
+  transition: transform .14s ease, background .14s ease, box-shadow .14s ease !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item i,
+.application.gothic-tales .gt-side-tabs a.item i,
+.gothic-tales .gt-side-tabs a.item i {
+  display: block !important;
+  margin: 0 !important;
+  font-size: 19px !important;
+  line-height: 1 !important;
+  pointer-events: none !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item span,
+.application.gothic-tales .gt-side-tabs a.item span,
+.gothic-tales .gt-side-tabs a.item span {
+  position: absolute !important;
+  left: calc(100% + 8px) !important;
+  top: 50% !important;
+  transform: translate(-10px, -50%) !important;
+  display: block !important;
+  min-width: 116px !important;
+  width: max-content !important;
+  max-width: 190px !important;
+  padding: 7px 12px 8px !important;
+  border-radius: 0 10px 10px 0 !important;
+  border: 1px solid rgba(80, 54, 38, .45) !important;
+  border-left: 4px solid var(--gt-red, #8e1513) !important;
+  background: linear-gradient(180deg, #f6dfaa, #d9b876) !important;
+  color: #2a160d !important;
+  box-shadow: 8px 8px 18px rgba(0,0,0,.28) !important;
+  text-shadow: 1px 1px 0 rgba(255,255,255,.45) !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: 250 !important;
+  transition: opacity .14s ease, transform .14s ease !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item:hover,
+.gt-v2-window .gt-side-tabs a.item:focus-visible,
+.application.gothic-tales .gt-side-tabs a.item:hover,
+.application.gothic-tales .gt-side-tabs a.item:focus-visible,
+.gothic-tales .gt-side-tabs a.item:hover,
+.gothic-tales .gt-side-tabs a.item:focus-visible {
+  transform: translateX(-2px) !important;
+  box-shadow: 0 0 0 2px rgba(238, 203, 126, .24), 0 4px 12px rgba(0,0,0,.25) !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item:hover span,
+.gt-v2-window .gt-side-tabs a.item:focus-visible span,
+.application.gothic-tales .gt-side-tabs a.item:hover span,
+.application.gothic-tales .gt-side-tabs a.item:focus-visible span,
+.gothic-tales .gt-side-tabs a.item:hover span,
+.gothic-tales .gt-side-tabs a.item:focus-visible span {
+  opacity: 1 !important;
+  transform: translate(0, -50%) !important;
+}
+
+.gt-v2-window .gt-magic-circle-panel,
+.application.gothic-tales .gt-magic-circle-panel,
+.gothic-tales .gt-magic-circle-panel {
+  padding: 18px 20px 20px !important;
+}
+
+.gt-v2-window .gt-magic-circle-header,
+.application.gothic-tales .gt-magic-circle-header,
+.gothic-tales .gt-magic-circle-header {
+  margin-bottom: 20px !important;
+}
+
+.gt-v2-window .gt-magic-dice-grid,
+.application.gothic-tales .gt-magic-dice-grid,
+.gothic-tales .gt-magic-dice-grid {
+  gap: 14px !important;
+  margin: 20px 0 22px !important;
+  align-items: stretch !important;
+}
+
+.gt-v2-window .gt-magic-die-slot,
+.application.gothic-tales .gt-magic-die-slot,
+.gothic-tales .gt-magic-die-slot {
+  min-height: 88px !important;
+  height: auto !important;
+  padding: 13px 8px 11px !important;
+  display: grid !important;
+  grid-template-rows: minmax(32px, 1fr) auto !important;
+  place-items: center !important;
+  align-content: center !important;
+  gap: 8px !important;
+  white-space: normal !important;
+}
+
+.gt-v2-window .gt-magic-die-slot strong,
+.application.gothic-tales .gt-magic-die-slot strong,
+.gothic-tales .gt-magic-die-slot strong {
+  display: block !important;
+  margin: 0 !important;
+}
+
+.gt-v2-window .gt-magic-die-slot small,
+.application.gothic-tales .gt-magic-die-slot small,
+.gothic-tales .gt-magic-die-slot small {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  line-height: 1.15 !important;
+}
+
+.gt-v2-window .gt-magic-actions,
+.application.gothic-tales .gt-magic-actions,
+.gothic-tales .gt-magic-actions {
+  margin-top: 8px !important;
+  padding-top: 15px !important;
+  border-top: 1px solid rgba(255, 222, 156, .24) !important;
+  gap: 10px !important;
+}
+
+.gt-v2-window .gt-magic-actions button,
+.application.gothic-tales .gt-magic-actions button,
+.gothic-tales .gt-magic-actions button {
+  min-height: 34px !important;
+  padding: 6px 12px !important;
+  align-items: center !important;
+}
+
+.gt-v2-window .gt-talent-control-panel .gt-open-talent-tree,
+.application.gothic-tales .gt-talent-control-panel .gt-open-talent-tree,
+.gothic-tales .gt-talent-control-panel .gt-open-talent-tree {
+  margin: 10px 0 18px !important;
+}
+
+.gt-v2-window .gt-talent-category-list,
+.application.gothic-tales .gt-talent-category-list,
+.gothic-tales .gt-talent-category-list {
+  margin-top: 18px !important;
+  gap: 18px !important;
+}
+
+.gt-v2-window .gt-talent-category,
+.application.gothic-tales .gt-talent-category,
+.gothic-tales .gt-talent-category {
+  padding: 12px !important;
+}
+
+.gt-v2-window .gt-talent-card-list,
+.application.gothic-tales .gt-talent-card-list,
+.gothic-tales .gt-talent-card-list {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.gt-v2-window .gt-actor-talent-card,
+.application.gothic-tales .gt-actor-talent-card,
+.gothic-tales .gt-actor-talent-card {
+  padding: 14px !important;
+}
+
+.gt-v2-window .gt-actor-talent-card .gt-talent-card-main,
+.application.gothic-tales .gt-actor-talent-card .gt-talent-card-main,
+.gothic-tales .gt-actor-talent-card .gt-talent-card-main {
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+}
+
+.gt-v2-window .gt-actor-talent-card .gt-talent-card-side,
+.application.gothic-tales .gt-actor-talent-card .gt-talent-card-side,
+.gothic-tales .gt-actor-talent-card .gt-talent-card-side {
+  width: 100% !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  justify-items: stretch !important;
+  gap: 10px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(92, 62, 41, .20) !important;
+}
+
+.gt-v2-window .gt-actor-talent-card .gt-talent-card-actions,
+.application.gothic-tales .gt-actor-talent-card .gt-talent-card-actions,
+.gothic-tales .gt-actor-talent-card .gt-talent-card-actions {
+  flex: 1 1 230px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.gt-v2-window .gt-actor-talent-card .gt-talent-card-actions button,
+.application.gothic-tales .gt-actor-talent-card .gt-talent-card-actions button,
+.gothic-tales .gt-actor-talent-card .gt-talent-card-actions button {
+  flex: 1 1 122px !important;
+  min-width: 116px !important;
+  max-width: 190px !important;
+  min-height: 32px !important;
+  white-space: nowrap !important;
+}
+
+.gt-v2-window .gt-actor-talent-card .gt-talent-uses,
+.application.gothic-tales .gt-actor-talent-card .gt-talent-uses,
+.gothic-tales .gt-actor-talent-card .gt-talent-uses {
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 900px) {
+  .gt-v2-window .gt-sheet-layout,
+  .application.gothic-tales .gt-sheet-layout,
+  .gothic-tales .gt-sheet-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gt-v2-window .gt-side-tabs,
+  .application.gothic-tales .gt-side-tabs,
+  .gothic-tales .gt-side-tabs {
+    width: auto !important;
+    min-width: 0 !important;
+    display: flex !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+  }
+
+  .gt-v2-window .gt-side-tabs a.item span,
+  .application.gothic-tales .gt-side-tabs a.item span,
+  .gothic-tales .gt-side-tabs a.item span {
+    left: 50% !important;
+    top: calc(100% + 7px) !important;
+    border-radius: 10px !important;
+    border-left-width: 1px !important;
+    transform: translate(-50%, -8px) !important;
+    text-align: center !important;
+  }
+
+  .gt-v2-window .gt-side-tabs a.item:hover span,
+  .gt-v2-window .gt-side-tabs a.item:focus-visible span,
+  .application.gothic-tales .gt-side-tabs a.item:hover span,
+  .application.gothic-tales .gt-side-tabs a.item:focus-visible span,
+  .gothic-tales .gt-side-tabs a.item:hover span,
+  .gothic-tales .gt-side-tabs a.item:focus-visible span {
+    transform: translate(-50%, 0) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .gt-v2-window .gt-talent-card-list,
+  .application.gothic-tales .gt-talent-card-list,
+  .gothic-tales .gt-talent-card-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gt-v2-window .gt-actor-talent-card .gt-talent-card-actions,
+  .application.gothic-tales .gt-actor-talent-card .gt-talent-card-actions,
+  .gothic-tales .gt-actor-talent-card .gt-talent-card-actions {
+    justify-content: flex-start !important;
+  }
+}
+
+
+/* v0.6.16: eigener Talent-Tooltip ohne Foundry/data-tooltip-Doppelanzeige */
+.gothic-tales.gt-floating-tooltip p {
+  margin: 0 0 8px;
+}
+
+.gothic-tales.gt-floating-tooltip p:last-child,
+.gothic-tales.gt-floating-tooltip ul:last-child,
+.gothic-tales.gt-floating-tooltip ol:last-child {
+  margin-bottom: 0;
+}
+
+.gothic-tales.gt-floating-tooltip ul,
+.gothic-tales.gt-floating-tooltip ol {
+  margin: 8px 0 10px 18px;
+  padding: 0;
+}
+
+.gothic-tales.gt-floating-tooltip li {
+  margin: 3px 0;
+}
+
+.gothic-tales.gt-floating-tooltip .gt-tooltip-meta {
+  color: #f1dfbd;
+  opacity: .95;
+}
+
+
+/* 0.6.17: Kontrollierter Würfeldialog */
+.gothic-tales.gt-roll-dialog {
+  display: grid;
+  gap: 14px;
+  color: #f7edd3;
+}
+
+.gothic-tales .gt-roll-dialog-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid rgba(255, 221, 150, .26);
+  border-radius: 12px;
+  background: radial-gradient(circle at 20% 0%, rgba(149, 21, 18, .45), rgba(29, 17, 12, .92));
+}
+
+.gothic-tales .gt-roll-dialog-head h2 {
+  margin: 0;
+  color: #ffe4a7;
+  text-shadow: 0 1px 2px #000;
+}
+
+.gothic-tales .gt-roll-dialog-head p {
+  margin: 6px 0 0;
+  color: #ead6ae;
+}
+
+.gothic-tales .gt-roll-dialog-base {
+  min-width: 160px;
+  display: grid;
+  gap: 4px;
+  text-align: right;
+  color: #d8c29a;
+}
+
+.gothic-tales .gt-roll-dialog-base code,
+.gothic-tales .gt-roll-dialog-final code {
+  display: inline-block;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.35);
+  color: #fff3c8;
+  border: 1px solid rgba(255, 220, 150, .25);
+}
+
+.gothic-tales .gt-roll-dialog-section {
+  padding: 13px;
+  border: 1px solid rgba(255, 221, 150, .22);
+  border-radius: 12px;
+  background: rgba(25, 15, 10, .78);
+}
+
+.gothic-tales .gt-roll-dialog-section h3 {
+  margin: 0 0 10px;
+  color: #ffd98f;
+  font-size: 1.05rem;
+}
+
+.gothic-tales .gt-roll-dialog-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.gothic-tales .gt-roll-dialog-mode-grid label,
+.gothic-tales .gt-roll-dialog-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+.gothic-tales .gt-roll-dialog-field {
+  justify-content: space-between;
+}
+
+.gothic-tales .gt-roll-dialog-field input,
+.gothic-tales .gt-roll-dialog-field select {
+  min-width: 110px;
+}
+
+.gothic-tales .gt-roll-dialog-dice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.gothic-tales button.gt-roll-dialog-die {
+  min-width: 58px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 220, 150, .32);
+  background: linear-gradient(180deg, rgba(97, 56, 24, .95), rgba(40, 22, 13, .95));
+  color: #fff0c4;
+  font-weight: 800;
+}
+
+.gothic-tales button.gt-roll-dialog-die.active {
+  background: linear-gradient(180deg, #a01815, #5c100e);
+  box-shadow: 0 0 0 1px rgba(255, 222, 151, .35), 0 0 12px rgba(255, 185, 80, .18);
+}
+
+.gothic-tales button.gt-roll-dialog-die span {
+  margin-left: 4px;
+  color: #ffd98f;
+}
+
+.gothic-tales .gt-roll-dialog-hint {
+  margin: 4px 0 8px;
+  font-size: .88rem;
+  color: #d8c29a;
+}
+
+.gothic-tales .gt-roll-dialog-clear-dice {
+  width: auto;
+}
+
+.gothic-tales .gt-roll-dialog-final {
+  display: grid;
+  gap: 7px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 218, 140, .1);
+  border: 1px solid rgba(255, 221, 150, .26);
+}
+
+.gothic-tales .gt-roll-dialog-summary {
+  color: #ffe4a7;
+  font-weight: 800;
+}
+
+.gothic-tales.gt-roll-card .gt-roll-options {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 221, 150, .14);
+  border: 1px solid rgba(255, 221, 150, .2);
+  color: #ffe0a0;
+  font-weight: 800;
+}
+
+.gothic-tales.gt-roll-card .gt-roll-die.ignored {
+  opacity: .55;
+  filter: grayscale(.35);
+}
+
+.gothic-tales.gt-roll-card .gt-roll-keep,
+.gothic-tales.gt-roll-card .gt-roll-ignored {
+  display: block;
+  font-size: .72rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.gothic-tales.gt-roll-card .gt-roll-keep { color: #89d88e; }
+.gothic-tales.gt-roll-card .gt-roll-ignored { color: #e7a1a1; }
+
+
+/* v0.6.20: Deutlicher aktiver Menüpunkt in der kompakten Icon-Navigation */
+.gt-v2-window .gt-side-tabs a.item.active,
+.gt-v2-window .gt-side-tabs a.item[aria-selected="true"],
+.gt-v2-window .gt-side-tabs a.item[aria-current="page"],
+.application.gothic-tales .gt-side-tabs a.item.active,
+.application.gothic-tales .gt-side-tabs a.item[aria-selected="true"],
+.application.gothic-tales .gt-side-tabs a.item[aria-current="page"],
+.gothic-tales .gt-side-tabs a.item.active,
+.gothic-tales .gt-side-tabs a.item[aria-selected="true"],
+.gothic-tales .gt-side-tabs a.item[aria-current="page"] {
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 238, 171, .48), transparent 34%),
+    linear-gradient(180deg, #9f1114, #5f090b) !important;
+  border-color: rgba(255, 218, 121, .92) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 245, 197, .35),
+    inset 0 -8px 16px rgba(0,0,0,.18),
+    0 0 0 2px rgba(255, 209, 92, .35),
+    0 0 18px rgba(142, 17, 17, .58),
+    0 5px 13px rgba(0,0,0,.34) !important;
+  transform: translateX(-2px) !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item.active i,
+.gt-v2-window .gt-side-tabs a.item[aria-selected="true"] i,
+.gt-v2-window .gt-side-tabs a.item[aria-current="page"] i,
+.application.gothic-tales .gt-side-tabs a.item.active i,
+.application.gothic-tales .gt-side-tabs a.item[aria-selected="true"] i,
+.application.gothic-tales .gt-side-tabs a.item[aria-current="page"] i,
+.gothic-tales .gt-side-tabs a.item.active i,
+.gothic-tales .gt-side-tabs a.item[aria-selected="true"] i,
+.gothic-tales .gt-side-tabs a.item[aria-current="page"] i {
+  color: #fff2c8 !important;
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.85),
+    0 0 9px rgba(255, 222, 132, .55) !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item.active::before,
+.gt-v2-window .gt-side-tabs a.item[aria-selected="true"]::before,
+.gt-v2-window .gt-side-tabs a.item[aria-current="page"]::before,
+.application.gothic-tales .gt-side-tabs a.item.active::before,
+.application.gothic-tales .gt-side-tabs a.item[aria-selected="true"]::before,
+.application.gothic-tales .gt-side-tabs a.item[aria-current="page"]::before,
+.gothic-tales .gt-side-tabs a.item.active::before,
+.gothic-tales .gt-side-tabs a.item[aria-selected="true"]::before,
+.gothic-tales .gt-side-tabs a.item[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 7px;
+  bottom: 7px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff1b8, #d59a35) !important;
+  box-shadow: 0 0 10px rgba(255, 218, 116, .8) !important;
+}
+
+.gt-v2-window .gt-side-tabs a.item.active::after,
+.gt-v2-window .gt-side-tabs a.item[aria-selected="true"]::after,
+.gt-v2-window .gt-side-tabs a.item[aria-current="page"]::after,
+.application.gothic-tales .gt-side-tabs a.item.active::after,
+.application.gothic-tales .gt-side-tabs a.item[aria-selected="true"]::after,
+.application.gothic-tales .gt-side-tabs a.item[aria-current="page"]::after,
+.gothic-tales .gt-side-tabs a.item.active::after,
+.gothic-tales .gt-side-tabs a.item[aria-selected="true"]::after,
+.gothic-tales .gt-side-tabs a.item[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateY(-50%) rotate(45deg);
+  background: #6f0b0d !important;
+  border-top: 1px solid rgba(255, 218, 121, .85) !important;
+  border-right: 1px solid rgba(255, 218, 121, .85) !important;
+  z-index: -1;
+}
+
+.gt-v2-window .gt-side-tabs a.item.active span,
+.gt-v2-window .gt-side-tabs a.item[aria-selected="true"] span,
+.gt-v2-window .gt-side-tabs a.item[aria-current="page"] span,
+.application.gothic-tales .gt-side-tabs a.item.active span,
+.application.gothic-tales .gt-side-tabs a.item[aria-selected="true"] span,
+.application.gothic-tales .gt-side-tabs a.item[aria-current="page"] span,
+.gothic-tales .gt-side-tabs a.item.active span,
+.gothic-tales .gt-side-tabs a.item[aria-selected="true"] span,
+.gothic-tales .gt-side-tabs a.item[aria-current="page"] span {
+  border-left-color: #9f1114 !important;
+  background: linear-gradient(180deg, #ffe6ad, #d29d4e) !important;
+}
+
+
+/* v0.6.22: Benutzte Magiewürfel und breiterer Magiewürfel-Dialog */
+.gt-v2-window .gt-magic-die-slot,
+.application.gothic-tales .gt-magic-die-slot,
+.gothic-tales .gt-magic-die-slot {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.gt-v2-window .gt-magic-die-slot.used,
+.application.gothic-tales .gt-magic-die-slot.used,
+.gothic-tales .gt-magic-die-slot.used {
+  border-color: rgba(255, 228, 158, .38) !important;
+  filter: saturate(.75);
+}
+
+.gt-v2-window .gt-magic-die-slot.used strong,
+.application.gothic-tales .gt-magic-die-slot.used strong,
+.gothic-tales .gt-magic-die-slot.used strong,
+.gt-v2-window .gt-magic-die-slot.used small,
+.application.gothic-tales .gt-magic-die-slot.used small,
+.gothic-tales .gt-magic-die-slot.used small {
+  opacity: .78;
+}
+
+.gt-v2-window .gt-magic-die-used-mark,
+.application.gothic-tales .gt-magic-die-used-mark,
+.gothic-tales .gt-magic-die-used-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: rotate(-17deg);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.05rem, 2.2vw, 1.65rem);
+  font-weight: 900;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: rgba(255, 236, 177, .42);
+  text-shadow:
+    0 1px 2px rgba(0,0,0,.75),
+    0 0 9px rgba(255, 218, 128, .28);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gothic-tales .gt-magic-die-dialog {
+  text-align: center;
+  padding: 2px 6px 4px;
+}
+
+.gothic-tales .gt-magic-die-dialog.used .gt-magic-die-dialog-orb {
+  filter: saturate(.75);
+}
+
+.gothic-tales .gt-magic-die-dialog-orb {
+  position: relative;
+  overflow: hidden;
+}
+
+.gothic-tales .gt-magic-die-dialog-used-mark {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform: rotate(-18deg);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgba(255, 237, 183, .38);
+  text-shadow: 0 1px 2px rgba(0,0,0,.75);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gothic-tales .gt-magic-die-dialog-actions {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr)) !important;
+  justify-content: stretch !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+  margin-top: 14px !important;
+  padding: 0 2px 2px !important;
+}
+
+.gothic-tales .gt-magic-die-dialog-actions button {
+  min-width: 0 !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+}
+
+.gothic-tales .gt-magic-die-used-chat-card {
+  border: 1px solid rgba(255, 219, 139, .55);
+  border-radius: 12px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 10%, rgba(139, 92, 246, .22), transparent 42%),
+    linear-gradient(180deg, #24162f, #15101c);
+  color: #f6e8c5;
+}
+
+.gothic-tales .gt-magic-die-used-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 219, 139, .25);
+}
+
+.gothic-tales .gt-magic-die-used-header h3 {
+  margin: 0;
+  color: #fff0bf;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.gothic-tales .gt-magic-die-used-rune {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: #fff0bf;
+  background: radial-gradient(circle, rgba(255,240,191,.28), rgba(91,49,139,.38));
+  border: 1px solid rgba(255,219,139,.45);
+}
+
+.gothic-tales .gt-magic-die-used-body {
+  display: grid;
+  place-items: center;
+  padding: 14px 12px 6px;
+}
+
+.gothic-tales .gt-magic-die-used-result {
+  font-size: 2.6rem;
+  line-height: 1;
+  font-weight: 900;
+  color: #fff4c9;
+  text-shadow: 0 0 12px rgba(255, 219, 139, .35);
+}
+
+.gothic-tales .gt-magic-die-used-label {
+  margin-top: 5px;
+  color: rgba(255, 235, 190, .78);
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.gothic-tales .gt-magic-die-used-chat-card p {
+  margin: 4px 12px 12px;
+  color: rgba(255, 235, 190, .86);
+  text-align: center;
+}

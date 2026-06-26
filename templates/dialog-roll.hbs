@@ -1,0 +1,55 @@
+{{!-- Dialog für kontrollierte Würfe mit Vorteil/Nachteil, Bonus und Zusatzwürfeln. --}}
+<div class="gothic-tales gt-dialog gt-roll-dialog">
+  <header class="gt-roll-dialog-head">
+    <div>
+      <h2><i class="fas fa-dice-d20"></i> {{label}}</h2>
+      {{#if flavor}}<p>{{flavor}}</p>{{/if}}
+    </div>
+    <div class="gt-roll-dialog-base">
+      <span>Ausgang</span>
+      <code>{{formula}}</code>
+    </div>
+  </header>
+
+  <section class="gt-roll-dialog-section">
+    <h3>Vorteil / Nachteil</h3>
+    <div class="gt-roll-dialog-mode-grid">
+      <label><input type="radio" name="advantageMode" value="none" checked> Normal</label>
+      <label><input type="radio" name="advantageMode" value="advantage"> Vorteil</label>
+      <label><input type="radio" name="advantageMode" value="disadvantage"> Nachteil</label>
+    </div>
+    <label class="gt-roll-dialog-field">
+      <span>Höhe</span>
+      <select class="gt-roll-dialog-level">
+        <option value="1">Klein (1W2)</option>
+        <option value="2">Mittel (1W6)</option>
+        <option value="3">Groß (1W12)</option>
+      </select>
+    </label>
+  </section>
+
+  <section class="gt-roll-dialog-section">
+    <h3>Bonus und Zusatzwürfel</h3>
+    <label class="gt-roll-dialog-field">
+      <span>Eigener Bonus</span>
+      <input type="number" class="gt-roll-dialog-bonus" value="0" step="1">
+    </label>
+    <div class="gt-roll-dialog-dice-row">
+      {{#each diceButtons}}
+        <button type="button" class="gt-roll-dialog-die" data-die="{{die}}">{{label}} <span>{{#if count}}{{count}}{{else}}+{{/if}}</span></button>
+      {{/each}}
+    </div>
+    <p class="gt-roll-dialog-hint">Linksklick fügt einen Würfel hinzu. Rechtsklick entfernt einen Würfel.</p>
+    <button type="button" class="gt-roll-dialog-clear-dice"><i class="fas fa-broom"></i> Zusatzwürfel leeren</button>
+  </section>
+
+  <section class="gt-roll-dialog-final">
+    <span class="gt-roll-dialog-summary">{{summary}}</span>
+    <code>{{finalFormula}}</code>
+  </section>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-roll-dialog-cancel"><i class="fas fa-xmark"></i> Abbrechen</button>
+    <button type="button" class="gt-roll-dialog-submit"><i class="fas fa-dice"></i> Wurf ausführen</button>
+  </footer>
+</div>

@@ -1,0 +1,217 @@
+{
+  "trees": [
+    {
+      "id": "berufe-kuenste",
+      "label": "WIP Berufe, Lehren & Künste WIP",
+      "nodes": [
+        {
+          "id": "schloesserknacken",
+          "label": "Schlösserknacken",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Schlösserknacken aus dem Kapitel Berufe, Lehren & Künste. Geschick & Erfahrung – 5 LP Um ein Schloss zu knacken, benötigt man Dietriche, mit denen man die Schalter betätigt. Schalter sind entweder links oder rechts und jedes Schloss hat eine bestimmte Anzahl von Schaltern.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "taschendiebstahl",
+          "label": "Taschendiebstahl",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Taschendiebstahl aus dem Kapitel Berufe, Lehren & Künste. Intuition & Geschick – 10 LP Mit Taschendiebstahl kann man Figuren bestehlen. Man kann auf konkrete Gegenstände abzielen (ein Schlüssel am Gürtel oder einen Geldbeutel) oder auf gut Glück aus Behältnissen wie Hosentaschen oder Rucksäcken stehlen.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "feilschen",
+          "label": "Feilschen",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Feilschen aus dem Kapitel Berufe, Lehren & Künste. Intuition & Erfahrung – 10 LP Man kann nun mit Händlern zu feilschen, um (nur!) beim Einkaufen den Preis zu drücken. Doch Achtung, das Ganze kann auch nach hinten losgehen!",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "wildtiere-ausnehmen",
+          "label": "Wildtiere Ausnehmen",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Wildtiere Ausnehmen aus dem Kapitel Berufe, Lehren & Künste. Erfahrung & Geschick – 10 LP Mit dieser Fähigkeit können Spieler die ‚Beute‘ von erlegten Wildtieren erlangen. Auf jedem Monsterbogen findet man dafür unten rechts einen Kasten.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "kraeuterkunde",
+          "label": "Kräuterkunde",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Kräuterkunde aus dem Kapitel Berufe, Lehren & Künste. Intuition & Konzentration – 5 LP Kräuterkunde ergänzt sich mit Alchemie. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Kräutern.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "alchemie",
+          "label": "Alchemie",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Alchemie aus dem Kapitel Berufe, Lehren & Künste. Konzentration & Geschick – 10 LP Alchemie ergänzt sich mit Kräuterkunde. Alchemie ist die Kunst Tränke zu brauen.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "schuerfen",
+          "label": "Schürfen",
+          "lpCost": 5,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Schürfen aus dem Kapitel Berufe, Lehren & Künste. Stärke & Ausdauer – 5 LP Schürfen ergänzt sich mit Schmiedekunst. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Erzen.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "schmiedekunst",
+          "label": "Schmiedekunst",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Schmiedekunst aus dem Kapitel Berufe, Lehren & Künste. Stärke & Erfahrung – 10 LP Schmiedekunst ergänzt sich mit Schürfen. Schmiedekunst ist die Fähigkeit Nahkampfwaffen herzustellen.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "schnitzkunst",
+          "label": "Schnitzkunst",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Schnitzkunst aus dem Kapitel Berufe, Lehren & Künste. Geschick & Ausdauer – 10 LP Schnitzkunst ist die Fähigkeit Pfeile zu schnitzen und Bögen zu bauen. Man benötigt ein Schnitzmesser.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe, Lehren & Künste",
+          "rankGroup": "",
+          "rank": 0
+        }
+      ]
+    }
+  ]
+}

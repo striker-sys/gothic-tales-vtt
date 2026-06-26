@@ -1,0 +1,22 @@
+{{!-- Dialog zum Benutzen oder Neuwerfen eines vorbereiteten Magiekreis-Würfels. --}}
+<div class="gothic-tales gt-dialog gt-magic-die-dialog {{#if slot.used}}used{{/if}}">
+  <div class="gt-magic-die-dialog-orb">
+    {{#if slot.used}}<span class="gt-magic-die-dialog-used-mark">Benutzt</span>{{/if}}
+    <strong>{{slot.result}}</strong>
+    <small>{{slot.label}}</small>
+  </div>
+
+  {{#if slot.used}}
+    <p>Dieser Zauberwürfel wurde bereits benutzt. Du kannst ihn neu würfeln, aber nicht noch einmal benutzen.</p>
+  {{else}}
+    <p>Dieser Zauberwürfel kann neu geworfen oder für eine Zauberhandlung benutzt werden. Beim Benutzen bleibt der Wert sichtbar und wird als <strong>Benutzt</strong> markiert.</p>
+  {{/if}}
+
+  <footer class="gt-dialog-actions gt-magic-die-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Abbrechen</button>
+    <button type="button" class="gt-magic-die-reroll"><i class="fas fa-repeat"></i> Neu würfeln</button>
+    {{#unless slot.used}}
+      <button type="button" class="gt-magic-die-use"><i class="fas fa-hand-sparkles"></i> Benutzen</button>
+    {{/unless}}
+  </footer>
+</div>

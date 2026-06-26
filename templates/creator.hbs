@@ -77,7 +77,7 @@
     <p>Wähle Starttalente. Der anklickbare Talentbaum kann nach der Erstellung weiter verwendet werden.</p>
     <div class="gt-talent-checklist">
       {{#each talents}}
-      <label><input type="checkbox" name="talent_{{id}}"> {{label}} <small>{{tree}} – {{lpCost}} LP</small></label>
+      <label><input type="checkbox" name="talent_{{id}}"> {{label}} <small>{{tree}} – {{lpCost}} LP{{#if attrRequirements}} · Mindestattribute: {{attrRequirements}}{{/if}}</small></label>
       {{/each}}
     </div>
   </section>

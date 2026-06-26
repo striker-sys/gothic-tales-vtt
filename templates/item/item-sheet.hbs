@@ -34,11 +34,45 @@
           <label>Reichweite <input name="system.range" type="text" value="{{system.range}}"></label>
           <label>Eigenschaften <input name="system.properties" type="text" value="{{system.properties}}"></label>
           <label>Voraussetzungen <input name="system.requirements" type="text" value="{{system.requirements}}"></label>
+          {{#if (eq item.type "talent")}}
+          <div class="gt-fieldset gt-full-row">
+            <strong>Mindestattribute</strong>
+            <div class="gt-mini-grid">
+              {{#each attributeRequirementOptions}}
+              <label>{{label}} <input name="system.attributeRequirements.{{key}}" type="number" value="{{value}}" min="0"></label>
+              {{/each}}
+            </div>
+          </div>
+          <div class="gt-fieldset gt-full-row">
+            <strong>Talent-Anwendungen</strong>
+            <div class="gt-mini-grid">
+              <label>Aktuell <input name="system.uses.value" type="number" value="{{system.uses.value}}" min="0"></label>
+              <label>Maximum <input name="system.uses.max" type="number" value="{{system.uses.max}}" min="0"></label>
+              <label>Regeneration <select name="system.usesRecovery">
+                <option value="combatEnd" {{#if (eq system.usesRecovery "combatEnd")}}selected{{/if}}>Nach Kampf</option>
+                <option value="longRest" {{#if (eq system.usesRecovery "longRest")}}selected{{/if}}>Lange Rast (alt)</option>
+                <option value="none" {{#if (eq system.usesRecovery "none")}}selected{{/if}}>Keine automatische Regeneration</option>
+              </select></label>
+              <label>Pool-Key <input name="system.usesPool" type="text" value="{{system.usesPool}}" placeholder="z. B. einhand"></label>
+              <label>Pool-Name <input name="system.usesPoolLabel" type="text" value="{{system.usesPoolLabel}}" placeholder="z. B. Einhand"></label>
+            </div>
+            <p class="gt-help">Maximum 0 bedeutet: keine begrenzten Anwendungen. Standard-Regeneration ist nach Kampfende.</p>
+          </div>
+          <div class="gt-fieldset gt-full-row">
+            <strong>Verbrauch eines anderen Talents</strong>
+            <div class="gt-mini-grid">
+              <label>Talent-Key <input name="system.consumeTalentKey" type="text" value="{{system.consumeTalentKey}}" placeholder="z. B. einhand.stoss"></label>
+              <label>Pool-Key <input name="system.consumePoolKey" type="text" value="{{system.consumePoolKey}}" placeholder="z. B. einhand"></label>
+              <label>Menge <input name="system.consumeAmount" type="number" value="{{system.consumeAmount}}" min="0"></label>
+            </div>
+            <p class="gt-help">Leer lassen, wenn dieses Talent seine eigenen Anwendungen verbraucht. Talent-Key: <code>baumId.talentId</code>. Pool-Key: z. B. <code>einhand</code>.</p>
+          </div>
+          {{/if}}
           <label>Wert <input name="system.value" type="text" value="{{system.value}}"></label>
           <label>RK <input name="system.rk" type="number" value="{{system.rk}}"></label>
           <label>ELE <input name="system.ele" type="number" value="{{system.ele}}"></label>
           <label>MA <input name="system.ma" type="number" value="{{system.ma}}"></label>
-          <label>Benutzungen <span><input name="system.uses.value" type="number" value="{{system.uses.value}}"> / <input name="system.uses.max" type="number" value="{{system.uses.max}}"></span></label>
+          {{#unless (eq item.type "talent")}}<label>Benutzungen <span><input name="system.uses.value" type="number" value="{{system.uses.value}}"> / <input name="system.uses.max" type="number" value="{{system.uses.max}}"></span></label>{{/unless}}
         </div>
         <div class="gt-action-row">
           <button type="button" class="gt-roll" data-formula="{{system.damage}}"><i class="fas fa-dice"></i> Schaden/Effekt würfeln</button>

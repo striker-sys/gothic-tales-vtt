@@ -1,8 +1,8 @@
 {
   "id": "gothic-tales",
   "title": "Gothic Tales",
-  "description": "Spielsystem für Gothic Tales mit System-Compendien im Manifest, ohne Legacy-Welt-Importer. Enthält bereinigte Packdaten, V2-Bögen, Nachschlagewerke, Actoren, Ausrüstung, Talente und Karten direkt als Systempacks.",
-  "version": "0.6.3",
+  "description": "Spielsystem für Gothic Tales mit getrenntem Talentbaum, Magiekreisen, vorbereiteten Magiewürfeln und magischem ActorSheet-Bereich.",
+  "version": "0.6.22",
   "authors": [
     {
       "name": "Kuberia"

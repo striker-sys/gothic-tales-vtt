@@ -12,9 +12,11 @@
     <h3>{{label}}</h3>
     <div class="gt-node-grid">
       {{#each nodes}}
-      <button type="button" class="gt-talent-node {{#if learned}}learned{{/if}} {{#unless available}}locked{{/unless}}" data-tree="{{../id}}" data-node="{{id}}" data-tooltip="{{description}}" aria-label="{{displayLabel}} – {{displayCost}}">
+      <button type="button" class="gt-talent-node {{#if learned}}learned{{/if}} {{#unless available}}locked{{/unless}}" data-tree="{{../id}}" data-node="{{id}}" data-gt-tooltip="{{tooltip}}" aria-label="{{displayLabel}} – {{displayCost}}">
+        {{#if learned}}<span class="gt-talent-learned-badge"><i class="fas fa-check"></i> Gelernt</span>{{/if}}
         <span class="gt-talent-name">{{displayLabel}}</span>
         <span class="gt-talent-cost">{{displayCost}}</span>
+        {{#if attrRequirementText}}<small class="gt-talent-attrreq">{{attrRequirementText}}</small>{{/if}}
       </button>
       {{/each}}
     </div>

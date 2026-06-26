@@ -1,0 +1,108 @@
+{
+  "trees": [
+    {
+      "id": "druiden-riten",
+      "label": "WIP Riten der Druiden WIP",
+      "nodes": [
+        {
+          "id": "riten-der-druiden",
+          "label": "Riten der Druiden",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Riten der Druiden gehört zum Talentbaum Riten der Druiden. Kosten: 10 LP. Voraussetzung: keine direkte Voraussetzung. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Riten der Druiden",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "seelenweber",
+          "label": "Schule des Seelenwebers",
+          "lpCost": 5,
+          "requires": [
+            "riten-der-druiden"
+          ],
+          "attributeRequirements": {},
+          "description": "Schule des Seelenwebers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Riten der Druiden",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "wurzelwirker",
+          "label": "Schule des Wurzelwirkers",
+          "lpCost": 5,
+          "requires": [
+            "riten-der-druiden"
+          ],
+          "attributeRequirements": {},
+          "description": "Schule des Wurzelwirkers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Riten der Druiden",
+          "rankGroup": "",
+          "rank": 0
+        },
+        {
+          "id": "gestaltwandler",
+          "label": "Schule des Gestaltwandlers",
+          "lpCost": 5,
+          "requires": [
+            "riten-der-druiden"
+          ],
+          "attributeRequirements": {},
+          "description": "Schule des Gestaltwandlers gehört zum Talentbaum Riten der Druiden. Kosten: 5 LP. Voraussetzung: riten-der-druiden. Dieses Talent ist als Knoten im Talentbaum hinterlegt und kann dort angewählt werden.",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Riten der Druiden",
+          "rankGroup": "",
+          "rank": 0
+        }
+      ]
+    }
+  ]
+}
