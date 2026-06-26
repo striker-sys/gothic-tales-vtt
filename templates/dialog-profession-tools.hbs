@@ -1,0 +1,59 @@
+{{!-- Gothic-Tales DM-Tools: zentrale, erweiterbare SL-Werkzeuge. --}}
+<div class="gothic-tales gt-dialog gt-profession-tools gt-dm-tools">
+  <header class="gt-profession-tools-header gt-dm-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Spielleiter-Werkzeuge</div>
+      <h2><i class="fas fa-hammer"></i> Gothic-Tales DM-Tools</h2>
+      <p>Zentrale Sammelstelle für Mini-Spiele, Berufs-Werkzeuge und Generatoren.</p>
+    </div>
+  </header>
+
+  <nav class="gt-dm-tools-tabs">
+    <button type="button" class="gt-dm-tools-tab {{#if professionsActive}}active{{/if}}" data-tab="professions">
+      <i class="fas fa-hammer"></i> Berufe
+    </button>
+    <button type="button" class="gt-dm-tools-tab {{#if generatorsActive}}active{{/if}}" data-tab="generators">
+      <i class="fas fa-wand-magic-sparkles"></i> Generator
+    </button>
+  </nav>
+
+  <section class="gt-dm-tools-panel {{#if professionsActive}}active{{/if}}" data-panel="professions">
+    <div class="gt-dm-tools-section-head">
+      <h3>Berufe</h3>
+      <p>Hier liegen die Mini-Spiele und SL-Werkzeuge der Berufe. Weitere Berufs-Mini-Spiele können später hier ergänzt werden.</p>
+    </div>
+
+    <div class="gt-profession-tool-grid">
+      <button type="button" class="gt-profession-tool-card gt-profession-tool-lockpicking">
+        <i class="fas fa-key"></i>
+        <strong>Schlösserknacken</strong>
+        <span>Schloss-Minispiel vorbereiten und an einen aktiven Spieler senden.</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="gt-dm-tools-panel {{#if generatorsActive}}active{{/if}}" data-panel="generators">
+    <div class="gt-dm-tools-section-head">
+      <h3>Generator</h3>
+      <p>Werkzeuge zum Erstellen und Bearbeiten von Charakteren und NSC.</p>
+    </div>
+
+    <div class="gt-profession-tool-grid">
+      <button type="button" class="gt-profession-tool-card gt-dm-tools-character-creator">
+        <i class="fas fa-user-gear"></i>
+        <strong>Charakter Editor</strong>
+        <span>Öffnet den Gothic-Tales Charakter-Editor für den gewählten Actor.</span>
+      </button>
+
+      <button type="button" class="gt-profession-tool-card gt-dm-tools-npc-generator">
+        <i class="fas fa-users-gear"></i>
+        <strong>NSC Generator</strong>
+        <span>Öffnet den NSC-Generator für schnelle Gegner und Nebenfiguren.</span>
+      </button>
+    </div>
+  </section>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

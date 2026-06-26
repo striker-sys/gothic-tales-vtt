@@ -67,6 +67,38 @@
             <h2>Fähigkeiten</h2>
             {{> "systems/gothic-tales/templates/actor/parts/attributes.hbs" list=skillList path="skills" kind="skill"}}
           </section>
+
+          <section class="gt-panel gt-parchment-panel gt-equipped-overview-panel">
+            <h2>Ausgerüstet</h2>
+            {{#if hasEquippedOverview}}
+              {{#if equippedGroups.weapons.items.length}}
+              <div class="gt-equipped-overview-group">
+                <h3>Waffen</h3>
+                {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "weapons") single=true compact=true}}
+              </div>
+              {{/if}}
+              {{#if equippedGroups.armor.items.length}}
+              <div class="gt-equipped-overview-group">
+                <h3>Rüstungen</h3>
+                {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "armor") single=true compact=true}}
+              </div>
+              {{/if}}
+              {{#if equippedGroups.spells.items.length}}
+              <div class="gt-equipped-overview-group">
+                <h3>Zauber</h3>
+                {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "spells") single=true compact=true}}
+              </div>
+              {{/if}}
+              {{#if equippedGroups.gear.items.length}}
+              <div class="gt-equipped-overview-group">
+                <h3>Gegenstände</h3>
+                {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "gear") single=true compact=true}}
+              </div>
+              {{/if}}
+            {{else}}
+              <p class="gt-help">Noch keine angelegten Waffen/Rüstungen oder Favoriten markiert.</p>
+            {{/if}}
+          </section>
         </div>
       </div>
 
@@ -74,8 +106,8 @@
         <div class="gt-grid-main combat-grid">
           <section class="gt-panel gt-parchment-panel">
             <h2>Waffen, Schilde & Zauber</h2>
-            <p class="gt-help">Angriff: W20 + Attributswürfel & Bonus. Schaden: Waffen-/Zauberwürfel und je nach Regel Attributswurf.</p>
             {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=combatGroups compact=true}}
+            <p class="gt-help gt-item-help-below">Angriff: W20 + Attributswürfel & Bonus. Schaden: Waffen-/Zauberwürfel und je nach Regel Attributswurf.</p>
           </section>
           <section class="gt-panel gt-parchment-panel">
             <h2>Schnellwürfe</h2>
@@ -96,11 +128,12 @@
       </div>
 
       <div class="tab inventory" data-group="primary" data-tab="inventory">
-        <div class="gt-grid-main inventory-grid">
+        <div class="gt-inventory-stack">
           {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=itemGroups}}
-          <section class="gt-panel gt-parchment-panel">
+          <section class="gt-panel gt-parchment-panel gt-inventory-text-panel">
             <h2>Inventartext</h2>
-            <div class="gt-description-preview gt-scroll">{{{system.inventoryText}}}</div><button type="button" class="gt-description-edit" data-path="inventoryText" data-label="Inventartext"><i class="fas fa-edit"></i> Inventartext bearbeiten</button>
+            <div class="gt-description-preview gt-scroll">{{{system.inventoryText}}}</div>
+            <button type="button" class="gt-description-edit" data-path="inventoryText" data-label="Inventartext"><i class="fas fa-edit"></i> Inventartext bearbeiten</button>
           </section>
         </div>
       </div>
@@ -123,8 +156,8 @@
       <div class="tab spells" data-group="primary" data-tab="spells">
         <section class="gt-panel gt-parchment-panel">
           <h2>Zauber</h2>
-          <p class="gt-help">Dieser Bereich ist vorbereitet. Die Zauberlogik wird später getrennt ausgebaut.</p>
           {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "spells") single=true}}
+          <p class="gt-help gt-item-help-below">Dieser Bereich ist vorbereitet. Die Zauberlogik wird später getrennt ausgebaut.</p>
         </section>
       </div>
 
@@ -202,6 +235,90 @@
           <h2><i class="fas fa-leaf"></i> Druidenkunst</h2>
           <p class="gt-help">Dieser Bereich ist vom normalen Talentbaum getrennt und für die nächste Ausbaustufe vorbereitet.</p>
           <p>Die Daten liegen nun in einer eigenen Datei und können später mit einem eigenen Baum und eigenen Funktionen versehen werden.</p>
+        </section>
+      </div>
+
+      <div class="tab professions" data-group="primary" data-tab="professions">
+        <section class="gt-panel gt-parchment-panel gt-professions-panel">
+          <header class="gt-professions-header">
+            <div>
+              <h2><i class="fas fa-hammer"></i> Berufe</h2>
+              <p>Erlernbare Berufs-Fähigkeiten mit eigenen Regeln, Mechaniken und Berufsseiten.</p>
+            </div>
+            <div class="gt-profession-header-actions">
+              <button type="button" class="gt-open-profession-tree"><i class="fas fa-sitemap"></i> Berufsbaum öffnen</button>
+            </div>
+          </header>
+
+          <div class="gt-profession-limit-note">
+            <strong>{{professionCount}} / 3 Berufe</strong>
+            <span>Mehr als 3 Berufe sind normalerweise nicht vorgesehen. Bei Story-Ausnahmen fragt das System nach.</span>
+          </div>
+
+          {{#if hasProfessionCards}}
+            <nav class="gt-profession-page-nav">
+              {{#each professionCards}}
+                <button type="button" class="gt-profession-page-select {{#if @first}}active{{/if}}" data-profession-target="{{anchorId}}">{{label}}</button>
+              {{/each}}
+            </nav>
+
+            <div class="gt-profession-pages">
+              {{#each professionCards}}
+              <article id="{{anchorId}}" class="gt-profession-page {{#if @first}}active{{/if}}" data-profession-page="{{anchorId}}">
+                <header>
+                  <div>
+                    <div class="gt-talent-chat-kicker">Gelernter Beruf</div>
+                    <h3>{{label}}</h3>
+                    <p>{{summary}}</p>
+                  </div>
+                  <div class="gt-profession-page-actions">
+                    <button type="button" class="gt-profession-roll" data-tree-id="{{treeId}}" data-node-id="{{nodeId}}"><i class="fas fa-dice-d20"></i> Würfeln</button>
+                    <button type="button" class="gt-profession-detail-open" data-tree-id="{{treeId}}" data-node-id="{{nodeId}}"><i class="fas fa-scroll"></i> Infokarte</button>
+                  </div>
+                </header>
+
+                <div class="gt-profession-meta-row">
+                  <span><i class="fas fa-dice-d20"></i> {{attributeText}}</span>
+                  <span><i class="fas fa-calculator"></i> {{formula}}</span>
+                </div>
+
+                <section class="gt-profession-description">
+                  {{{descriptionHtml}}}
+                </section>
+
+                {{#if mechanics.length}}
+                <section class="gt-profession-mechanics">
+                  <h4>Mechaniken</h4>
+                  {{#each mechanics}}
+                    <article>
+                      <h5>{{title}}</h5>
+                      <p>{{text}}</p>
+                    </article>
+                  {{/each}}
+                </section>
+                {{/if}}
+
+                {{#if tables.length}}
+                <section class="gt-profession-tables">
+                  {{#each tables}}
+                    <h4>{{title}}</h4>
+                    <table>
+                      <thead><tr>{{#each columns}}<th>{{this}}</th>{{/each}}</tr></thead>
+                      <tbody>
+                        {{#each rows}}
+                          <tr>{{#each this}}<td>{{this}}</td>{{/each}}</tr>
+                        {{/each}}
+                      </tbody>
+                    </table>
+                  {{/each}}
+                </section>
+                {{/if}}
+              </article>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="gt-help">Noch kein Beruf gelernt. Öffne den Berufsbaum und wähle einen Beruf.</p>
+          {{/if}}
         </section>
       </div>
 
@@ -284,6 +401,7 @@
       <a class="item" data-tab="spells"><i class="fas fa-scroll"></i><span>Zauber</span></a>
       <a class="item" data-tab="magic"><i class="fas fa-wand-sparkles"></i><span>Magiekreise</span></a>
       <a class="item" data-tab="druid"><i class="fas fa-leaf"></i><span>Druidenkunst</span></a>
+      <a class="item" data-tab="professions"><i class="fas fa-hammer"></i><span>Berufe</span></a>
       <a class="item" data-tab="talents"><i class="fas fa-sitemap"></i><span>Talente</span></a>
       <a class="item" data-tab="creation"><i class="fas fa-pen-to-square"></i><span>Editor</span></a>
       <a class="item" data-tab="notes"><i class="fas fa-feather"></i><span>Notizen</span></a>

@@ -4,7 +4,7 @@
  * game.gothicTales bereitstellen kann.
  */
 const GT = {};
-GT.SYSTEM_VERSION = "0.6.22";
+GT.SYSTEM_VERSION = "0.6.39";
 
 // Foundry-Utility-Aliase halten den folgenden Code lesbar und bündeln Kompatibilitäts-Fallbacks.
 const mergeObject = foundry.utils.mergeObject;
@@ -229,7 +229,8 @@ class GothicTalesItemDataModel extends foundry.abstract.TypeDataModel {
       value: GT.dataField.string(""),
       properties: GT.dataField.string(""),
       requirements: GT.dataField.string(""),
-      equipped: GT.dataField.boolean(false)
+      equipped: GT.dataField.boolean(false),
+      favorite: GT.dataField.boolean(false)
     };
   }
 }
@@ -1328,7 +1329,7 @@ GT.executeChatRoll = async function({formula, label = "Gothic Tales Wurf", actor
     ${critical}
     <footer class="gt-roll-total"><span>Gesamt</span><strong>${result.total}</strong></footer>
   </div>`;
-  return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content});
+  return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content, flags: {"gothic-tales": {rollTotal: result.total, formula, label, flavor}}});
 };
 
 GT.chatRoll = async function(options = {}) {
@@ -1572,6 +1573,53 @@ GT.itemDamageFormula = function(actor, item) {
 };
 
 /** Gruppiert eingebettete Items für Bogenbereiche wie Kampf, Kram, Munition, Nahrung und Tränke. */
+
+/** Entfernt das frei schwebende Navigations-Post-It. */
+GT.hideFloatingSideTabLabel = function() {
+  document.querySelectorAll(".gt-floating-nav-postit").forEach(el => el.remove());
+};
+
+/** Zeigt Navigations-Post-Its außerhalb der Foundry-Application an, damit sie nicht vom Fenster abgeschnitten werden. */
+GT.showFloatingSideTabLabel = function(link) {
+  if (!(link instanceof HTMLElement)) return;
+  const label = link.querySelector("span")?.textContent?.trim() || link.dataset.tab || "";
+  if (!label) return;
+  GT.hideFloatingSideTabLabel();
+  const postit = document.createElement("div");
+  postit.className = "gt-floating-nav-postit";
+  postit.textContent = label;
+  document.body.appendChild(postit);
+
+  const rect = link.getBoundingClientRect();
+  const margin = 10;
+  const postitRect = postit.getBoundingClientRect();
+  let left = rect.right + margin;
+  let top = rect.top + (rect.height / 2) - (postitRect.height / 2);
+
+  // Wenn das App-Fenster sehr nah am rechten Bildschirmrand steht, bleibt das Post-It trotzdem sichtbar.
+  if (left + postitRect.width > window.innerWidth - 8) {
+    left = Math.max(8, rect.left - postitRect.width - margin);
+    postit.classList.add("left");
+  }
+  top = Math.max(8, Math.min(top, window.innerHeight - postitRect.height - 8));
+
+  postit.style.left = `${left}px`;
+  postit.style.top = `${top}px`;
+};
+
+/** Bindet die Side-Tab-Labels an ein body-level Floating-Post-It. */
+GT.bindFloatingSideTabLabels = function(root) {
+  if (!root?.querySelectorAll) return;
+  root.querySelectorAll(".gt-side-tabs a.item").forEach(link => {
+    link.addEventListener("mouseenter", () => GT.showFloatingSideTabLabel(link));
+    link.addEventListener("focus", () => GT.showFloatingSideTabLabel(link));
+    link.addEventListener("mousemove", () => GT.showFloatingSideTabLabel(link));
+    link.addEventListener("mouseleave", GT.hideFloatingSideTabLabel);
+    link.addEventListener("blur", GT.hideFloatingSideTabLabel);
+    link.addEventListener("click", GT.hideFloatingSideTabLabel);
+  });
+};
+
 GT.groupItems = function(items) {
   const order = [
     ["weapons", "Waffen", ["weapon"], null, "weapon"],
@@ -1594,6 +1642,27 @@ GT.groupItems = function(items) {
       groups[id].items.push(item); placed = true; break;
     }
     if (!placed) groups.gear.items.push(item);
+  }
+  return groups;
+};
+
+
+/** Baut den Startseitenbereich "Ausgerüstet" aus angelegten Waffen/Rüstungen und favorisierten Zaubern/Gegenständen. */
+GT.actorEquippedOverviewGroups = function(items = []) {
+  const groups = {
+    weapons: {id: "weapons", label: "Waffen", createType: "weapon", items: []},
+    armor: {id: "armor", label: "Rüstungen", createType: "armor", items: []},
+    spells: {id: "spells", label: "Zauber", createType: "spell", items: []},
+    gear: {id: "gear", label: "Gegenstände", createType: "equipment", items: []}
+  };
+  for (const item of items ?? []) {
+    const type = String(item?.type || "");
+    const equipped = !!item?.system?.equipped;
+    const favorite = !!item?.system?.favorite;
+    if (type === "weapon" && equipped) groups.weapons.items.push(item);
+    else if ((type === "armor" || type === "shield") && equipped) groups.armor.items.push(item);
+    else if (type === "spell" && favorite) groups.spells.items.push(item);
+    else if (favorite && !["weapon", "armor", "shield", "spell", "talent", "trait"].includes(type)) groups.gear.items.push(item);
   }
   return groups;
 };
@@ -1630,6 +1699,212 @@ GT.getDruidArtsScaffold = async function() {
 GT.getProfessionScaffold = async function() {
   if (!GT._professionScaffold) GT._professionScaffold = GT.enrichTalentScaffold(await fetchSystemJson("gt-profession-scaffold.json"));
   return GT._professionScaffold;
+};
+
+
+GT.professionTalentSystem = function(system = {}) {
+  return {...system, talentTree: system.professions ?? {learned: {}, uses: {}}};
+};
+
+GT.learnedProfessionEntries = function(system = {}, scaffold = GT._professionScaffold) {
+  const learnedRoot = system.professions?.learned ?? {};
+  const entries = [];
+  for (const tree of scaffold?.trees ?? []) {
+    const learnedTree = learnedRoot[tree.id] ?? {};
+    for (const node of tree.nodes ?? []) {
+      if (learnedTree[node.id]) entries.push({tree, node});
+    }
+  }
+  return entries;
+};
+
+GT.learnedProfessionCount = function(system = {}, scaffold = GT._professionScaffold) {
+  return GT.learnedProfessionEntries(system, scaffold).length;
+};
+
+GT.actorHasProfession = function(actor, nodeId) {
+  const learned = actor?.system?.professions?.learned ?? {};
+  for (const nodes of Object.values(learned)) if (nodes?.[nodeId]) return true;
+  return false;
+};
+
+GT.professionAttributeText = function(node = {}) {
+  const attrs = Array.isArray(node.attributes) ? node.attributes : [];
+  return attrs.map(a => GT.CONFIG.attributes?.[a] || a).join(" & ") || "Keine Attribute";
+};
+
+GT.professionFormula = function(actor, node = {}) {
+  const attrs = Array.isArray(node.attributes) ? node.attributes : [];
+  const a = attrs[0] || "ge";
+  const b = attrs[1] || a;
+  const av = Number(actor?.system?.attributes?.[a]?.value ?? 10);
+  const bv = Number(actor?.system?.attributes?.[b]?.value ?? av);
+  const value = Math.floor((av + bv) / 2);
+  const derived = GT.attrFromValue(value);
+  return `w20 + ${derived.die}${Number(derived.bonus || 0) ? ` + ${Number(derived.bonus || 0)}` : ""}`;
+};
+
+GT.actorSkillFormulaByKey = function(actor, key) {
+  const skill = actor?.system?.skills?.[key];
+  if (skill?.formula) return skill.formula;
+  const pair = GT.CONFIG.skillAttributes?.[key] ?? ["ge", "erf"];
+  const av = Number(actor?.system?.attributes?.[pair[0]]?.value ?? 10);
+  const bv = Number(actor?.system?.attributes?.[pair[1]]?.value ?? av);
+  const value = Math.floor((av + bv) / 2);
+  const derived = GT.attrFromValue(value);
+  return `w20 + ${derived.die}${Number(derived.bonus || 0) ? ` + ${Number(derived.bonus || 0)}` : ""}`;
+};
+
+GT.actorProfessionCards = function(actor, system = {}, scaffold = GT._professionScaffold) {
+  return GT.learnedProfessionEntries(system, scaffold).map(({tree, node}) => ({
+    treeId: tree.id,
+    nodeId: node.id,
+    label: node.label,
+    summary: node.summary || "",
+    descriptionHtml: node.descriptionHtml || GT.talentDescriptionHtml(node.description || ""),
+    mechanics: node.mechanics || [],
+    tables: node.tables || [],
+    special: node.special || "",
+    formula: GT.professionFormula(actor, node),
+    attributeText: GT.professionAttributeText(node),
+    anchorId: `gt-profession-${tree.id}-${node.id}`
+  }));
+};
+
+GT.findProfessionNode = async function(treeId, nodeId) {
+  const data = await GT.getProfessionScaffold();
+  const tree = data.trees.find(t => t.id === treeId) || data.trees[0];
+  const node = tree?.nodes.find(n => n.id === nodeId);
+  return {data, tree, node};
+};
+
+GT.toggleProfessionLearned = async function(actor, treeId, nodeId) {
+  const {data, tree, node} = await GT.findProfessionNode(treeId, nodeId);
+  if (!tree || !node) return ui.notifications.warn("Beruf nicht gefunden.");
+  if (actor.system?.sheetLocked) return ui.notifications.warn("Der Charakterbogen ist gesperrt.");
+
+  const path = `professions.learned.${tree.id}.${node.id}`;
+  const isLearned = !!getProperty(actor.system, path);
+  const isCharacter = actor.type === "character";
+  const cost = isCharacter ? Number(node.lpCost || 0) : 0;
+  const lp = Number(actor.system?.lp?.value ?? 0);
+  const update = {};
+
+  if (isLearned) {
+    const ok = await GT.confirm({title: "Beruf verlernen", content: `<p><strong>${GT.escape(node.label)}</strong> wirklich verlernen?</p>`, yesLabel: "Verlernen", noLabel: "Abbrechen"});
+    if (!ok) return false;
+    update[`system.${path}`] = false;
+    if (isCharacter) update["system.lp.value"] = lp + cost;
+    await actor.update(update);
+    actor.sheet?.render(false);
+    return true;
+  }
+
+  const learnedCount = GT.learnedProfessionCount(actor.system, data);
+  if (learnedCount >= 3) {
+    const okLimit = await GT.confirm({
+      title: "Mehr als 3 Berufe",
+      content: `<p>Normalerweise sind maximal <strong>3 Berufe</strong> erlaubt.</p><p>Dieser Charakter hat bereits ${learnedCount} Berufe gelernt. Trotzdem lernen?</p>`,
+      yesLabel: "Trotzdem lernen",
+      noLabel: "Abbrechen"
+    });
+    if (!okLimit) return false;
+  }
+
+  if (isCharacter && lp < cost) return ui.notifications.warn("Nicht genug Lernpunkte.");
+
+  const okTeacher = await GT.confirm({
+    title: "Lehrer oder Lernmoment",
+    content: `<p><strong>${GT.escape(node.label)}</strong> benötigt einen Lehrer oder einen passenden Lernmoment.</p><p>${cost ? `Kosten: <strong>${cost} LP</strong>.` : "Kosten: frei."}</p><p>Beruf lernen?</p>`,
+    yesLabel: "Lernen",
+    noLabel: "Abbrechen"
+  });
+  if (!okTeacher) return false;
+
+  update[`system.${path}`] = true;
+  if (isCharacter) update["system.lp.value"] = lp - cost;
+  await actor.update(update);
+  actor.sheet?.render(false);
+  return true;
+};
+
+GT.openProfessionDetail = function(actor, treeId, nodeId) {
+  if (!actor) return ui.notifications.warn("Kein Charakter ausgewählt.");
+  new GothicTalesProfessionDetail(actor, treeId, nodeId).render(true);
+};
+
+GT.professionMacroText = function(options = {}) {
+  const switches = (options.switches ?? ["left", "right", "left"]).map(s => String(s || "left"));
+  const difficulty = Number(options.difficulty || 15);
+  const hideCount = !!options.hideCount;
+  const userId = String(options.userId || "");
+  return `game.gothicTales.professions.lockpicking.open({\n  difficulty: ${difficulty},\n  hideCount: ${hideCount},\n  switches: ${JSON.stringify(switches)},\n  userId: ${JSON.stringify(userId)}\n});`;
+};
+
+GT.lockpickingOnlineUsers = function(selected = "") {
+  return Array.from(game.users ?? [])
+    .filter(u => u.active && !u.isGM)
+    .map(u => ({id: u.id, name: u.name, selected: u.id === selected}));
+};
+
+GT.startLockpickingSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann ein Schloss vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const switches = (options.switches ?? []).map(s => String(s || "left") === "right" ? "right" : "left");
+  if (!switches.length) return ui.notifications.warn("Es wurde keine Schalterfolge festgelegt.");
+  const payload = {
+    type: "lockpickingStart",
+    userId,
+    session: {
+      id: foundry?.utils?.randomID?.() || String(Date.now()),
+      gmId: game.user.id,
+      difficulty: Number(options.difficulty || 10),
+      hideCount: !!options.hideCount,
+      switches
+    }
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Schlösserknacken an ${target.name} gesendet.`);
+};
+
+GT.handleSocketMessage = function(payload = {}) {
+  if (!payload || payload.userId !== game.user?.id) return;
+  if (payload.type === "lockpickingStart") {
+    const actor = game.user.character ?? canvas?.tokens?.controlled?.[0]?.actor;
+    if (!actor) return ui.notifications.warn("Schlösserknacken: Kein Spielercharakter zugewiesen.");
+    new GothicTalesLockpickingPlayerDialog(actor, payload.session).render(true);
+  }
+};
+
+GT.consumeLockpick = async function(actor) {
+  const items = Array.from(actor?.items ?? []);
+  const item = items.find(i => /dietrich/i.test(i.name || "") && Number(i.system?.quantity ?? 1) > 0);
+  if (!item) {
+    const ok = await GT.confirm({
+      title: "Kein Dietrich gefunden",
+      content: "<p>Im Inventar wurde kein Gegenstand mit dem Namen „Dietrich“ gefunden.</p><p>Trotzdem einen neuen Versuch starten?</p>",
+      yesLabel: "Trotzdem",
+      noLabel: "Abbrechen"
+    });
+    return ok;
+  }
+  const qty = Number(item.system?.quantity ?? 1);
+  if (qty > 1) await item.update({"system.quantity": qty - 1});
+  else await item.delete();
+  ui.notifications.info(`Ein Dietrich wurde verbraucht (${item.name}).`);
+  return true;
+};
+
+GT.lockpickingFormulaOptions = function(actor) {
+  const learned = GT.actorHasProfession(actor, "schloesserknacken");
+  if (learned) {
+    const node = GT._professionScaffold?.trees?.flatMap(t => t.nodes ?? [])?.find(n => n.id === "schloesserknacken");
+    return {formula: GT.professionFormula(actor, node || {attributes: ["ge", "erf"]}), label: "Schlösserknacken", rollOptions: {}, summary: "Beruf gelernt"};
+  }
+  return {formula: GT.actorSkillFormulaByKey(actor, "gewandtheit"), label: "Gewandtheit", advantageMode: "disadvantage", advantageLevel: 3, summary: "Ohne Schlösserknacken: großer Nachteil"};
 };
 
 GT.magicCircleTalentSystem = function(system = {}) {
@@ -2160,6 +2435,8 @@ function enrichLists(data) {
     spells: data.itemGroups.spells,
     talents: data.itemGroups.talents
   };
+  data.equippedGroups = GT.actorEquippedOverviewGroups(items);
+  data.hasEquippedOverview = Object.values(data.equippedGroups).some(group => group.items.length);
   data.learnedTalentLabels = [];
   const learned = system.talentTree?.learned ?? {};
   const labelIndex = GT._talentLabelIndex ?? new Map();
@@ -2173,6 +2450,10 @@ function enrichLists(data) {
   data.magicCircleCards = GT.actorMagicCircleCards(data.actor, system);
   data.magicCircleCategories = GT.groupTalentCardsByCategory(data.magicCircleCards);
   data.hasMagicCircleCategories = !!data.magicCircleCategories.length;
+  data.professionCards = GT.actorProfessionCards(data.actor, system);
+  data.hasProfessionCards = !!data.professionCards.length;
+  data.professionCount = GT.learnedProfessionCount(system);
+  data.isGM = !!game.user?.isGM;
   data.magicCircleSlots = GT.magicCircleSlots(system);
   data.currentMagicCircle = GT.currentMagicCircleNode(system);
   data.currentMagicCircleLabel = data.currentMagicCircle ? GT.talentDisplayLabel(data.currentMagicCircle.node) : "Kein Magiekreis gelernt";
@@ -2277,7 +2558,7 @@ class GothicTalesRollDialog extends GothicTalesApplicationV2 {
   constructor(options = {}) {
     super({window: {title: options.label || "Wurf vorbereiten"}, position: {width: 560, height: "auto"}});
     this.roll = {...options, formula: options.formula || "w20", label: options.label || "Gothic Tales Wurf"};
-    this.rollState = {advantageMode: "none", advantageLevel: 1, bonus: 0, diceCounts: {2: 0, 4: 0, 6: 0, 8: 0, 10: 0, 12: 0, 20: 0}};
+    this.rollState = {advantageMode: options.advantageMode || options.d20Mode || "none", advantageLevel: Number(options.advantageLevel || options.d20Level || 1), bonus: Number(options.bonus || 0), diceCounts: {2: 0, 4: 0, 6: 0, 8: 0, 10: 0, 12: 0, 20: 0}};
   }
   static DEFAULT_OPTIONS = {
     classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-roll-dialog-window"],
@@ -2574,6 +2855,7 @@ class GothicTalesActorSheet extends BaseActorSheet {
   activateListeners(element) {
     const root = GT.htmlRoot(element);
     const tabKey = GT.sheetTabKey(this.actor);
+    GT.hideFloatingSideTabLabel();
     GT.activateSheetTabs(root, {
       initial: this._activeTab || GT.sheetTabState.get(tabKey) || "main",
       onChange: tab => {
@@ -2581,11 +2863,12 @@ class GothicTalesActorSheet extends BaseActorSheet {
         GT.sheetTabState.set(tabKey, this._activeTab);
       }
     });
+    GT.bindFloatingSideTabLabels(root);
     const locked = !!this.actor.system?.sheetLocked;
     if (locked) {
       root.querySelectorAll("input, textarea, select").forEach(el => { el.disabled = true; });
       root.querySelectorAll('input[name="system.hp.value"], input[name="system.mana.value"], input[name="system.exhaustion.value"], input[name="system.deathCounter.value"]').forEach(el => { el.disabled = false; el.classList.add("gt-resource-editable"); });
-      root.querySelectorAll(".gt-lock-toggle, .gt-roll, .gt-open-talent-tree, .gt-open-creator, .gt-open-npc-creator, .gt-rest-button, .gt-combat-end-button, .gt-recalculate, .gt-level-manage, .gt-description-edit, .gt-talent-info, .gt-use-talent").forEach(el => { el.disabled = false; });
+      root.querySelectorAll(".gt-lock-toggle, .gt-roll, .gt-open-talent-tree, .gt-open-creator, .gt-open-npc-creator, .gt-rest-button, .gt-combat-end-button, .gt-recalculate, .gt-level-manage, .gt-description-edit, .gt-talent-info, .gt-use-talent, .item-roll, .item-attack, .item-favorite").forEach(el => { el.disabled = false; });
       root.querySelectorAll(".item-create, .item-edit, .item-delete, .item-equip").forEach(el => { el.disabled = true; el.classList.add("disabled"); });
     }
     root.querySelectorAll(".gt-roll").forEach(el => el.addEventListener("click", ev => {
@@ -2633,6 +2916,23 @@ class GothicTalesActorSheet extends BaseActorSheet {
     }));
     root.querySelectorAll(".gt-open-talent-tree").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesTalentTree(this.actor).render(true); }));
     root.querySelectorAll(".gt-open-magic-tree").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesMagicCircleTree(this.actor).render(true); }));
+    root.querySelectorAll(".gt-open-profession-tree").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); new GothicTalesProfessionTree(this.actor).render(true); }));
+    root.querySelectorAll(".gt-profession-page-select").forEach(el => el.addEventListener("click", ev => {
+      ev.preventDefault();
+      const button = ev.currentTarget;
+      const target = button.dataset.professionTarget || "";
+      if (!target) return;
+      root.querySelectorAll(".gt-profession-page-select").forEach(btn => btn.classList.toggle("active", btn === button));
+      root.querySelectorAll(".gt-profession-page").forEach(page => page.classList.toggle("active", page.dataset.professionPage === target));
+    }));
+    root.querySelectorAll(".gt-profession-detail-open").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); const btn = ev.currentTarget; GT.openProfessionDetail(this.actor, btn.dataset.treeId, btn.dataset.nodeId); }));
+    root.querySelectorAll(".gt-profession-roll").forEach(el => el.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const btn = ev.currentTarget;
+      const {node} = await GT.findProfessionNode(btn.dataset.treeId, btn.dataset.nodeId);
+      if (!node) return ui.notifications.warn("Beruf nicht gefunden.");
+      GT.chatRoll({formula: GT.professionFormula(this.actor, node), label: node.label, actor: this.actor, flavor: "Berufswurf"});
+    }));
     root.querySelectorAll(".gt-magic-roll-all").forEach(el => el.addEventListener("click", async ev => { ev.preventDefault(); await GT.rollAllMagicCircleDice(this.actor); this.render(false); }));
     root.querySelectorAll(".gt-magic-die-slot").forEach(el => el.addEventListener("click", ev => { ev.preventDefault(); if (ev.currentTarget.disabled) return; GT.openMagicDieDialog(this.actor, ev.currentTarget.dataset.slotIndex); }));
     root.querySelectorAll(".gt-use-magic-skill").forEach(el => el.addEventListener("click", async ev => { ev.preventDefault(); const button = ev.currentTarget; await GT.executeMagicCircleSkill(this.actor, {treeId: button.dataset.treeId, nodeId: button.dataset.nodeId}); this.render(false); }));
@@ -2659,6 +2959,39 @@ class GothicTalesActorSheet extends BaseActorSheet {
       await GT.executeTalent(this.actor, {source: button.dataset.source, treeId: button.dataset.treeId, nodeId: button.dataset.nodeId, itemId: button.dataset.itemId});
       this.render(false);
     }));
+    root.querySelectorAll(".item-attack").forEach(el => el.addEventListener("click", ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const row = ev.currentTarget.closest(".gt-item-row, .item");
+      const item = this.actor.items.get(row?.dataset?.itemId);
+      if (!item) return ui.notifications.warn("Gothic Tales: Gegenstand nicht gefunden.");
+      const formula = GT.actorAttributeFormula(this.actor, item?.system?.attribute || (item?.type === "spell" ? "konz" : "st"));
+      GT.chatRoll({formula, label: item?.name ?? "Angriff", actor: this.actor, flavor: "Angriffswurf"});
+    }));
+    root.querySelectorAll(".item-roll").forEach(el => el.addEventListener("click", ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const row = ev.currentTarget.closest(".gt-item-row, .item");
+      const item = this.actor.items.get(row?.dataset?.itemId);
+      if (!item) return ui.notifications.warn("Gothic Tales: Gegenstand nicht gefunden.");
+      GT.chatRoll({formula: GT.itemDamageFormula(this.actor, item), label: item?.name ?? "Wurf", actor: this.actor, flavor: "Schaden/Effekt"});
+    }));
+    root.querySelectorAll(".item-favorite").forEach(el => el.addEventListener("click", async ev => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      const row = ev.currentTarget.closest(".gt-item-row, .item");
+      const item = this.actor.items.get(row?.dataset?.itemId);
+      if (!item) return ui.notifications.warn("Gothic Tales: Gegenstand nicht gefunden.");
+      await item.update({"system.favorite": !item.system?.favorite});
+      this.render(false);
+    }));
+    root.querySelectorAll(".item-favorite").forEach(el => el.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
+      if (!item) return;
+      await item.update({"system.favorite": !item.system?.favorite});
+      this.render(false);
+    }));
     if (!this.isEditable || locked) return;
     root.querySelectorAll(".item-create").forEach(el => el.addEventListener("click", async ev => {
       ev.preventDefault();
@@ -2681,17 +3014,6 @@ class GothicTalesActorSheet extends BaseActorSheet {
       if (!item) return;
       await item.update({"system.equipped": !item.system?.equipped});
       await this.actor.update(GT.flattenSystemUpdate(GT.recalculateSystem(this.actor.system, this.actor.type, {equippedArmorBonus: GT.equippedArmorBonusFromItems(this.actor.items)})));
-    }));
-    root.querySelectorAll(".item-roll").forEach(el => el.addEventListener("click", ev => {
-      ev.preventDefault();
-      const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
-      GT.chatRoll({formula: GT.itemDamageFormula(this.actor, item), label: item?.name ?? "Wurf", actor: this.actor, flavor: "Schaden/Effekt"});
-    }));
-    root.querySelectorAll(".item-attack").forEach(el => el.addEventListener("click", ev => {
-      ev.preventDefault();
-      const item = this.actor.items.get(ev.currentTarget.closest(".item")?.dataset.itemId);
-      const formula = GT.actorAttributeFormula(this.actor, item?.system?.attribute || (item?.type === "spell" ? "konz" : "st"));
-      GT.chatRoll({formula, label: item?.name ?? "Angriff", actor: this.actor, flavor: "Angriffswurf"});
     }));
   }
 }
@@ -3244,6 +3566,491 @@ GT.installGlobalClickHandlers = function() {
 
 /** Foundry-init: registriert Helfer, Einstellungen, Bögen, Templates und öffentliche game.gothicTales-APIs. */
 
+
+class GothicTalesProfessionTree extends GothicTalesApplicationV2 {
+  constructor(actor, options = {}) { super(options); this.actor = actor; this.activeTree = "berufe"; }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-profession-tree",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-talent-tree-window", "gt-profession-tree-window"],
+    window: {title: "Gothic Tales Berufe", resizable: true},
+    position: {width: 1040, height: 780}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/talent-tree.hbs", scrollable: [".gt-talent-app"]}};
+  async getData() {
+    const data = await GT.getProfessionScaffold();
+    const learnedRoot = this.actor.system?.professions?.learned ?? {};
+    const lp = Number(this.actor.system?.lp?.value ?? 0);
+    const isCharacter = this.actor.type === "character";
+    const learnedCount = GT.learnedProfessionCount(this.actor.system, data);
+    const trees = data.trees.map(tree => {
+      const learned = learnedRoot[tree.id] ?? {};
+      const nodes = tree.nodes.map(n => {
+        const cost = isCharacter ? Number(n.lpCost || 0) : 0;
+        const enoughLp = !isCharacter || lp >= cost;
+        const learnedNode = !!learned[n.id];
+        const available = learnedNode || enoughLp;
+        const displayCost = isCharacter ? (Number(n.lpCost || 0) ? `${n.lpCost} LP` : "frei") : "NSC/Monster";
+        const missingReason = [];
+        if (!enoughLp) missingReason.push("nicht genug LP");
+        if (!learnedNode && learnedCount >= 3) missingReason.push("normalerweise maximal 3 Berufe");
+        const attributeText = GT.professionAttributeText(n);
+        const tooltip = GT.talentDetailsHtml({descriptionHtml: n.descriptionHtml || GT.talentDescriptionHtml(n.description || ""), usageText: attributeText, attributeText: "Lehrer oder Lernmoment nötig"});
+        const lockedInfo = missingReason.length ? `<p class="gt-tooltip-meta"><strong>Hinweis:</strong> ${GT.escape(missingReason.join("; "))}</p>` : "";
+        return {...n, displayLabel: GT.talentDisplayLabel(n), learned: learnedNode, available, displayCost, attrRequirementText: attributeText, usesText: "Beruf", consumeText: "", tooltip: `${tooltip}${lockedInfo}`, missingReason: missingReason.join("; ")};
+      });
+      return {...tree, active: tree.id === this.activeTree, nodes};
+    });
+    return {actor: this.actor, system: this.actor.system, trees, isCharacter};
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    html.find(".gt-tree-select").on("click", ev => { this.activeTree = ev.currentTarget.dataset.tree; GT.hideFloatingTooltip(); this.render(false); });
+    html.find(".gt-talent-node")
+      .on("mouseenter focus", ev => GT.showFloatingTooltip(ev.currentTarget, ev.currentTarget.dataset.gtTooltip))
+      .on("mouseleave blur", () => GT.hideFloatingTooltip());
+    html.find(".gt-talent-node").on("click", ev => {
+      ev.preventDefault();
+      const button = ev.currentTarget;
+      GT.openProfessionDetail(this.actor, button.dataset.tree, button.dataset.node);
+    });
+  }
+}
+
+class GothicTalesProfessionDetail extends GothicTalesApplicationV2 {
+  constructor(actor, treeId, nodeId, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.treeId = treeId || "berufe";
+    this.nodeId = nodeId;
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-profession-detail",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-profession-detail-window"],
+    window: {title: "Beruf", resizable: true},
+    position: {width: 760, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-profession-detail.hbs", scrollable: [".gt-profession-detail"]}};
+  async getData() {
+    const {tree, node} = await GT.findProfessionNode(this.treeId, this.nodeId);
+    const learned = !!getProperty(this.actor.system, `professions.learned.${tree?.id}.${node?.id}`);
+    const isCharacter = this.actor.type === "character";
+    const cost = isCharacter ? Number(node?.lpCost || 0) : 0;
+    return {
+      actor: this.actor,
+      tree,
+      node,
+      learned,
+      isGM: !!game.user?.isGM,
+      isLockpicking: node?.special === "lockpicking",
+      displayCost: isCharacter ? (cost ? `${cost} LP` : "frei") : "NSC/Monster",
+      attributeText: GT.professionAttributeText(node),
+      formula: GT.professionFormula(this.actor, node)
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+    root.querySelector(".gt-profession-learn")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const changed = await GT.toggleProfessionLearned(this.actor, this.treeId, this.nodeId);
+      if (changed) this.render(false);
+    });
+    root.querySelector(".gt-profession-roll")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const {node} = await GT.findProfessionNode(this.treeId, this.nodeId);
+      if (!node) return;
+      GT.chatRoll({formula: GT.professionFormula(this.actor, node), label: node.label, actor: this.actor, flavor: "Berufswurf"});
+    });
+  }
+}
+
+
+class GothicTalesProfessionToolsDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) { super(options); this.activeTab = options.activeTab || "professions"; }
+
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-dm-tools",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-profession-tools-window", "gt-dm-tools-window"],
+    window: {title: "Gothic-Tales DM-Tools", resizable: false},
+    position: {width: 640, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-profession-tools.hbs"}};
+
+  getData() {
+    return {
+      isGM: !!game.user?.isGM,
+      activeTab: this.activeTab,
+      professionsActive: this.activeTab === "professions",
+      generatorsActive: this.activeTab === "generators"
+    };
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    const setTab = tab => {
+      this.activeTab = tab || "professions";
+      root.querySelectorAll(".gt-dm-tools-tab").forEach(btn => btn.classList.toggle("active", btn.dataset.tab === this.activeTab));
+      root.querySelectorAll(".gt-dm-tools-panel").forEach(panel => panel.classList.toggle("active", panel.dataset.panel === this.activeTab));
+    };
+
+    root.querySelectorAll(".gt-dm-tools-tab").forEach(button => button.addEventListener("click", ev => {
+      ev.preventDefault();
+      setTab(ev.currentTarget.dataset.tab);
+    }));
+
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+
+    root.querySelector(".gt-dm-tools-open-professions")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      setTab("professions");
+    });
+
+    root.querySelector(".gt-profession-tool-lockpicking")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesLockpickingGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-dm-tools-character-creator")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const actor = canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character ?? null;
+      this.close();
+      new GothicTalesCharacterCreator({targetActor: actor}).render(true);
+    });
+
+    root.querySelector(".gt-dm-tools-npc-generator")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const actor = canvas?.tokens?.controlled?.[0]?.actor ?? game.user?.character ?? null;
+      this.close();
+      new GothicTalesNPCGenerator({targetActor: actor}).render(true);
+    });
+
+    setTab(this.activeTab);
+  }
+}
+
+GT.openProfessionTools = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann die Gothic-Tales DM-Tools öffnen.");
+  return new GothicTalesProfessionToolsDialog(options || {}).render(true);
+};
+
+GT.openDMTools = GT.openProfessionTools;
+
+GT.sidebarTabSelector = [
+  "#sidebar-tabs",
+  "#ui-right #sidebar-tabs",
+  "#ui-right nav.tabs",
+  "#ui-right menu.tabs",
+  "#ui-right .tabs",
+  "#sidebar nav.tabs",
+  "#sidebar menu.tabs",
+  "#sidebar .tabs",
+  "nav.sidebar-tabs",
+  ".sidebar-tabs",
+  "[role='tablist']"
+].join(", ");
+
+GT.findSidebarEntry = function(kind) {
+  const selectors = kind === "settings"
+    ? [
+        '[data-tab="settings"]',
+        '[data-app="settings"]',
+        '[data-tool="settings"]',
+        '[aria-label="Settings"]',
+        '[aria-label="Configure Settings"]',
+        '[title="Settings"]',
+        '[title="Configure Settings"]',
+        '[data-tooltip="Settings"]',
+        '[data-tooltip="Configure Settings"]'
+      ]
+    : [
+        '[data-tab="compendium"]',
+        '[data-tab="compendiums"]',
+        '[data-app="compendium"]',
+        '[data-app="compendiums"]',
+        '[aria-label="Compendium Packs"]',
+        '[title="Compendium Packs"]',
+        '[data-tooltip="Compendium Packs"]'
+      ];
+  for (const selector of selectors) {
+    const found = document.querySelector(selector);
+    if (found) return found;
+  }
+  return null;
+};
+
+GT.findSidebarTabBar = function() {
+  const settings = GT.findSidebarEntry("settings");
+  const compendium = GT.findSidebarEntry("compendium");
+
+  if (settings && compendium) {
+    let parent = settings.parentElement;
+    while (parent && parent !== document.body) {
+      if (parent.contains(compendium)) return parent;
+      parent = parent.parentElement;
+    }
+  }
+
+  for (const bar of document.querySelectorAll(GT.sidebarTabSelector)) {
+    const entries = bar.querySelectorAll("a, button, [role='tab'], [data-tab], [data-action]");
+    if (entries.length >= 4) return bar;
+  }
+
+  return settings?.parentElement || compendium?.parentElement || null;
+};
+
+GT.makeDMSidebarButton = function(reference = null) {
+  const tag = reference?.tagName?.toLowerCase?.() === "button" ? "button" : "a";
+  const button = document.createElement(tag);
+  button.id = "gt-dm-sidebar-tab";
+  // Keine Klassen vom Settings-/Compendium-Button übernehmen, sonst können Foundry-Icons übereinander liegen.
+  button.className = "item gt-dm-sidebar-tab";
+  button.setAttribute("role", "button");
+  button.setAttribute("aria-label", "Gothic-Tales DM-Tools");
+  button.dataset.tooltip = "Gothic-Tales DM-Tools";
+  button.dataset.tooltipDirection = "LEFT";
+  button.title = "Gothic-Tales DM-Tools";
+  if (tag === "a") button.href = "#";
+  else button.type = "button";
+  button.replaceChildren();
+  const icon = document.createElement("i");
+  icon.className = "fas fa-hammer";
+  icon.setAttribute("aria-hidden", "true");
+  button.appendChild(icon);
+  button.dataset.gtDmToolsReady = "0.6.36";
+
+  button.addEventListener("click", ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    ev.stopImmediatePropagation?.();
+    GT.openDMTools();
+  }, true);
+
+  return button;
+};
+
+GT.injectProfessionToolsButton = function() {
+  // Ab v0.6.34 sitzt das DM-Werkzeug zuverlässig in der rechten Sidebar.
+  document.querySelector("#gt-dm-menu")?.remove();
+  document.querySelector("#gt-profession-tools-control")?.remove();
+
+  if (!game.user?.isGM) {
+    document.querySelector("#gt-dm-sidebar-tab")?.remove();
+    return false;
+  }
+
+  const tabBar = GT.findSidebarTabBar();
+  if (!tabBar) return false;
+
+  const existing = document.querySelector("#gt-dm-sidebar-tab");
+  const settings = GT.findSidebarEntry("settings");
+  const compendium = GT.findSidebarEntry("compendium");
+  const reference = settings || compendium || tabBar.querySelector("a, button, [role='tab'], [data-tab]");
+  const button = existing || GT.makeDMSidebarButton(reference);
+  if (button.dataset.gtDmToolsReady !== "0.6.36") {
+    button.className = "item gt-dm-sidebar-tab";
+    button.setAttribute("role", "button");
+    button.setAttribute("aria-label", "Gothic-Tales DM-Tools");
+    button.dataset.tooltip = "Gothic-Tales DM-Tools";
+    button.dataset.tooltipDirection = "LEFT";
+    button.title = "Gothic-Tales DM-Tools";
+    if (button.tagName?.toLowerCase?.() === "a") button.href = "#";
+    else button.type = "button";
+    button.replaceChildren();
+    const icon = document.createElement("i");
+    icon.className = "fas fa-hammer";
+    icon.setAttribute("aria-hidden", "true");
+    button.appendChild(icon);
+    button.dataset.gtDmToolsReady = "0.6.36";
+  }
+
+  // Ziel: ganz unten zwischen Compendium und Settings. Wenn Settings gefunden wurde, direkt davor.
+  if (settings && settings.parentElement === tabBar) {
+    if (button.nextSibling !== settings) tabBar.insertBefore(button, settings);
+  } else if (compendium && compendium.parentElement === tabBar && compendium.nextSibling) {
+    if (button.previousSibling !== compendium) tabBar.insertBefore(button, compendium.nextSibling);
+  } else if (!button.parentElement) {
+    tabBar.appendChild(button);
+  }
+
+  button.hidden = false;
+  button.style.display = "";
+  return true;
+};
+
+GT.startProfessionToolsButtonObserver = function() {
+  if (GT._professionToolsObserverStarted) return;
+  GT._professionToolsObserverStarted = true;
+
+  const tryInject = () => {
+    try { GT.injectProfessionToolsButton(); }
+    catch (err) { console.warn("Gothic Tales | DM-Tools-Button konnte nicht eingefügt werden.", err); }
+  };
+
+  // Mehrere verzögerte Versuche, weil Foundry V14 die Sidebar teilweise später rendert.
+  // Kein MutationObserver mehr: der konnte durch DOM-Rewrites den Ladevorgang stören.
+  for (const delay of [100, 350, 800, 1500, 3000, 6000, 10000]) {
+    setTimeout(tryInject, delay);
+  }
+};
+
+class GothicTalesLockpickingGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {
+      difficulty: Number(options.difficulty || 15),
+      hideCount: !!options.hideCount,
+      switches: Array.isArray(options.switches) && options.switches.length ? options.switches : ["left", "right", "left"],
+      userId: String(options.userId || "")
+    };
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-lockpicking-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-lockpicking-gm-window"],
+    window: {title: "Schlösserknacken vorbereiten", resizable: true},
+    position: {width: 720, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-lockpicking-gm.hbs", scrollable: [".gt-lockpicking-gm"]}};
+  getData() {
+    const count = Math.max(1, Number(this.settings.count || this.settings.switches?.length || 3));
+    const rows = Array.from({length: count}, (_, index) => {
+      const value = String(this.settings.switches?.[index] || "left") === "right" ? "right" : "left";
+      return {index, number: index + 1, isLeft: value === "left", isRight: value === "right"};
+    });
+    return {difficulty: this.settings.difficulty, count, hideCount: this.settings.hideCount, users: GT.lockpickingOnlineUsers(this.settings.userId), switchRows: rows};
+  }
+  readForm(root) {
+    const count = Math.max(1, Number(root.querySelector(".gt-lock-count")?.value || 1));
+    const switches = [];
+    for (let i = 0; i < count; i++) {
+      const value = root.querySelector(`.gt-lock-switch-row select[data-index="${i}"]`)?.value || this.settings.switches?.[i] || "left";
+      switches.push(value === "right" ? "right" : "left");
+    }
+    return {
+      difficulty: Number(root.querySelector(".gt-lock-difficulty")?.value || 10),
+      hideCount: !!root.querySelector(".gt-lock-hide")?.checked,
+      userId: String(root.querySelector(".gt-lock-user")?.value || ""),
+      count,
+      switches
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-lock-count")?.addEventListener("change", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      this.render(false);
+    });
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startLockpickingSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+    root.querySelector(".gt-lock-copy-macro")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      const macro = GT.professionMacroText(this.settings);
+      try {
+        await navigator.clipboard?.writeText(macro);
+        ui.notifications.info("Schlösserknacken-Makro in die Zwischenablage kopiert.");
+      } catch (err) {
+        console.log(macro);
+        ui.notifications.warn("Zwischenablage nicht verfügbar. Makro wurde in die Konsole geschrieben.");
+      }
+    });
+  }
+}
+
+class GothicTalesLockpickingPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.progress = 0;
+    this.failed = false;
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-lockpicking-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-lockpicking-player-window"],
+    window: {title: "Schloss knacken", resizable: false},
+    position: {width: 560, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-lockpicking-player.hbs"}};
+  getData() {
+    const count = Number(this.session?.switches?.length || 0);
+    return {
+      actor: this.actor,
+      difficulty: Number(this.session?.difficulty || 10),
+      hideCount: !!this.session?.hideCount,
+      count,
+      failed: this.failed,
+      progressDots: Array.from({length: count}, (_, i) => ({done: i < this.progress}))
+    };
+  }
+  async wrongChoice() {
+    this.failed = true;
+    this.progress = 0;
+    this.render(false);
+    ui.notifications.warn("Fehlgeschlagen! Prüfe, ob der Dietrich hält.");
+    const opts = GT.lockpickingFormulaOptions(this.actor);
+    await GT.chatRoll({
+      formula: opts.formula,
+      label: opts.label,
+      actor: this.actor,
+      flavor: `Schlösserknacken gegen SchwG ${Number(this.session.difficulty || 10)}`,
+      advantageMode: opts.advantageMode || "none",
+      advantageLevel: opts.advantageLevel || 1,
+      rollSummary: opts.summary || "",
+      onRoll: async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        if (total >= Number(this.session.difficulty || 10)) {
+          this.failed = false;
+          this.progress = 0;
+          ui.notifications.info("Der Dietrich hält. Beginne von vorn.");
+          await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card"><h3>Dietrich hält</h3><p>${GT.escape(this.actor.name)} darf beim Schloss von vorne beginnen.</p></div>`});
+          this.render(false);
+          return;
+        }
+        const useNew = await GT.confirm({title: "Dietrich zerbrochen", content: "<p>Der Wurf ist misslungen. Neuen Dietrich verwenden?</p>", yesLabel: "Ja", noLabel: "Nein"});
+        if (!useNew) return this.close();
+        const consumed = await GT.consumeLockpick(this.actor);
+        if (!consumed) return this.close();
+        this.failed = false;
+        this.progress = 0;
+        this.render(false);
+      }
+    });
+  }
+  async success() {
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-lockpicking-success"><h2><i class="fas fa-key"></i> Schloss geknackt!</h2><p>${GT.escape(this.actor.name)} hat die Schalterfolge richtig gelöst.</p></div>`
+    });
+    ui.notifications.info("Schloss geknackt!");
+    return this.close();
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelectorAll(".gt-lock-choice").forEach(button => button.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const direction = ev.currentTarget.dataset.direction;
+      const expected = this.session?.switches?.[this.progress];
+      if (direction !== expected) return this.wrongChoice();
+      this.failed = false;
+      this.progress += 1;
+      if (this.progress >= (this.session?.switches?.length || 0)) return this.success();
+      this.render(false);
+    }));
+    root.querySelector(".gt-lock-abandon")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
 class GothicTalesMagicCircleTree extends GothicTalesApplicationV2 {
   constructor(actor, options = {}) { super(options); this.actor = actor; this.activeTree = "magie"; }
   static DEFAULT_OPTIONS = {
@@ -3324,6 +4131,11 @@ class GothicTalesMagicCircleTree extends GothicTalesApplicationV2 {
   }
 }
 
+
+Hooks.on("renderSidebar", () => setTimeout(() => GT.injectProfessionToolsButton(), 50));
+Hooks.on("renderSidebarTab", () => setTimeout(() => GT.injectProfessionToolsButton(), 50));
+Hooks.once("ready", () => GT.startProfessionToolsButtonObserver());
+
 Hooks.once("init", async function() {
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("not", a => !a);
@@ -3344,6 +4156,15 @@ Hooks.once("init", async function() {
   game.gothicTales.npcGenerator = {open: actor => new GothicTalesNPCGenerator({targetActor: actor}).render(true)};
   game.gothicTales.talentTree = {open: actor => new GothicTalesTalentTree(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character).render(true)};
   game.gothicTales.magicCircles = {open: actor => new GothicTalesMagicCircleTree(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character).render(true)};
+  game.gothicTales.professions = {
+    open: actor => new GothicTalesProfessionTree(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character).render(true),
+    detail: (actor, treeId, nodeId) => GT.openProfessionDetail(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character, treeId || "berufe", nodeId),
+    tools: {open: options => GT.openDMTools(options || {})},
+    lockpicking: {open: options => new GothicTalesLockpickingGMDialog(options || {}).render(true), macroText: options => GT.professionMacroText(options || {})}
+  };
+  game.gothicTales.dmTools = {open: options => GT.openDMTools(options || {})};
+  game.gothicTales.lockpicking = game.gothicTales.professions.lockpicking;
+  game.socket?.on?.("system.gothic-tales", payload => GT.handleSocketMessage(payload));
   GT.installGlobalClickHandlers();
   await foundry.applications.handlebars.loadTemplates([
     "systems/gothic-tales/templates/actor/parts/attributes.hbs",

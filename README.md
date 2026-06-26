@@ -1,9 +1,158 @@
 # Gothic Tales für Foundry VTT
 
-## Release 0.6.22
+## Release 0.6.39
 
 Version 0.6.17 stellt die Talentbeschreibungen aus dem zuletzt hochgeladenen Talentbaum-JSON wieder her und trennt Magiekreise, Druidenkunst und Berufe vom normalen Talentbaum. Der Actorbogen erhält eigene Bereiche für Zauber, Magiekreise und Druidenkunst. Magiekreise besitzen nun eine eigene JSON-Datei, einen eigenen Lernbaum und vier magische Würfelfelder, die abhängig vom aktuell gelernten Magiekreis gefüllt werden.
 
+
+### 0.6.39 – Dynamische Schalteranzahl beim Schlösserknacken
+
+- Im Fenster `Schlösserknacken vorbereiten` werden nicht mehr standardmäßig 12 Schalter angezeigt.
+- Die sichtbare Schalterfolge entspricht jetzt der eingetragenen `Anzahl Schalter`.
+- Die Begrenzung auf 12 Schalter wurde entfernt.
+- Beim Ändern der Anzahl wird das Fenster neu aufgebaut und die Liste entsprechend erweitert oder gekürzt.
+- Bei vielen Schaltern wird die Schalterliste scrollbar.
+
+### 0.6.38 – DM-Tools Design wiederhergestellt
+
+- Das vorherige schönere DM-Tools-Kartendesign wurde wiederhergestellt.
+- Die optischen Änderungen aus 0.6.37 an Kartenhöhe, Innenabstand und Ausrichtung wurden zurückgenommen.
+- Der Abstand zwischen `Charakter Editor` und `NSC Generator` bleibt erhöht, ohne das Kartendesign zu verändern.
+
+### 0.6.37 – DM-Tools Generator-Abstände
+
+- Abstand zwischen `Charakter Editor` und `NSC Generator` im Reiter `Generator` erhöht.
+- Generator-Karten erhalten mehr Mindesthöhe und Innenabstand.
+- Texte und Icons überschneiden sich dadurch nicht mehr.
+
+### 0.6.36 – DM-Tools Ladefix
+
+- Ladeunterbrechung durch den Sidebar-Observer behoben.
+- Der MutationObserver für den DM-Tools-Button wurde entfernt.
+- Stattdessen werden mehrere sichere verzögerte Einfügeversuche genutzt.
+- Der Sidebar-Button schreibt sein Icon nicht mehr permanent neu.
+- Doppel-Icons werden verhindert: sichtbar ist nur noch der Hammer.
+- Tooltip und Fenster heißen weiterhin `Gothic-Tales DM-Tools`.
+
+### 0.6.35 – Gothic-Tales DM-Tools
+
+- Das Sidebar-Icon verwendet jetzt nur noch den Hammer und übernimmt keine Settings-/Compendium-Klassen mehr.
+- Tooltip und Fenster heißen nun `Gothic-Tales DM-Tools`.
+- Das DM-Tools-Fenster wurde als erweiterbares Werkzeugmenü aufgebaut.
+- Reiter `Berufe` enthält die Berufs-Mini-Spiele. Aktuell enthalten: `Schlösserknacken`.
+- Reiter `Generator` enthält:
+  - Charakter Editor
+  - NSC Generator
+- Die Struktur ist für weitere Berufs-Mini-Spiele und DM-Funktionen vorbereitet.
+
+### 0.6.34 – Berufe-Sidebarbutton sichtbar gemacht
+
+- Der Berufe-Button sucht nun robuster nach der rechten Foundry-Sidebar.
+- Unterstützt mehrere Foundry-V14-DOM-Strukturen für Sidebar-Tabs.
+- Der Button wird weiterhin zwischen `Compendium Packs` und `Settings` eingefügt, wenn diese Einträge gefunden werden.
+- Zusätzlich gibt es mehrere verzögerte Einfügeversuche und einen MutationObserver, damit der Button auch sichtbar wird, wenn Foundry die Sidebar später rendert.
+- Der Button nutzt weiterhin Foundrys Tooltip über `data-tooltip="Berufe"`.
+
+### 0.6.33 – DM-Menü in rechter Foundry-Sidebar
+
+- Das DM-Menü sitzt jetzt als Foundry-ähnliches Icon in der rechten Sidebar.
+- Der Button wird zwischen `Compendium Packs` und `Settings` eingefügt, sofern beide Tabs vorhanden sind.
+- Das Icon nutzt die normale Sidebar-Optik statt eines eigenen großen Buttons.
+- Der Tooltip läuft über Foundrys normales `data-tooltip`-System und heißt `Berufe`.
+- Das Menü bleibt nur für Spielleiter sichtbar.
+- Klick auf das Icon öffnet weiterhin das zentrale Berufe-Werkzeugfenster.
+
+### 0.6.32 – Rechtes DM-Menü
+
+- Der Berufe-Button wurde aus der linken Controls-Leiste herausgelöst.
+- Spielleiter erhalten nun rechts am Bildschirm ein eigenes `DM`-Menü.
+- Das DM-Menü ist nur für Spielleiter sichtbar.
+- Im DM-Menü gibt es aktuell den Eintrag `Berufe`.
+- Der Eintrag `Berufe` öffnet das zentrale Berufe-Werkzeugfenster mit dem Schlösserknacken-Minispiel.
+- Das Menü ist als erweiterbare Sammelstelle für weitere Mini-Spiele und SL-Funktionen vorbereitet.
+
+### 0.6.31 – Berufe-Hauptnavigation Fehler behoben
+
+- Console-Fehler beim Klick auf das neue `Berufe`-Werkzeug behoben.
+- Die fehleranfällige direkte Registrierung als Foundry Scene-Control wurde entfernt.
+- Der GM-Button wird weiterhin in den Controls-Bereich eingefügt, ist aber kein internes Foundry-Tool mehr.
+- Dadurch wird Foundrys interne Tool-Umschaltung nicht mehr ausgelöst.
+- Das zentrale Berufe-Werkzeug mit `Schlösserknacken` bleibt erhalten und ist weiterhin nur für Spielleiter sichtbar.
+
+### 0.6.30 – Berufe-Werkzeuge in Foundry-Hauptnavigation
+
+- Der Button `Schloss vorbereiten` wurde aus dem Actor Sheet entfernt.
+- Auch die Berufs-Infokarte öffnet das Schlösserknacken-Minispiel nicht mehr direkt.
+- Für Spielleiter gibt es nun ein eigenes GM-Werkzeug `Berufe` in der Foundry-Hauptnavigation/Scene-Control-Leiste.
+- Das neue Berufe-Werkzeug öffnet ein zentrales Fenster für berufsspezifische Mini-Spiele.
+- Aktuell enthalten: `Schlösserknacken`.
+- Der Button ist nur für Spielleiter sichtbar.
+- Fallback eingebaut: Falls Foundry die Scene-Control-Erweiterung nicht rendert, wird ein eigener GM-Button im Controls-Bereich ergänzt.
+
+### 0.6.29 – Berufsseiten im Sheet umschalten
+
+- Die Berufsauswahl im Reiter `Berufe` nutzt jetzt Buttons statt Ankerlinks.
+- Beim Anklicken eines Berufs wird die aktive Berufsseite direkt im Sheet ausgetauscht.
+- Es wird nur noch die aktuell ausgewählte Berufsbeschreibung angezeigt.
+- Der aktive Beruf bekommt einen sichtbaren roten/goldenen Highlight.
+- Dadurch öffnet sich beim Klick auf `Schlösserknacken`, `Kräuterkunde` usw. keine Browser-/Webseiten-Navigation mehr.
+
+### 0.6.28 – Berufe und Schlösserknacken-Minispiel
+
+- Neuer Charakterbogen-Reiter `Berufe` zwischen Druidenkunst und Talente.
+- Berufe werden aus `data/gt-profession-scaffold.json` geladen.
+- Der Berufsbereich besitzt einen eigenen Berufsbaum.
+- Gelernte Berufe erhalten im Reiter `Berufe` eigene Berufsseiten mit Beschreibung, Mechaniken, Tabellen und Würfelbutton.
+- Beim Lernen wird auf Lehrer oder Lernmoment hingewiesen.
+- Mehr als 3 Berufe sind möglich, lösen aber eine Warnung mit Bestätigung aus.
+- Neue vollständige Infokarten für Berufe.
+- Neues Schlösserknacken-Minispiel:
+  - SL kann Schalteranzahl, Links/Rechts-Folge, SchwG, Zielspieler und versteckte Schalteranzahl festlegen.
+  - Spieler löst das Schloss in einem eigenen Fenster.
+  - Bei falschem Schalter wird automatisch ein Wurf gegen den SchwG vorbereitet.
+  - Ohne Beruf `Schlösserknacken` wird `Gewandtheit` mit großem Nachteil verwendet.
+  - Bei Fehlschlag kann ein neuer Dietrich verwendet werden.
+  - Dietrich-Gegenstände werden im Inventar gesucht und verbraucht.
+- Neues Makro-Beispiel: `macros/schloesserknacken-minispiel.js`.
+
+### 0.6.27 – Item-Würfe repariert
+
+- Die Click-Listener für `Angriff` und `Schaden/Effekt` an Gegenständen wurden wieder eingebunden.
+- Item-Würfe funktionieren jetzt im normalen und im gesperrten Charakterbogen.
+- Favoriten können weiterhin direkt über die Gegenstandsliste umgeschaltet werden.
+- Wenn ein Gegenstand nicht gefunden wird, erscheint nun eine sichtbare Gothic-Tales-Warnung.
+
+### 0.6.26 – Sheet-Scrolling repariert
+
+- Das Scrollen innerhalb des Charakterbogens funktioniert wieder.
+- Die vorherigen `overflow: visible`-Regeln am Fenster wurden für den Sheet-Inhalt zurückgenommen.
+- Die Navigations-Post-Its bleiben weiterhin als frei schwebendes Element über dem Fenster sichtbar.
+
+### 0.6.25 – Navigation-PostIt und Inventartext korrigiert
+
+- Die Navigations-PostIts werden jetzt als frei schwebendes Element über dem Foundry-Fenster angezeigt.
+- Dadurch werden sie nicht mehr durch das Charakterbogenfenster abgeschnitten.
+- Der Inventartext liegt nun unter der Gegenstandsliste statt daneben.
+- Hilfetexte bei Waffen/Zaubern stehen nun unter der jeweiligen Gegenstandsliste.
+- Die Inventarliste nutzt dadurch mehr Breite für Gegenstandsnamen, Infos und Aktionsbuttons.
+
+### 0.6.24 – Startseitenlayout und Navigation korrigiert
+
+- Die Attribute stehen auf der Startseite wieder oben für sich allein.
+- Darunter stehen die Fähigkeiten links und der Bereich `Ausgerüstet` rechts.
+- Die Post-It-Hoverlabels der Seitennavigation fahren wieder nach rechts aus dem Bogen heraus.
+- Das Layout fällt bei kleineren Fenstern sauber untereinander.
+
+### 0.6.23 – Gegenstandslisten, Favoriten und Ausgerüstet-Übersicht
+
+- Gegenstandslisten wurden neu strukturiert: Icon, Name/Infos und Aktionsbuttons sind jetzt sauber getrennt.
+- Verschobene Info-Chips und falsch eingerückte Aktionssymbole wurden korrigiert.
+- Item-Angriff und Item-Schaden/Effekt können jetzt auch im gesperrten Charakterbogen gewürfelt werden.
+- Waffen können nun ebenfalls als ausgerüstet markiert werden.
+- Items haben nun einen Favorit-Status.
+- Auf der Startseite gibt es einen neuen Bereich `Ausgerüstet` neben den Fähigkeiten.
+- Dort werden angelegte Waffen, angelegte Rüstungen/Schilde, favorisierte Zauber und favorisierte Gegenstände gruppiert angezeigt.
+- Die Post-It-Hoverlabels der Seitennavigation klappen nun nach innen zum Bogen aus, damit sie nicht mehr aus dem Fenster heraus abgeschnitten werden.
 
 ### 0.6.22 – Benutzte Zauberwürfel
 

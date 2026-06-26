@@ -1,8 +1,8 @@
 {
   "trees": [
     {
-      "id": "berufe-kuenste",
-      "label": "WIP Berufe, Lehren & Künste WIP",
+      "id": "berufe",
+      "label": "Berufe",
       "nodes": [
         {
           "id": "schloesserknacken",
@@ -10,7 +10,64 @@
           "lpCost": 5,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Schlösserknacken aus dem Kapitel Berufe, Lehren & Künste. Geschick & Erfahrung – 5 LP Um ein Schloss zu knacken, benötigt man Dietriche, mit denen man die Schalter betätigt. Schalter sind entweder links oder rechts und jedes Schloss hat eine bestimmte Anzahl von Schaltern.",
+          "attributes": [
+            "ge",
+            "erf"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Schlösser öffnen mit Dietrichen, Schalterfolge und Gedächtnis.",
+          "description": "<p>Um ein Schloss zu knacken, benötigt man Dietriche. Ein Schloss besitzt eine bestimmte Anzahl von Schaltern. Jeder Schalter steht für <strong>links</strong> oder <strong>rechts</strong>. Der Spielleiter legt Anzahl und Kombination verdeckt fest. Das Schloss springt auf, wenn alle Schalter in einem Rutsch und in richtiger Reihenfolge angesagt werden.</p><p>Bei einem falschen Schalter beginnt der Versuch von vorne und es wird gegen den Schwierigkeitsgrad des Schlosses gewürfelt. Bei Erfolg bleibt der Dietrich erhalten. Bei Fehlschlag zerbricht er.</p><p>Schlösserknacken ist auch ohne erlernte Fähigkeit möglich. Dann wird <strong>Gewandtheit</strong> mit <strong>großem Nachteil</strong> verwendet.</p>",
+          "mechanics": [
+            {
+              "title": "Wurf",
+              "text": "Geschick & Erfahrung gegen den Schwierigkeitsgrad des Schlosses."
+            },
+            {
+              "title": "Falscher Schalter",
+              "text": "Der Versuch beginnt von vorne. Bei gelungenem Wurf bleibt der Dietrich erhalten, bei misslungenem Wurf zerbricht er."
+            },
+            {
+              "title": "Ohne Beruf",
+              "text": "Verwende Gewandtheit mit großem Nachteil."
+            },
+            {
+              "title": "Kampf",
+              "text": "Während eines Kampfes gilt ein Versuch bis zum falschen Schalter als Standardaktion."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Schwierigkeitsgrad nach Schaltern",
+              "columns": [
+                "SchwG",
+                "Anzahl der Schalter"
+              ],
+              "rows": [
+                [
+                  "Leicht – 10",
+                  "2 – 3"
+                ],
+                [
+                  "Mittel – 15",
+                  "4 – 5"
+                ],
+                [
+                  "Schwer – 20",
+                  "6 – 7"
+                ],
+                [
+                  "Sehr schwer – 25",
+                  "8 – 10"
+                ],
+                [
+                  "Meisterklasse – 30",
+                  "11 +"
+                ]
+              ]
+            }
+          ],
+          "special": "lockpicking",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -23,8 +80,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "schloesserknacken",
           "rank": 0
         },
         {
@@ -33,7 +90,30 @@
           "lpCost": 10,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Taschendiebstahl aus dem Kapitel Berufe, Lehren & Künste. Intuition & Geschick – 10 LP Mit Taschendiebstahl kann man Figuren bestehlen. Man kann auf konkrete Gegenstände abzielen (ein Schlüssel am Gürtel oder einen Geldbeutel) oder auf gut Glück aus Behältnissen wie Hosentaschen oder Rucksäcken stehlen.",
+          "attributes": [
+            "intu",
+            "ge"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Figuren unter Zeitdruck bestehlen.",
+          "description": "<p>Mit Taschendiebstahl kann man Figuren bestehlen. Man kann auf konkrete Gegenstände abzielen oder auf gut Glück aus Behältnissen wie Taschen oder Rucksäcken stehlen. Der Diebstahl läuft in drei Schritten ab: Schwierigkeitsgrad bestimmen, Zeitfenster verschaffen und den eigentlichen Diebstahl ausführen.</p><p>Das Ziel würfelt Wahrnehmen. Dieses Ergebnis ist der SchwG für den Diebstahl. Der Dieb erzeugt anschließend mit Taschendiebstahl ein Zeitfenster. Innerhalb dieses Zeitfensters darf er so oft würfeln, wie er schafft, muss aber immer die gleichen Würfel verwenden. Bei kritischem Fehlschlag bemerkt das Opfer den Diebstahl.</p>",
+          "mechanics": [
+            {
+              "title": "Schritt 1: SchwG",
+              "text": "Das Ziel macht einen Wahrnehmen-Wurf. Das Ergebnis ist der SchwG. Der SL kann je nach Sicherung des Gegenstands Vorteil geben."
+            },
+            {
+              "title": "Schritt 2: Zeitfenster",
+              "text": "Der Dieb würfelt Taschendiebstahl. Für jeden 5er-Wert erhält er +3 Sekunden. Verbündete können durch passende Würfe +2 Sekunden pro 5er-Wert beitragen."
+            },
+            {
+              "title": "Schritt 3: Diebstahl",
+              "text": "Innerhalb des Timers würfelt der Dieb auf Taschendiebstahl gegen den SchwG. Bei Fehlschlag scheitert der Diebstahl."
+            }
+          ],
+          "tables": [],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -46,8 +126,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "taschendiebstahl",
           "rank": 0
         },
         {
@@ -56,7 +136,60 @@
           "lpCost": 10,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Feilschen aus dem Kapitel Berufe, Lehren & Künste. Intuition & Erfahrung – 10 LP Man kann nun mit Händlern zu feilschen, um (nur!) beim Einkaufen den Preis zu drücken. Doch Achtung, das Ganze kann auch nach hinten losgehen!",
+          "attributes": [
+            "intu",
+            "erf"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Beim Einkauf Preise durch Argumente senken.",
+          "description": "<p>Mit Feilschen kann man beim Einkaufen den Preis drücken. Jeder Wurf braucht ein Argument. Ein Erfolg reduziert den Preis um ein Zehntel, bis zu einem Minimum von fünf Zehnteln. Bei drei Fehlschlägen ist der Händler verärgert; es kann nicht weiter gefeilscht werden und der Preis ist wieder der Normalpreis.</p><p>Man kann jederzeit aufhören und den aktuellen Preis zahlen. Der SL entscheidet, ob ein Argument Vorteil oder Nachteil bringt. Unterstützen ist mit sozialen Fähigkeiten möglich, muss aber dargestellt oder geschildert werden.</p>",
+          "mechanics": [
+            {
+              "title": "Argument",
+              "text": "Jeder Feilschen-Wurf braucht ein plausibles oder kreatives Argument."
+            },
+            {
+              "title": "Erfolg",
+              "text": "Der Preis sinkt um 1/10. Minimum ist 5/10."
+            },
+            {
+              "title": "Fehlschläge",
+              "text": "Nach 3 Fehlschlägen ist der Händler verärgert und der Normalpreis gilt wieder."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Schwierigkeitsgrad nach Preis",
+              "columns": [
+                "Preis",
+                "SchwG"
+              ],
+              "rows": [
+                [
+                  "Unter 100",
+                  "10"
+                ],
+                [
+                  "101 – 200",
+                  "15"
+                ],
+                [
+                  "201 – 500",
+                  "20"
+                ],
+                [
+                  "501 – 1500",
+                  "25"
+                ],
+                [
+                  "Über 1500",
+                  "30"
+                ]
+              ]
+            }
+          ],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -69,8 +202,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "feilschen",
           "rank": 0
         },
         {
@@ -79,7 +212,34 @@
           "lpCost": 10,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Wildtiere Ausnehmen aus dem Kapitel Berufe, Lehren & Künste. Erfahrung & Geschick – 10 LP Mit dieser Fähigkeit können Spieler die ‚Beute‘ von erlegten Wildtieren erlangen. Auf jedem Monsterbogen findet man dafür unten rechts einen Kasten.",
+          "attributes": [
+            "erf",
+            "ge"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Beute, Materialien und Trophäen von Wildtieren gewinnen.",
+          "description": "<p>Mit dieser Fähigkeit können Spieler Beute von erlegten Wildtieren gewinnen. Auf Monsterbögen findet man dafür ein Beutekästchen. Zum Ausnehmen benötigt man ein Jagdmesser. Der Spieler würfelt gegen den angegebenen SchwG.</p><p>Rationen erhält man normalerweise automatisch. Tiermaterialien erhält man in einer Menge gleich dem Würfelergebnis, maximal bis zum SchwG. Trophäen erhält man, wenn der SchwG geschafft wird. Bei kritischem Erfolg können Materialien über den SchwG hinaus gewonnen werden und die Trophäe ist garantiert. Bei kritischem Fehlschlag erhält man nichts.</p>",
+          "mechanics": [
+            {
+              "title": "Voraussetzung",
+              "text": "Jagdmesser und erlegtes Wildtier."
+            },
+            {
+              "title": "Materialien",
+              "text": "Menge entspricht dem Würfelergebnis, maximal SchwG. Bei kritischem Erfolg auch über dem SchwG."
+            },
+            {
+              "title": "Trophäe",
+              "text": "Wird bei erreichtem SchwG gewonnen. Für weitere Trophäen je ein weiterer Wurf."
+            },
+            {
+              "title": "Unterstützen",
+              "text": "Objekte Bewegen und Gewandtheit sind möglich, verursachen aber kleinen Nachteil pro Unterstützendem. Wildtiere Ausnehmen als Unterstützung gibt mittleren Vorteil."
+            }
+          ],
+          "tables": [],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -92,8 +252,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "wildtiere-ausnehmen",
           "rank": 0
         },
         {
@@ -102,7 +262,106 @@
           "lpCost": 5,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Kräuterkunde aus dem Kapitel Berufe, Lehren & Künste. Intuition & Konzentration – 5 LP Kräuterkunde ergänzt sich mit Alchemie. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Kräutern.",
+          "attributes": [
+            "intu",
+            "konz"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Kräuter suchen und sammeln.",
+          "description": "<p>Kräuterkunde ergänzt sich mit Alchemie. Diese Fähigkeit ermöglicht das Sammeln von Kräutern in der freien Natur. Nur bei erfolgreichem Wurf zählt der Versuch. Nach einer Suche wird ein Timer auf 30 Minuten gestellt. Unterstützen ist nicht möglich.</p><p>Der Spieler wählt zuerst ein Kraut aus und würfelt dann Kräuterkunde gegen den SchwG des Krauts. Bei Heil- und Manakräutern entspricht die Menge dem Kräuterkunde-Wurf. Bei kritischem Erfolg erhält man außerdem den seltenen Kronstöckel.</p>",
+          "mechanics": [
+            {
+              "title": "Suchen",
+              "text": "Nur in freier Natur. In Minen oder Städten ist normalerweise nichts zu finden."
+            },
+            {
+              "title": "Timer",
+              "text": "Nach dem Suchen 30 Minuten warten."
+            },
+            {
+              "title": "Häufigkeit",
+              "text": "Mit höheren Graden sind mehr Suchen pro Sitzung vorgesehen: geübt 3, gelehrt 4, gemeistert 5."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Kräuter",
+              "columns": [
+                "Kraut",
+                "SchwG",
+                "Nutzung/Wert"
+              ],
+              "rows": [
+                [
+                  "Heilkräuter",
+                  "10",
+                  "Heiltränke, Wert = Menge"
+                ],
+                [
+                  "Manakräuter",
+                  "10",
+                  "Manatränke, Wert = Menge"
+                ],
+                [
+                  "Snapperkraut",
+                  "15",
+                  "Geschwindigkeit, Wert 30"
+                ],
+                [
+                  "Blitzblatt",
+                  "20",
+                  "Initiative+, Wert 40"
+                ],
+                [
+                  "Herrscherkraut",
+                  "20",
+                  "TP+, Wert 40"
+                ],
+                [
+                  "Flammenbeere",
+                  "20",
+                  "Mana+, Wert 40"
+                ],
+                [
+                  "Drachenwurzel",
+                  "25",
+                  "St+, Wert 50"
+                ],
+                [
+                  "Goblinbeere",
+                  "25",
+                  "Ge+, Wert 50"
+                ],
+                [
+                  "Harnischkraut",
+                  "25",
+                  "Ausd+, Wert 50"
+                ],
+                [
+                  "Königsdistel",
+                  "25",
+                  "Konz+, Wert 50"
+                ],
+                [
+                  "Blutschilf",
+                  "25",
+                  "Intu+, Wert 50"
+                ],
+                [
+                  "Sonnenmoos",
+                  "25",
+                  "Erf+, Wert 50"
+                ],
+                [
+                  "Kronstöckel",
+                  "kritischer Erfolg",
+                  "Permanente Tränke, Wert 120"
+                ]
+              ]
+            }
+          ],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -115,8 +374,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "kraeuterkunde",
           "rank": 0
         },
         {
@@ -125,7 +384,56 @@
           "lpCost": 10,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Alchemie aus dem Kapitel Berufe, Lehren & Künste. Konzentration & Geschick – 10 LP Alchemie ergänzt sich mit Kräuterkunde. Alchemie ist die Kunst Tränke zu brauen.",
+          "attributes": [
+            "konz",
+            "ge"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Tränke brauen und Kräuter verarbeiten.",
+          "description": "<p>Alchemie ergänzt sich mit Kräuterkunde. Alchemie ist die Kunst, Tränke zu brauen. Dafür benötigt man einen Alchemietisch. Ein Trank dauert etwa fünf Minuten pro Trank und ist während des Kampfes nicht möglich.</p><p>Anfänger können Heil- und Manatränke brauen. Mit höheren Graden sind Erholung/Reinigung, Geschwindigkeit/Hast und permanente Tränke vorgesehen. Unterstützung ist grundsätzlich nicht möglich, außer bei permanenten Tränken durch genau einen passenden Helfer.</p>",
+          "mechanics": [
+            {
+              "title": "Heil- und Manatränke",
+              "text": "Zutaten erzeugen Aufgaben. Diese Aufgaben werden mit Alchemie-Würfen gegen ihren SchwG gelöst und bestimmen die Wirkung."
+            },
+            {
+              "title": "Permanente Tränke",
+              "text": "Benötigen Kronstöckel, spezifisches Kraut und einen Alchemie-Wurf gegen SchwG 30."
+            },
+            {
+              "title": "Fehlschlag",
+              "text": "Je nach Rezept gehen Ingredienzien verloren; kritische Fehlschläge sind schwerwiegender."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Grad und Tränke",
+              "columns": [
+                "Grad",
+                "Mögliche Tränke"
+              ],
+              "rows": [
+                [
+                  "0 – Anfänger",
+                  "Heil- & Manatränke"
+                ],
+                [
+                  "1 – geübt",
+                  "Erholung & Reinigung"
+                ],
+                [
+                  "2 – gelehrt",
+                  "Geschwindigkeit & Hast"
+                ],
+                [
+                  "3 – gemeistert",
+                  "Permanente Tränke"
+                ]
+              ]
+            }
+          ],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -138,8 +446,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "alchemie",
           "rank": 0
         },
         {
@@ -148,7 +456,52 @@
           "lpCost": 5,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Schürfen aus dem Kapitel Berufe, Lehren & Künste. Stärke & Ausdauer – 5 LP Schürfen ergänzt sich mit Schmiedekunst. Diese Fähigkeit ermöglicht 2-mal pro Sitzung das Sammeln von Erzen.",
+          "attributes": [
+            "st",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Erzadern finden und Erz abbauen.",
+          "description": "<p>Schürfen ergänzt sich mit Schmiedekunst. Diese Fähigkeit ermöglicht das Sammeln von Erzen an geeigneten Orten wie Höhlen oder Tunneln. Man benötigt eine Spitzhacke. Nur bei erfolgreichem Wurf zählt der Versuch. Nach dem Suchen wird ein Timer von 30 Minuten gestellt.</p><p>Schürfen geschieht in drei Schritten: Erz suchen, Menge bestimmen und Erz abbauen. Unterstützen ist nicht möglich.</p>",
+          "mechanics": [
+            {
+              "title": "Erz suchen",
+              "text": "Ein Schürfen-Wurf bestimmt, ob kein Fund, Eisenerz oder magisches Erz gefunden wird."
+            },
+            {
+              "title": "Menge bestimmen",
+              "text": "Ein zweiter Wurf bestimmt die Zahl der Vorkommen."
+            },
+            {
+              "title": "Abbauen",
+              "text": "Pro Vorkommen wird ein Schürfen-Wurf gemacht. Die Ergebnisse werden addiert."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Erzfund",
+              "columns": [
+                "Wurf",
+                "Erze"
+              ],
+              "rows": [
+                [
+                  "2 – 10",
+                  "Kein Fund"
+                ],
+                [
+                  "11 – 24",
+                  "Eisenerz, Wert = Menge"
+                ],
+                [
+                  "25+",
+                  "Magisches Erz, Wert = Menge × 3"
+                ]
+              ]
+            }
+          ],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -161,8 +514,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "schuerfen",
           "rank": 0
         },
         {
@@ -171,7 +524,30 @@
           "lpCost": 10,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Schmiedekunst aus dem Kapitel Berufe, Lehren & Künste. Stärke & Erfahrung – 10 LP Schmiedekunst ergänzt sich mit Schürfen. Schmiedekunst ist die Fähigkeit Nahkampfwaffen herzustellen.",
+          "attributes": [
+            "st",
+            "erf"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Nahkampfwaffen herstellen.",
+          "description": "<p>Schmiedekunst ergänzt sich mit Schürfen. Man benötigt Schmiedehammer und Schmiede. Eine Waffe zu schmieden ist ein mehrstündiger Prozess und benötigt mehrere Helfer. Es gibt eine Vorbereitungsphase zum Sammeln von Würfeln und eine Schmiedephase zur Fertigung.</p><p>In der Schmiedephase werden Art, Waffenwürfel und Bonus festgelegt. Danach können Eigenschaften oder ein zweiter Waffenwürfel versucht werden. Fehlschläge erzeugen Malus oder Verlust je nach Schritt.</p>",
+          "mechanics": [
+            {
+              "title": "Vorbereitungsphase",
+              "text": "Der Schmied würfelt bis zu 5-mal. Helfer bearbeiten Aufgaben und geben bei Erfolg Würfel für die Schmiedephase."
+            },
+            {
+              "title": "Schmiedephase",
+              "text": "Art, Waffen-W und Bonus werden nacheinander gewählt und gegen SchwG erarbeitet."
+            },
+            {
+              "title": "Verbesserungen",
+              "text": "Bis zu zwei Eigenschaften und/oder ein zweiter Waffenwürfel können versucht werden."
+            }
+          ],
+          "tables": [],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -184,8 +560,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "schmiedekunst",
           "rank": 0
         },
         {
@@ -194,7 +570,66 @@
           "lpCost": 10,
           "requires": [],
           "attributeRequirements": {},
-          "description": "Schnitzkunst aus dem Kapitel Berufe, Lehren & Künste. Geschick & Ausdauer – 10 LP Schnitzkunst ist die Fähigkeit Pfeile zu schnitzen und Bögen zu bauen. Man benötigt ein Schnitzmesser.",
+          "attributes": [
+            "ge",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Pfeile, Bolzen und Bögen herstellen.",
+          "description": "<p>Schnitzkunst ist die Fähigkeit, Pfeile zu schnitzen und Bögen zu bauen. Man benötigt ein Schnitzmesser. Anfänger können Pfeile und Bolzen herstellen. Geübt sind besondere Pfeile und Bolzen möglich. Gelehrt können Bögen geschnitzt werden.</p><p>Schnitzen erfolgt während des Rastens. Jede Fertigung dauert etwa eine Stunde. Bei kritischem Fehlschlag schneidet man sich in den Finger und erleidet 5 Schaden.</p>",
+          "mechanics": [
+            {
+              "title": "Pfeile/Bolzen",
+              "text": "Während einer Rast würfeln. Man schnitzt Ergebnis/3 Pfeile oder Bolzen."
+            },
+            {
+              "title": "Besondere Munition",
+              "text": "Bis zu 6 besondere Pfeile/Bolzen in 1 Stunde; je ein Wurf gegen SchwG und passende Materialien."
+            },
+            {
+              "title": "Bogenschnitzen",
+              "text": "Bogenholz und Sehne werden getrennt vorbereitet und über ein Punktesystem zu Waffenwürfel, Bonus, Reichweite und Eigenschaften verarbeitet."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Besondere Pfeile/Bolzen",
+              "columns": [
+                "Munition",
+                "SchwG",
+                "Material"
+              ],
+              "rows": [
+                [
+                  "Reißzahn",
+                  "10",
+                  "3 / 7 Zähne, Krallen und Klauen"
+                ],
+                [
+                  "Breitkopf",
+                  "10",
+                  "2 Eisenerz"
+                ],
+                [
+                  "Erzbreitkopf",
+                  "15",
+                  "2 magisches Erz"
+                ],
+                [
+                  "Widerhaken",
+                  "15",
+                  "4 Eisenerz"
+                ],
+                [
+                  "Bodkin",
+                  "15",
+                  "3 Eisenerz"
+                ]
+              ]
+            }
+          ],
+          "special": "",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -207,8 +642,8 @@
             "amount": 0,
             "pool": ""
           },
-          "category": "Berufe, Lehren & Künste",
-          "rankGroup": "",
+          "category": "Berufe",
+          "rankGroup": "schnitzkunst",
           "rank": 0
         }
       ]
