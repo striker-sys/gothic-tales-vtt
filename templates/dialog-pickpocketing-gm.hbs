@@ -1,0 +1,78 @@
+<form class="gothic-tales gt-dialog gt-pickpocketing-gm">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-user-secret"></i> Taschendiebstahl vorbereiten</h2>
+      <p>SchwG aus Wahrnehmen festlegen, Umstände bewerten und an den Dieb senden.</p>
+    </div>
+  </header>
+
+  <div class="gt-dialog-grid">
+    <label>Zielspieler / Dieb
+      <select class="gt-pickpocket-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+    <label>Ziel / Opfer
+      <input class="gt-pickpocket-target" type="text" value="{{targetName}}" placeholder="z. B. Händler, Wache, Buddler">
+    </label>
+    <label>Beute / Zielgegenstand
+      <input class="gt-pickpocket-loot" type="text" value="{{loot}}" placeholder="z. B. Schlüssel, Geldbeutel">
+    </label>
+    <label>Art des Diebstahls
+      <select class="gt-pickpocket-type">
+        {{#each theftTypes}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <label>Sicherung
+      <select class="gt-pickpocket-security">
+        {{#each securityOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <label>SchwG aus Wahrnehmen
+      <input class="gt-pickpocket-difficulty" type="number" min="1" step="1" value="{{difficulty}}">
+    </label>
+  </div>
+
+  <h3>Zeitfenster verschaffen</h3>
+  <div class="gt-dialog-grid">
+    <label>Umstände
+      <select class="gt-pickpocket-window-mode">
+        {{#each advantageModes}}<option value="{{id}}" {{#if (eq id ../windowMode)}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <label>Stufe
+      <select class="gt-pickpocket-window-level">
+        {{#each advantageLevels}}<option value="{{value}}" {{#if (eq value ../windowLevel)}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+  </div>
+
+  <h3>Zugreifen</h3>
+  <div class="gt-dialog-grid">
+    <label>Umstände Schritt 3
+      <select class="gt-pickpocket-grab-mode">
+        {{#each advantageModes}}<option value="{{id}}" {{#if (eq id ../grabMode)}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <label>Stufe
+      <select class="gt-pickpocket-grab-level">
+        {{#each advantageLevels}}<option value="{{value}}" {{#if (eq value ../grabLevel)}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+  </div>
+
+  <label class="gt-full-field">Notiz
+    <textarea class="gt-pickpocket-note" rows="3" placeholder="Optional: Situation, Ablenkung, Verdacht, besondere Umstände">{{note}}</textarea>
+  </label>
+
+  <div class="gt-help-box">
+    Der Spieler baut zuerst ein Zeitfenster auf. Beim Zugreifen gilt eine feste Würfelkonfiguration und zwischen zwei Zugreifen-Würfen eine 2-Sekunden-Sperre.
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="submit"><i class="fas fa-paper-plane"></i> An Spieler senden</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</form>

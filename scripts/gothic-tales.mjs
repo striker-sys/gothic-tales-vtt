@@ -4,7 +4,7 @@
  * game.gothicTales bereitstellen kann.
  */
 const GT = {};
-GT.SYSTEM_VERSION = "0.6.39";
+GT.SYSTEM_VERSION = "0.6.42";
 
 // Foundry-Utility-Aliase halten den folgenden Code lesbar und bündeln Kompatibilitäts-Fallbacks.
 const mergeObject = foundry.utils.mergeObject;
@@ -1310,7 +1310,10 @@ GT.executeChatRoll = async function({formula, label = "Gothic Tales Wurf", actor
     </span>`;
   }).join("");
   const constHtml = result.constant ? `<span class="gt-roll-bonus"><span>Bonus</span><strong>${result.constant >= 0 ? "+" : ""}${result.constant}</strong></span>` : "";
+  const baseD20 = result.dice.find(d => d.sides === 20 && !d.ignored)?.result || 0;
+  const criticalFailure = Number(baseD20) === 1;
   const critical = result.critical ? `<div class="gt-critical"><i class="fa-solid fa-burst"></i> Kritischer Treffer/Erfolg</div>` : "";
+  const fumble = criticalFailure ? `<div class="gt-critical gt-fumble"><i class="fa-solid fa-skull-crossbones"></i> Kritischer Fehlschlag</div>` : "";
   const actorName = actor?.name ? `<div class="gt-roll-actor">${GT.escape(actor.name)}</div>` : "";
   const summaryHtml = rollSummary ? `<div class="gt-roll-options"><i class="fa-solid fa-sliders"></i> ${GT.escape(rollSummary)}</div>` : "";
   const content = `<div class="gothic-tales chat-card gt-roll-card">
@@ -1327,9 +1330,10 @@ GT.executeChatRoll = async function({formula, label = "Gothic Tales Wurf", actor
     <div class="gt-roll-dice-grid">${diceHtml || `<span class="gt-roll-die muted">Keine Würfel</span>`}</div>
     ${constHtml ? `<div class="gt-roll-modifiers">${constHtml}</div>` : ""}
     ${critical}
+    ${fumble}
     <footer class="gt-roll-total"><span>Gesamt</span><strong>${result.total}</strong></footer>
   </div>`;
-  return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content, flags: {"gothic-tales": {rollTotal: result.total, formula, label, flavor}}});
+  return ChatMessage.create({speaker: ChatMessage.getSpeaker({actor}), content, flags: {"gothic-tales": {rollTotal: result.total, rollCritical: !!result.critical, rollCriticalFailure: criticalFailure, rollD20: baseD20, formula, label, flavor}}});
 };
 
 GT.chatRoll = async function(options = {}) {
@@ -1708,24 +1712,46 @@ GT.professionTalentSystem = function(system = {}) {
 
 GT.learnedProfessionEntries = function(system = {}, scaffold = GT._professionScaffold) {
   const learnedRoot = system.professions?.learned ?? {};
-  const entries = [];
+  const byGroup = new Map();
   for (const tree of scaffold?.trees ?? []) {
     const learnedTree = learnedRoot[tree.id] ?? {};
     for (const node of tree.nodes ?? []) {
-      if (learnedTree[node.id]) entries.push({tree, node});
+      if (!learnedTree[node.id]) continue;
+      const group = String(node.rankGroup || node.id);
+      const rank = Number(node.rank || 0);
+      const existing = byGroup.get(group);
+      if (!existing || rank > Number(existing.node.rank || 0)) byGroup.set(group, {tree, node});
     }
   }
-  return entries;
+  return Array.from(byGroup.values());
 };
 
 GT.learnedProfessionCount = function(system = {}, scaffold = GT._professionScaffold) {
   return GT.learnedProfessionEntries(system, scaffold).length;
 };
 
-GT.actorHasProfession = function(actor, nodeId) {
+GT.actorBestProfessionEntry = function(actor, rankGroupOrId, scaffold = GT._professionScaffold) {
+  const target = String(rankGroupOrId || "");
+  const learnedRoot = actor?.system?.professions?.learned ?? {};
+  let best = null;
+  for (const tree of scaffold?.trees ?? []) {
+    const learnedTree = learnedRoot[tree.id] ?? {};
+    for (const node of tree.nodes ?? []) {
+      if (!learnedTree[node.id]) continue;
+      const group = String(node.rankGroup || node.id);
+      if (node.id !== target && group !== target) continue;
+      const rank = Number(node.rank || 0);
+      if (!best || rank > Number(best.node.rank || 0)) best = {tree, node};
+    }
+  }
+  return best;
+};
+
+GT.actorHasProfession = function(actor, nodeIdOrGroup) {
+  const target = String(nodeIdOrGroup || "");
   const learned = actor?.system?.professions?.learned ?? {};
-  for (const nodes of Object.values(learned)) if (nodes?.[nodeId]) return true;
-  return false;
+  for (const nodes of Object.values(learned)) if (nodes?.[target]) return true;
+  return !!GT.actorBestProfessionEntry(actor, target);
 };
 
 GT.professionAttributeText = function(node = {}) {
@@ -1800,8 +1826,14 @@ GT.toggleProfessionLearned = async function(actor, treeId, nodeId) {
     return true;
   }
 
+  const learnedTree = getProperty(actor.system, `professions.learned.${tree.id}`) ?? {};
+  const reqsMet = (node.requires ?? []).every(r => learnedTree[r]);
+  if (!reqsMet) return ui.notifications.warn("Voraussetzungen sind noch nicht erfüllt.");
+
+  const group = String(node.rankGroup || node.id);
+  const groupAlreadyLearned = (tree.nodes ?? []).some(other => String(other.rankGroup || other.id) === group && !!learnedTree[other.id]);
   const learnedCount = GT.learnedProfessionCount(actor.system, data);
-  if (learnedCount >= 3) {
+  if (!groupAlreadyLearned && learnedCount >= 3) {
     const okLimit = await GT.confirm({
       title: "Mehr als 3 Berufe",
       content: `<p>Normalerweise sind maximal <strong>3 Berufe</strong> erlaubt.</p><p>Dieser Charakter hat bereits ${learnedCount} Berufe gelernt. Trotzdem lernen?</p>`,
@@ -1872,10 +1904,58 @@ GT.startLockpickingSession = function(options = {}) {
 
 GT.handleSocketMessage = function(payload = {}) {
   if (!payload || payload.userId !== game.user?.id) return;
+  const actor = game.user.character ?? canvas?.tokens?.controlled?.[0]?.actor;
+
   if (payload.type === "lockpickingStart") {
-    const actor = game.user.character ?? canvas?.tokens?.controlled?.[0]?.actor;
     if (!actor) return ui.notifications.warn("Schlösserknacken: Kein Spielercharakter zugewiesen.");
     new GothicTalesLockpickingPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "hagglingStart") {
+    if (!actor) return ui.notifications.warn("Feilschen: Kein Spielercharakter zugewiesen.");
+    new GothicTalesHagglingPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "pickpocketingStart") {
+    if (!actor) return ui.notifications.warn("Taschendiebstahl: Kein Spielercharakter zugewiesen.");
+    new GothicTalesPickpocketingPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "herbalismStart") {
+    if (!actor) return ui.notifications.warn("Kräuterkunde: Kein Spielercharakter zugewiesen.");
+    new GothicTalesHerbalismPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "miningStart") {
+    if (!actor) return ui.notifications.warn("Schürfen: Kein Spielercharakter zugewiesen.");
+    new GothicTalesMiningPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "alchemyStart") {
+    if (!actor) return ui.notifications.warn("Alchemie: Kein Spielercharakter zugewiesen.");
+    new GothicTalesAlchemyPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "smithingStart") {
+    if (!actor) return ui.notifications.warn("Schmiedekunst: Kein Spielercharakter zugewiesen.");
+    new GothicTalesSmithingPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "carvingStart") {
+    if (!actor) return ui.notifications.warn("Schnitzkunst: Kein Spielercharakter zugewiesen.");
+    new GothicTalesCarvingPlayerDialog(actor, payload.session).render(true);
+  }
+
+  if (payload.type === "miningReset") {
+    if (!actor) return ui.notifications.warn("Schürfen: Kein Spielercharakter zugewiesen.");
+    GT.resetMiningState(actor, {timer: true, successes: true});
+    ui.notifications.info("Schürfen-Zähler und Timer wurden zurückgesetzt.");
+  }
+
+  if (payload.type === "herbalismReset") {
+    if (!actor) return ui.notifications.warn("Kräuterkunde: Kein Spielercharakter zugewiesen.");
+    GT.resetHerbalismState(actor, {timer: true, successes: true});
+    ui.notifications.info("Kräuterkunde-Zähler und Timer wurden zurückgesetzt.");
   }
 };
 
@@ -3588,11 +3668,15 @@ class GothicTalesProfessionTree extends GothicTalesApplicationV2 {
         const cost = isCharacter ? Number(n.lpCost || 0) : 0;
         const enoughLp = !isCharacter || lp >= cost;
         const learnedNode = !!learned[n.id];
-        const available = learnedNode || enoughLp;
+        const reqsMet = (n.requires ?? []).every(r => learned[r]);
+        const group = String(n.rankGroup || n.id);
+        const groupAlreadyLearned = (tree.nodes ?? []).some(other => String(other.rankGroup || other.id) === group && !!learned[other.id]);
+        const available = learnedNode || (reqsMet && enoughLp);
         const displayCost = isCharacter ? (Number(n.lpCost || 0) ? `${n.lpCost} LP` : "frei") : "NSC/Monster";
         const missingReason = [];
+        if (!reqsMet) missingReason.push("Voraussetzung fehlt");
         if (!enoughLp) missingReason.push("nicht genug LP");
-        if (!learnedNode && learnedCount >= 3) missingReason.push("normalerweise maximal 3 Berufe");
+        if (!learnedNode && !groupAlreadyLearned && learnedCount >= 3) missingReason.push("normalerweise maximal 3 Berufe");
         const attributeText = GT.professionAttributeText(n);
         const tooltip = GT.talentDetailsHtml({descriptionHtml: n.descriptionHtml || GT.talentDescriptionHtml(n.description || ""), usageText: attributeText, attributeText: "Lehrer oder Lernmoment nötig"});
         const lockedInfo = missingReason.length ? `<p class="gt-tooltip-meta"><strong>Hinweis:</strong> ${GT.escape(missingReason.join("; "))}</p>` : "";
@@ -3711,6 +3795,48 @@ class GothicTalesProfessionToolsDialog extends GothicTalesApplicationV2 {
       ev.preventDefault();
       this.close();
       new GothicTalesLockpickingGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-haggling")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesHagglingGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-pickpocketing")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesPickpocketingGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-alchemy")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesAlchemyGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-mining")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesMiningGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-smithing")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesSmithingGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-carving")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesCarvingGMDialog().render(true);
+    });
+
+    root.querySelector(".gt-profession-tool-herbalism")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.close();
+      new GothicTalesHerbalismGMDialog().render(true);
     });
 
     root.querySelector(".gt-dm-tools-character-creator")?.addEventListener("click", ev => {
@@ -3895,6 +4021,2055 @@ GT.startProfessionToolsButtonObserver = function() {
     setTimeout(tryInject, delay);
   }
 };
+
+
+
+GT.pickpocketSecondsFromMainRoll = function(total) {
+  return Math.max(0, Math.floor(Number(total || 0) / 5) * 3);
+};
+
+GT.pickpocketSecondsFromSupportRoll = function(total) {
+  return Math.max(0, Math.floor(Number(total || 0) / 5) * 2);
+};
+
+GT.pickpocketFormulaOptions = function(actor) {
+  const node = GT.actorBestProfessionEntry(actor, "taschendiebstahl")?.node
+    || GT._professionScaffold?.trees?.flatMap(t => t.nodes ?? [])?.find(n => n.id === "taschendiebstahl")
+    || {id: "taschendiebstahl", label: "Taschendiebstahl", attributes: ["intu", "ge"]};
+  const learned = GT.actorHasProfession(actor, "taschendiebstahl");
+  return {
+    formula: GT.professionFormula(actor, node),
+    label: "Taschendiebstahl",
+    summary: learned ? "Beruf gelernt" : "Taschendiebstahl nicht gelernt – SL entscheidet"
+  };
+};
+
+GT.pickpocketAdvantageData = function(mode = "none", level = 1) {
+  const m = String(mode || "none");
+  const l = Math.max(1, Math.min(3, Number(level || 1)));
+  return {
+    mode: m,
+    level: l,
+    label: m === "none" ? "Normal" : (GT.advantageLabel(m, l) || "Normal")
+  };
+};
+
+GT.startPickpocketingSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Taschendiebstahl vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const difficulty = Math.max(1, Number(options.difficulty || 10));
+  const windowAdv = GT.pickpocketAdvantageData(options.windowMode, options.windowLevel);
+  const grabAdv = GT.pickpocketAdvantageData(options.grabMode, options.grabLevel);
+  const payload = {
+    type: "pickpocketingStart",
+    userId,
+    session: {
+      id: foundry?.utils?.randomID?.() || String(Date.now()),
+      gmId: game.user.id,
+      targetName: String(options.targetName || "Ziel"),
+      loot: String(options.loot || "Beute"),
+      theftType: String(options.theftType || "concrete"),
+      security: String(options.security || "normal"),
+      difficulty,
+      windowMode: windowAdv.mode,
+      windowLevel: windowAdv.level,
+      windowLabel: windowAdv.label,
+      grabMode: grabAdv.mode,
+      grabLevel: grabAdv.level,
+      grabLabel: grabAdv.label,
+      note: String(options.note || "")
+    }
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Taschendiebstahl an ${target.name} gesendet.`);
+};
+
+class GothicTalesPickpocketingGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {
+      userId: String(options.userId || ""),
+      targetName: String(options.targetName || "Ziel"),
+      loot: String(options.loot || "Geldbeutel"),
+      theftType: String(options.theftType || "concrete"),
+      security: String(options.security || "normal"),
+      difficulty: Number(options.difficulty || 15),
+      windowMode: String(options.windowMode || "none"),
+      windowLevel: Number(options.windowLevel || 1),
+      grabMode: String(options.grabMode || "none"),
+      grabLevel: Number(options.grabLevel || 1),
+      note: String(options.note || "")
+    };
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-pickpocketing-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-pickpocketing-gm-window"],
+    window: {title: "Taschendiebstahl vorbereiten", resizable: true},
+    position: {width: 700, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-pickpocketing-gm.hbs"}};
+  getData() {
+    return {
+      ...this.settings,
+      users: GT.lockpickingOnlineUsers(this.settings.userId),
+      theftTypes: [
+        {id: "concrete", label: "konkreter Gegenstand", selected: this.settings.theftType === "concrete"},
+        {id: "random", label: "auf gut Glück", selected: this.settings.theftType === "random"}
+      ],
+      securityOptions: [
+        {id: "easy", label: "leicht zu greifen", selected: this.settings.security === "easy"},
+        {id: "normal", label: "normal gesichert", selected: this.settings.security === "normal"},
+        {id: "hard", label: "schwer gesichert", selected: this.settings.security === "hard"},
+        {id: "locked", label: "befestigt/verschlossen", selected: this.settings.security === "locked"}
+      ],
+      advantageModes: [
+        {id: "none", label: "Normal"},
+        {id: "advantage", label: "Vorteil"},
+        {id: "disadvantage", label: "Nachteil"}
+      ],
+      advantageLevels: [
+        {value: 1, label: "klein"},
+        {value: 2, label: "mittel"},
+        {value: 3, label: "groß"}
+      ]
+    };
+  }
+  readForm(root) {
+    return {
+      userId: String(root.querySelector(".gt-pickpocket-user")?.value || ""),
+      targetName: String(root.querySelector(".gt-pickpocket-target")?.value || "Ziel"),
+      loot: String(root.querySelector(".gt-pickpocket-loot")?.value || "Beute"),
+      theftType: String(root.querySelector(".gt-pickpocket-type")?.value || "concrete"),
+      security: String(root.querySelector(".gt-pickpocket-security")?.value || "normal"),
+      difficulty: Math.max(1, Number(root.querySelector(".gt-pickpocket-difficulty")?.value || 10)),
+      windowMode: String(root.querySelector(".gt-pickpocket-window-mode")?.value || "none"),
+      windowLevel: Number(root.querySelector(".gt-pickpocket-window-level")?.value || 1),
+      grabMode: String(root.querySelector(".gt-pickpocket-grab-mode")?.value || "none"),
+      grabLevel: Number(root.querySelector(".gt-pickpocket-grab-level")?.value || 1),
+      note: String(root.querySelector(".gt-pickpocket-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startPickpocketingSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesPickpocketingPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.windowRolled = false;
+    this.windowSeconds = 0;
+    this.supports = [];
+    this.started = false;
+    this.finished = false;
+    this.endsAt = 0;
+    this.grabLockedUntil = 0;
+    this.grabInProgress = false;
+    this.countdownTimer = null;
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-pickpocketing-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-pickpocketing-player-window"],
+    window: {title: "Taschendiebstahl", resizable: true},
+    position: {width: 740, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-pickpocketing-player.hbs", scrollable: [".gt-pickpocketing-player"]}};
+  get totalSeconds() {
+    return Number(this.windowSeconds || 0) + this.supports.reduce((t, s) => t + Number(s.seconds || 0), 0);
+  }
+  get remainingSeconds() {
+    if (!this.started || !this.endsAt || this.finished) return 0;
+    return Math.max(0, Math.ceil((this.endsAt - Date.now()) / 1000));
+  }
+  getData() {
+    const opts = GT.pickpocketFormulaOptions(this.actor);
+    return {
+      actor: this.actor,
+      session: this.session,
+      targetName: this.session.targetName || "Ziel",
+      loot: this.session.loot || "Beute",
+      theftType: this.session.theftType === "random" ? "auf gut Glück" : "konkreter Gegenstand",
+      security: this.session.security || "normal",
+      difficulty: Number(this.session.difficulty || 10),
+      note: this.session.note || "",
+      learned: GT.actorHasProfession(this.actor, "taschendiebstahl"),
+      formula: opts.formula,
+      summary: opts.summary,
+      windowRolled: this.windowRolled,
+      windowSeconds: this.windowSeconds,
+      supports: this.supports,
+      supportSeconds: this.supports.reduce((t, s) => t + Number(s.seconds || 0), 0),
+      totalSeconds: this.totalSeconds,
+      started: this.started,
+      finished: this.finished,
+      remainingSeconds: this.remainingSeconds,
+      canStart: !this.started && !this.finished && this.totalSeconds > 0,
+      grabCooldown: Math.max(0, Math.ceil((this.grabLockedUntil - Date.now()) / 1000)),
+      windowLabel: this.session.windowLabel || "Normal",
+      grabLabel: this.session.grabLabel || "Normal"
+    };
+  }
+  clearTimers() {
+    if (this.countdownTimer) clearInterval(this.countdownTimer);
+    this.countdownTimer = null;
+  }
+  updateLiveState(root) {
+    const remaining = this.remainingSeconds;
+    const remainingEl = root.querySelector(".gt-pickpocket-remaining");
+    if (remainingEl) remainingEl.textContent = String(remaining);
+    const grabButton = root.querySelector(".gt-pickpocket-grab");
+    const locked = Date.now() < Number(this.grabLockedUntil || 0);
+    const cooldown = Math.max(0, Math.ceil((Number(this.grabLockedUntil || 0) - Date.now()) / 1000));
+    if (grabButton) {
+      const disabled = this.finished || !this.started || remaining <= 0 || locked || this.grabInProgress;
+      grabButton.disabled = disabled;
+      const label = locked ? `Zugreifen (${cooldown}s)` : "Zugreifen!";
+      const labelSpan = grabButton.querySelector("span");
+      if (labelSpan) labelSpan.textContent = label;
+    }
+    if (this.started && !this.finished && remaining <= 0) {
+      this.finished = true;
+      this.clearTimers();
+      ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        content: `<div class="gothic-tales chat-card gt-pickpocket-result"><h2><i class="fas fa-hourglass-end"></i> Taschendiebstahl gescheitert</h2><p>Das Zeitfenster ist vorbei. <strong>${GT.escape(this.actor.name)}</strong> konnte ${GT.escape(this.session.loot || "die Beute")} nicht stehlen.</p></div>`
+      });
+      this.render(false);
+    }
+  }
+  startLiveTimer(root) {
+    this.clearTimers();
+    if (!this.started || this.finished) return;
+    this.updateLiveState(root);
+    this.countdownTimer = setInterval(() => this.updateLiveState(root), 250);
+  }
+  async postWindowResult(total, seconds) {
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-pickpocket-result">
+        <h2><i class="fas fa-stopwatch"></i> Zeitfenster</h2>
+        <p><strong>${GT.escape(this.actor.name)}</strong> verschafft sich ein Zeitfenster für den Taschendiebstahl.</p>
+        <p>Wurf: <strong>${Number(total || 0)}</strong> → <strong>+${Number(seconds || 0)} Sekunden</strong>.</p>
+      </div>`
+    });
+  }
+  async postGrabResult({total, criticalFailure, success}) {
+    let html = "";
+    if (criticalFailure) {
+      this.finished = true;
+      this.clearTimers();
+      html = `<h2><i class="fas fa-eye"></i> Taschendiebstahl bemerkt!</h2><p>Kritischer Fehlschlag. Das Opfer bemerkt den Diebstahlversuch.</p>`;
+    } else if (success) {
+      this.finished = true;
+      this.clearTimers();
+      html = `<h2><i class="fas fa-hand-sparkles"></i> Taschendiebstahl gelungen</h2><p><strong>${GT.escape(this.actor.name)}</strong> stiehlt: <strong>${GT.escape(this.session.loot || "Beute")}</strong>.</p>`;
+    } else {
+      html = `<h2><i class="fas fa-hand"></i> Griff misslungen</h2><p>Der Griff scheitert. Solange Zeit bleibt, kann weiter versucht werden.</p>`;
+    }
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-pickpocket-result">
+        ${html}
+        <p>Wurf: <strong>${Number(total || 0)}</strong> gegen SchwG <strong>${Number(this.session.difficulty || 10)}</strong>.</p>
+        <p class="gt-chat-note">Zugreifen-Sperre: 2 Sekunden zwischen den Versuchen.</p>
+      </div>`
+    });
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    this.startLiveTimer(root);
+
+    root.querySelector(".gt-pickpocket-window-roll")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      if (this.started) return ui.notifications.warn("Das Zeitfenster läuft bereits.");
+      const opts = GT.pickpocketFormulaOptions(this.actor);
+      await GT.chatRoll({
+        formula: opts.formula,
+        label: "Taschendiebstahl: Zeitfenster",
+        actor: this.actor,
+        flavor: `${opts.summary} · ${this.session.windowLabel || "Normal"}`,
+        advantageMode: this.session.windowMode || "none",
+        advantageLevel: Number(this.session.windowLevel || 1),
+        onRoll: async message => {
+          const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+          const seconds = GT.pickpocketSecondsFromMainRoll(total);
+          this.windowRolled = true;
+          this.windowSeconds = seconds;
+          await this.postWindowResult(total, seconds);
+          this.render(false);
+        }
+      });
+    });
+
+    root.querySelector(".gt-pickpocket-support-add")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const name = String(root.querySelector(".gt-pickpocket-support-name")?.value || "Unterstützung").trim();
+      const action = String(root.querySelector(".gt-pickpocket-support-action")?.value || "").trim();
+      const total = Number(root.querySelector(".gt-pickpocket-support-total")?.value || 0);
+      const seconds = GT.pickpocketSecondsFromSupportRoll(total);
+      if (total <= 0) return ui.notifications.warn("Bitte ein Unterstützungsergebnis eintragen.");
+      this.supports.push({name, action, total, seconds});
+      this.render(false);
+    });
+
+    root.querySelector(".gt-pickpocket-start")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      if (this.totalSeconds <= 0) return ui.notifications.warn("Es wurde noch kein Zeitfenster erzeugt.");
+      this.started = true;
+      this.finished = false;
+      this.endsAt = Date.now() + this.totalSeconds * 1000;
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        content: `<div class="gothic-tales chat-card gt-pickpocket-result">
+          <h2><i class="fas fa-person-running"></i> Diebstahl startet</h2>
+          <p>Ziel: <strong>${GT.escape(this.session.targetName || "Ziel")}</strong> · Beute: <strong>${GT.escape(this.session.loot || "Beute")}</strong></p>
+          <p>Zeitfenster: <strong>${this.totalSeconds} Sekunden</strong>. SchwG: <strong>${Number(this.session.difficulty || 10)}</strong>.</p>
+          <p class="gt-chat-note">Jeder Zugreifen-Wurf ist durch eine 2-Sekunden-Sperre geschützt.</p>
+        </div>`
+      });
+      this.render(false);
+    });
+
+    root.querySelector(".gt-pickpocket-grab")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      if (!this.started || this.finished) return;
+      if (this.remainingSeconds <= 0) return this.updateLiveState(root);
+      const now = Date.now();
+      if (now < Number(this.grabLockedUntil || 0)) {
+        const left = Math.ceil((Number(this.grabLockedUntil || 0) - now) / 1000);
+        return ui.notifications.warn(`Erst in ${left} Sek. erneut zugreifen.`);
+      }
+      this.grabLockedUntil = now + 2000;
+      this.grabInProgress = true;
+      this.updateLiveState(root);
+      const opts = GT.pickpocketFormulaOptions(this.actor);
+      const message = await GT.chatRoll({
+        formula: opts.formula,
+        label: "Taschendiebstahl: Zugreifen",
+        actor: this.actor,
+        flavor: `Gegen SchwG ${Number(this.session.difficulty || 10)} · feste Würfel: ${this.session.grabLabel || "Normal"}`,
+        configure: false,
+        rollOptions: {advantageMode: this.session.grabMode || "none", advantageLevel: Number(this.session.grabLevel || 1)}
+      });
+      const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+      const criticalFailure = !!message?.getFlag?.("gothic-tales", "rollCriticalFailure");
+      await this.postGrabResult({total, criticalFailure, success: total >= Number(this.session.difficulty || 10)});
+      this.grabInProgress = false;
+      this.render(false);
+    });
+
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.clearTimers();
+      this.close();
+    });
+  }
+}
+
+
+/* ------------------------------------------------------------------------- */
+/* Berufs-Minispiele: Schürfen, Alchemie, Schmiedekunst, Schnitzkunst        */
+/* ------------------------------------------------------------------------- */
+
+GT.safeRandomID = function() {
+  return foundry?.utils?.randomID?.() || String(Date.now()) + String(Math.floor(Math.random() * 9999));
+};
+
+GT.stackOrCreateItem = async function(actor, {name, type = "consumable", quantity = 1, value = "", category = "", description = "", properties = "", img = "", system = {}} = {}) {
+  if (!actor || !name) return null;
+  const qty = Math.max(1, Number(quantity || 1));
+  const existing = Array.from(actor.items ?? []).find(i => i.name === name && i.type === type);
+  if (existing && Number(existing.system?.quantity ?? 0) >= 0) {
+    await existing.update({"system.quantity": Number(existing.system?.quantity || 0) + qty});
+    return existing;
+  }
+  const [item] = await actor.createEmbeddedDocuments("Item", [{
+    name,
+    type,
+    img: img || GT.itemImage?.(type, name, category) || GT.CONFIG?.icons?.default || "icons/svg/item-bag.svg",
+    system: {
+      quantity: qty,
+      value: String(value ?? ""),
+      category,
+      description,
+      properties,
+      ...system
+    }
+  }]);
+  return item;
+};
+
+GT.professionEntryOrDefault = function(actor, group, fallback = {}) {
+  return GT.actorBestProfessionEntry(actor, group)?.node
+    || GT._professionScaffold?.trees?.flatMap(t => t.nodes ?? [])?.find(n => n.id === group || n.rankGroup === group)
+    || fallback;
+};
+
+GT.professionFormulaWithoutD20 = function(actor, node = {}) {
+  const formula = GT.professionFormula(actor, node);
+  const stripped = String(formula || "").replace(/(?:^|\+)\s*w20\s*/i, "").replace(/^\s*\+\s*/, "").trim();
+  return stripped || "w2";
+};
+
+GT.criticalFailureFromMessage = function(message) {
+  return !!message?.getFlag?.("gothic-tales", "rollCriticalFailure");
+};
+
+GT.criticalSuccessFromMessage = function(message) {
+  return !!message?.getFlag?.("gothic-tales", "rollCritical");
+};
+
+GT.rankInfoForProfession = function(actor, group, ranks = []) {
+  const entry = GT.actorBestProfessionEntry(actor, group);
+  if (!entry) return {learned: false, rank: -1, label: "nicht gelernt", node: {attributes: []}, data: ranks[0] ?? {}};
+  const rank = Math.max(0, Number(entry.node.rank || 0));
+  const data = ranks.find(r => Number(r.rank) === rank) ?? ranks[0] ?? {};
+  return {learned: true, rank, label: data.label || entry.node.label || "gelernt", node: entry.node, data};
+};
+
+/* ----------------------------- Schürfen --------------------------------- */
+
+GT.MINING_RANKS = [
+  {rank: 0, label: "Grundrang", maxSearches: 2},
+  {rank: 1, label: "geübt", maxSearches: 3},
+  {rank: 2, label: "gelehrt", maxSearches: 4},
+  {rank: 3, label: "gemeistert", maxSearches: 5}
+];
+
+GT.miningRankInfo = function(actor) {
+  const info = GT.rankInfoForProfession(actor, "schuerfen", GT.MINING_RANKS);
+  return {...info, maxSearches: info.data?.maxSearches || 0};
+};
+
+GT.miningState = function(actor) {
+  const state = actor?.system?.professions?.uses?.schuerfen ?? {};
+  return {
+    successes: Math.max(0, Number(state.successes || 0)),
+    nextAllowed: Math.max(0, Number(state.nextAllowed || 0))
+  };
+};
+
+GT.updateMiningState = async function(actor, patch = {}) {
+  const state = {...GT.miningState(actor), ...patch};
+  await actor.update({"system.professions.uses.schuerfen": state});
+  return state;
+};
+
+GT.resetMiningState = async function(actor, {timer = true, successes = true} = {}) {
+  const state = GT.miningState(actor);
+  if (timer) state.nextAllowed = 0;
+  if (successes) state.successes = 0;
+  await actor.update({"system.professions.uses.schuerfen": state});
+  return state;
+};
+
+GT.miningCooldownText = function(nextAllowed) {
+  const remaining = Number(nextAllowed || 0) - Date.now();
+  if (remaining <= 0) return "bereit";
+  return `${Math.ceil(remaining / 60000)} Min.`;
+};
+
+GT.miningOreFromRoll = function(total) {
+  const t = Number(total || 0);
+  if (t <= 10) return {id: "none", label: "Kein Fund", valueMultiplier: 0};
+  if (t <= 24) return {id: "iron", label: "Eisenerz", valueMultiplier: 1};
+  return {id: "magic", label: "Magisches Erz", valueMultiplier: 3};
+};
+
+GT.miningOreById = function(id) {
+  if (id === "magic") return {id: "magic", label: "Magisches Erz", valueMultiplier: 3};
+  if (id === "iron") return {id: "iron", label: "Eisenerz", valueMultiplier: 1};
+  return {id: "none", label: "Kein Fund", valueMultiplier: 0};
+};
+
+GT.hasItemNamed = function(actor, pattern) {
+  const rx = pattern instanceof RegExp ? pattern : new RegExp(String(pattern || ""), "i");
+  return Array.from(actor?.items ?? []).some(i => rx.test(i.name || "") && Number(i.system?.quantity ?? 1) > 0);
+};
+
+GT.startMiningSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Schürfen vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {
+    type: "miningStart",
+    userId,
+    session: {
+      id: GT.safeRandomID(),
+      gmId: game.user.id,
+      suitable: !!options.suitable,
+      existingDeposit: !!options.existingDeposit,
+      oreId: String(options.oreId || "iron"),
+      deposits: Math.max(1, Number(options.deposits || 1)),
+      note: String(options.note || "")
+    }
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Schürfen an ${target.name} gesendet.`);
+};
+
+GT.resetMiningForUser = function(userId) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Schürfen zurücksetzen.");
+  const target = game.users?.get?.(String(userId || ""));
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {type: "miningReset", userId: target.id};
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+};
+
+class GothicTalesMiningGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {
+      userId: String(options.userId || ""),
+      suitable: options.suitable !== false,
+      existingDeposit: !!options.existingDeposit,
+      oreId: String(options.oreId || "iron"),
+      deposits: Number(options.deposits || 1),
+      note: String(options.note || "")
+    };
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-mining-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-mining-gm-window"],
+    window: {title: "Schürfen vorbereiten", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-mining-gm.hbs"}};
+  getData() {
+    return {
+      ...this.settings,
+      users: GT.lockpickingOnlineUsers(this.settings.userId),
+      oreOptions: [
+        {id: "iron", label: "Eisenerz", selected: this.settings.oreId === "iron"},
+        {id: "magic", label: "Magisches Erz", selected: this.settings.oreId === "magic"}
+      ]
+    };
+  }
+  readForm(root) {
+    return {
+      userId: String(root.querySelector(".gt-mining-user")?.value || ""),
+      suitable: !!root.querySelector(".gt-mining-suitable")?.checked,
+      existingDeposit: !!root.querySelector(".gt-mining-existing")?.checked,
+      oreId: String(root.querySelector(".gt-mining-ore")?.value || "iron"),
+      deposits: Math.max(1, Number(root.querySelector(".gt-mining-deposits")?.value || 1)),
+      note: String(root.querySelector(".gt-mining-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startMiningSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-mining-reset")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.resetMiningForUser(this.settings.userId);
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesMiningPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.step = session.existingDeposit ? "mine" : "search";
+    this.ore = session.existingDeposit ? GT.miningOreById(session.oreId) : null;
+    this.deposits = session.existingDeposit ? Math.max(1, Number(session.deposits || 1)) : 0;
+    this.currentMineRoll = 0;
+    this.minedTotal = 0;
+    this.done = false;
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-mining-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-mining-player-window"],
+    window: {title: "Schürfen", resizable: true},
+    position: {width: 700, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-mining-player.hbs", scrollable: [".gt-mining-player"]}};
+  getData() {
+    const rank = GT.miningRankInfo(this.actor);
+    const state = GT.miningState(this.actor);
+    const blocked = [];
+    if (!rank.learned) blocked.push("Schürfen nicht gelernt");
+    if (!this.session.suitable) blocked.push("Ort ist nicht als geeignet markiert");
+    if (!GT.hasItemNamed(this.actor, /spitzhacke/i)) blocked.push("keine Spitzhacke im Inventar gefunden");
+    if (state.successes >= rank.maxSearches && rank.learned) blocked.push("Schürfen pro Sitzung aufgebraucht");
+    if (state.nextAllowed > Date.now()) blocked.push(`Timer aktiv: ${GT.miningCooldownText(state.nextAllowed)}`);
+    return {
+      actor: this.actor,
+      rank,
+      state,
+      successes: state.successes,
+      maxSearches: rank.maxSearches,
+      remaining: Math.max(0, rank.maxSearches - state.successes),
+      cooldownText: GT.miningCooldownText(state.nextAllowed),
+      suitable: !!this.session.suitable,
+      note: this.session.note || "",
+      blocked: blocked.length > 0 && this.step === "search",
+      blockedReason: blocked.join("; "),
+      step: this.step,
+      ore: this.ore,
+      deposits: this.deposits,
+      currentMineRoll: this.currentMineRoll,
+      minedTotal: this.minedTotal,
+      done: this.done,
+      canSearch: this.step === "search" && !this.done,
+      canAmount: this.step === "amount" && !this.done,
+      canMine: this.step === "mine" && !this.done && this.currentMineRoll < this.deposits
+    };
+  }
+  async miningFormulaRoll(label, flavor, onRoll) {
+    const rank = GT.miningRankInfo(this.actor);
+    return GT.chatRoll({
+      formula: GT.professionFormula(this.actor, rank.node || {attributes: ["st", "ausd"]}),
+      label,
+      actor: this.actor,
+      flavor,
+      onRoll
+    });
+  }
+  async finishNoFund(total) {
+    await GT.updateMiningState(this.actor, {nextAllowed: Date.now() + 30 * 60 * 1000});
+    this.done = true;
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-mountain"></i> Schürfen</h2><p>Wurf ${Number(total || 0)}: Kein brauchbares Erz gefunden. Der erfolgreiche Suchzähler wird nicht verbraucht.</p><p class="gt-chat-note">Nächste Suche in 30 Minuten.</p></div>`
+    });
+  }
+  async finishMining() {
+    if (!this.ore || this.ore.id === "none") return;
+    const qty = Math.max(1, Number(this.minedTotal || 1));
+    const value = this.ore.valueMultiplier === 3 ? qty * 3 : qty;
+    await GT.stackOrCreateItem(this.actor, {
+      name: this.ore.label,
+      type: "consumable",
+      quantity: qty,
+      value,
+      category: "Material",
+      properties: "Erz",
+      description: `<p>${GT.escape(this.ore.label)} aus dem Schürfen. Handelswert: ${value}.</p>`
+    });
+    const rank = GT.miningRankInfo(this.actor);
+    const state = GT.miningState(this.actor);
+    await GT.updateMiningState(this.actor, {
+      successes: Math.min(rank.maxSearches, state.successes + 1),
+      nextAllowed: Date.now() + 30 * 60 * 1000
+    });
+    this.done = true;
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-gem"></i> Erz abgebaut</h2><p><strong>${GT.escape(this.actor.name)}</strong> erhält <strong>${qty}× ${GT.escape(this.ore.label)}</strong>.</p><p>Handelswert: <strong>${value}</strong>.</p><p class="gt-chat-note">Nächste Suche in 30 Minuten.</p></div>`
+    });
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-mining-search")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.miningFormulaRoll("Schürfen: Erz suchen", "Schritt 1: Erzader suchen", async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        const ore = GT.miningOreFromRoll(total);
+        this.ore = ore;
+        if (ore.id === "none") await this.finishNoFund(total);
+        else {
+          this.step = "amount";
+          await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-mountain"></i> Erzader gefunden</h2><p>Wurf ${total}: <strong>${GT.escape(ore.label)}</strong>.</p></div>`});
+        }
+        this.render(false);
+      });
+    });
+    root.querySelector(".gt-mining-amount")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.miningFormulaRoll("Schürfen: Menge bestimmen", "Schritt 2: Vorkommen bestimmen", async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        this.deposits = 1 + Math.floor(Math.max(0, total) / 10);
+        this.step = "mine";
+        await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-layer-group"></i> Vorkommen</h2><p>Wurf ${total}: <strong>${this.deposits}</strong> Vorkommen.</p></div>`});
+        this.render(false);
+      });
+    });
+    root.querySelector(".gt-mining-mine")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      if (this.currentMineRoll >= this.deposits) return;
+      this.miningFormulaRoll("Schürfen: Erz abbauen", `Schritt 3: Vorkommen ${this.currentMineRoll + 1}/${this.deposits}`, async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        this.currentMineRoll += 1;
+        this.minedTotal += Math.max(0, total);
+        if (this.currentMineRoll >= this.deposits) await this.finishMining();
+        this.render(false);
+      });
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+/* ----------------------------- Alchemie --------------------------------- */
+
+GT.ALCHEMY_RANKS = [
+  {rank: 0, label: "Anfänger", modes: ["heiltrank", "manatrank"]},
+  {rank: 1, label: "geübt", modes: ["heiltrank", "manatrank", "reinigung", "erholung"]},
+  {rank: 2, label: "gelehrt", modes: ["heiltrank", "manatrank", "reinigung", "erholung", "geschwindigkeit", "hast"]},
+  {rank: 3, label: "gemeistert", modes: ["heiltrank", "manatrank", "reinigung", "erholung", "geschwindigkeit", "hast", "permanent"]}
+];
+
+GT.alchemyRankInfo = function(actor) {
+  const info = GT.rankInfoForProfession(actor, "alchemie", GT.ALCHEMY_RANKS);
+  return {...info, modes: info.data?.modes || []};
+};
+
+GT.ALCHEMY_TASKS = {
+  heiltrank: [
+    {min: 1, max: 1, difficulty: 5, task: "Koch den Feldknöterich", success: "+1", failure: "Durchfall: Erschöpfung +1 für 1 Tag"},
+    {min: 2, max: 2, difficulty: 10, task: "Zerstampfe das Heilblatt", success: "+w2", failure: "0"},
+    {min: 3, max: 3, difficulty: 5, task: "Dünste das Heilblatt", success: "+w4", failure: "-1"},
+    {min: 4, max: 4, difficulty: 10, task: "Entsafte die Weidenbeere", success: "+w4", failure: "0"},
+    {min: 5, max: 5, difficulty: 15, task: "Erhitze das Ogerblatt", success: "+w6", failure: "0"},
+    {min: 6, max: 6, difficulty: 10, task: "Zerkleinere das Ogerblatt", success: "+w6", failure: "-1"},
+    {min: 7, max: 7, difficulty: 15, task: "Klopf den Eisenhalm weich", success: "+w8", failure: "-2"},
+    {min: 8, max: 8, difficulty: 10, task: "Entfasere den Eisenhalm", success: "+w8", failure: "-2"},
+    {min: 9, max: 9, difficulty: 15, task: "Dampfe Sonnenkraut ab", success: "+w10", failure: "-2"},
+    {min: 10, max: 10, difficulty: 15, task: "Entnehme Sonnenkrautmark", success: "+w10", failure: "-1"},
+    {min: 11, max: 11, difficulty: 20, task: "Schleudere Heilwurzel", success: "+w12", failure: "-3"},
+    {min: 12, max: 12, difficulty: 20, task: "Entziehe Heilwurzelextrakt", success: "+w6 +w4", failure: "-3"},
+    {min: 13, max: 999, difficulty: 25, task: "Destilliere Heilwurzelextrakt", success: "+2w6", failure: "SL notiert eine geheime negative Konsequenz"}
+  ],
+  manatrank: [
+    {min: 1, max: 1, difficulty: 5, task: "Koch den Feldknöterich", success: "+1", failure: "Du verlierst all dein Mana, danach regeneriert dieser Trank"},
+    {min: 2, max: 2, difficulty: 10, task: "Zerstampfe die Feuernessel", success: "+1", failure: "0"},
+    {min: 3, max: 3, difficulty: 5, task: "Dünste die Feuernessel", success: "+w2", failure: "-1"},
+    {min: 4, max: 4, difficulty: 10, task: "Entsafte das Seraphiskraut", success: "+w2", failure: "0"},
+    {min: 5, max: 5, difficulty: 15, task: "Erhitze den Morgentaupilz", success: "+w4", failure: "0"},
+    {min: 6, max: 6, difficulty: 10, task: "Zerkleinere Morgentaupilz", success: "+w4", failure: "-1"},
+    {min: 7, max: 7, difficulty: 15, task: "Klopfe Mondschatten weich", success: "+w6", failure: "-2"},
+    {min: 8, max: 8, difficulty: 10, task: "Entfasere Mondschatten", success: "+w6", failure: "-2"},
+    {min: 9, max: 9, difficulty: 15, task: "Dampfe Rabenkraut ab", success: "+w8", failure: "-2"},
+    {min: 10, max: 10, difficulty: 15, task: "Entnimm Rabenkrautmark", success: "+w8", failure: "-1"},
+    {min: 11, max: 11, difficulty: 20, task: "Schleudere Feuerwurzel", success: "+w10", failure: "-3"},
+    {min: 12, max: 12, difficulty: 20, task: "Entziehe Feuerwurzelextrakt", success: "+w10", failure: "-2"},
+    {min: 13, max: 999, difficulty: 25, task: "Destilliere Feuerwurzelextrakt", success: "+w4 +w6", failure: "SL notiert eine geheime negative Konsequenz"}
+  ]
+};
+
+GT.alchemyTaskForRoll = function(kind, total) {
+  const t = Number(total || 1);
+  return (GT.ALCHEMY_TASKS[kind] || GT.ALCHEMY_TASKS.heiltrank).find(row => t >= row.min && t <= row.max);
+};
+
+GT.ALCHEMY_SIMPLE_RECIPES = [
+  {id: "reinigung", label: "Trank der Reinigung", rank: 1, difficulty: 20, value: 60, description: "Kuriert Erkrankungen und Gifte nach SL-Entscheid."},
+  {id: "erholung", label: "Trank der Erholung", rank: 1, difficulty: 20, value: 60, description: "Lindert körperliche Erschöpfung nach SL-Entscheid."},
+  {id: "geschwindigkeit", label: "Trank der Geschwindigkeit", rank: 2, difficulty: 25, value: 90, description: "Trank der Geschwindigkeit."},
+  {id: "hast", label: "Trank der Hast", rank: 2, difficulty: 25, value: 90, description: "Trank der Hast."}
+];
+
+GT.ALCHEMY_PERMANENT = [
+  {id: "kraft", label: "Trank der Kraft", herb: "Drachenwurzel", attribute: "Stärke"},
+  {id: "geschick", label: "Trank der Geschicklichkeit", herb: "Goblinbeere", attribute: "Geschick"},
+  {id: "ausdauer", label: "Trank der Ausdauer", herb: "Harnischkraut", attribute: "Ausdauer"},
+  {id: "konzentration", label: "Trank der Konzentration", herb: "Königsdistel", attribute: "Konzentration"},
+  {id: "intuition", label: "Trank der Intuition", herb: "Blutschilf", attribute: "Intuition"},
+  {id: "erfahrung", label: "Trank der Erfahrung", herb: "Sonnenmoos", attribute: "Erfahrung"},
+  {id: "leben", label: "Trank des Lebens", herb: "Herrscherkraut", attribute: "TP"},
+  {id: "mana", label: "Trank des Manas", herb: "Flammenbeere", attribute: "Mana"},
+  {id: "initiative", label: "Trank der Initiative", herb: "Blitzblatt", attribute: "Initiative"}
+];
+
+GT.startAlchemySession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Alchemie vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {
+    type: "alchemyStart",
+    userId,
+    session: {
+      id: GT.safeRandomID(),
+      gmId: game.user.id,
+      hasTable: !!options.hasTable,
+      note: String(options.note || "")
+    }
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Alchemie an ${target.name} gesendet.`);
+};
+
+class GothicTalesAlchemyGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {userId: String(options.userId || ""), hasTable: options.hasTable !== false, note: String(options.note || "")};
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-alchemy-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-alchemy-gm-window"],
+    window: {title: "Alchemie vorbereiten", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-alchemy-gm.hbs"}};
+  getData() { return {...this.settings, users: GT.lockpickingOnlineUsers(this.settings.userId)}; }
+  readForm(root) {
+    return {
+      userId: String(root.querySelector(".gt-alchemy-user")?.value || ""),
+      hasTable: !!root.querySelector(".gt-alchemy-table")?.checked,
+      note: String(root.querySelector(".gt-alchemy-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startAlchemySession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesAlchemyPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.mode = "heiltrank";
+    this.batches = 1;
+    this.tasks = [];
+    this.effects = [];
+    this.done = false;
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-alchemy-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-alchemy-player-window"],
+    window: {title: "Alchemie", resizable: true},
+    position: {width: 760, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-alchemy-player.hbs", scrollable: [".gt-alchemy-player"]}};
+  get recipeOptions() {
+    const rank = GT.alchemyRankInfo(this.actor);
+    const options = [
+      {id: "heiltrank", label: "Heiltrank", minRank: 0},
+      {id: "manatrank", label: "Manatrank", minRank: 0},
+      ...GT.ALCHEMY_SIMPLE_RECIPES.map(r => ({id: r.id, label: r.label, minRank: r.rank})),
+      {id: "permanent", label: "Permanenter Trank", minRank: 3}
+    ];
+    return options.filter(o => rank.rank >= o.minRank).map(o => ({...o, selected: this.mode === o.id}));
+  }
+  getData() {
+    const rank = GT.alchemyRankInfo(this.actor);
+    const blocked = [];
+    if (!rank.learned) blocked.push("Alchemie nicht gelernt");
+    if (!this.session.hasTable) blocked.push("kein Alchemietisch vorhanden");
+    const simple = GT.ALCHEMY_SIMPLE_RECIPES.find(r => r.id === this.mode);
+    return {
+      actor: this.actor,
+      rank,
+      note: this.session.note || "",
+      hasTable: !!this.session.hasTable,
+      blocked: blocked.length > 0,
+      blockedReason: blocked.join("; "),
+      recipeOptions: this.recipeOptions,
+      mode: this.mode,
+      isTaskPotion: this.mode === "heiltrank" || this.mode === "manatrank",
+      isPermanent: this.mode === "permanent",
+      simpleRecipe: simple,
+      batches: this.batches,
+      maxBatches: this.mode === "manatrank" ? 4 : 5,
+      herbCostText: this.mode === "manatrank" ? "8 Manakräuter je Ansatz" : "10 Heilkräuter je Ansatz",
+      tasks: this.tasks,
+      effects: this.effects,
+      effectText: this.effects.length ? this.effects.join(" ") : "noch keine Wirkung",
+      done: this.done,
+      permanentOptions: GT.ALCHEMY_PERMANENT.map(p => ({...p}))
+    };
+  }
+  async createPotion(name, description, value = "") {
+    await GT.stackOrCreateItem(this.actor, {
+      name,
+      type: "consumable",
+      quantity: 1,
+      value,
+      category: "Trank",
+      properties: "Alchemie",
+      description
+    });
+  }
+  async generateTasks(root) {
+    this.tasks = [];
+    this.effects = [];
+    this.done = false;
+    const max = this.mode === "manatrank" ? 4 : 5;
+    this.batches = Math.max(1, Math.min(max, Number(root.querySelector(".gt-alchemy-batches")?.value || 1)));
+    const rank = GT.alchemyRankInfo(this.actor);
+    const formula = GT.professionFormulaWithoutD20(this.actor, rank.node || {attributes: ["konz", "ge"]});
+    for (let i = 0; i < this.batches; i++) {
+      const message = await GT.chatRoll({
+        formula,
+        label: "Alchemie: Aufgabe bestimmen",
+        actor: this.actor,
+        flavor: `Ansatz ${i + 1}/${this.batches} · FähW&B ohne W20`,
+        configure: false
+      });
+      const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 1);
+      const task = GT.alchemyTaskForRoll(this.mode, total);
+      this.tasks.push({index: i, roll: total, ...task, solved: false, result: ""});
+    }
+    this.render(false);
+  }
+  async solveTask(index) {
+    const task = this.tasks[Number(index)];
+    if (!task || task.solved) return;
+    const rank = GT.alchemyRankInfo(this.actor);
+    await GT.chatRoll({
+      formula: GT.professionFormula(this.actor, rank.node || {attributes: ["konz", "ge"]}),
+      label: `Alchemie: ${task.task}`,
+      actor: this.actor,
+      flavor: `SchwG ${task.difficulty}`,
+      onRoll: async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        const success = total >= Number(task.difficulty || 0);
+        task.solved = true;
+        task.result = success ? task.success : task.failure;
+        this.effects.push(task.result);
+        await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-flask"></i> Alchemie-Aufgabe</h2><p>${GT.escape(task.task)} · Wurf ${total} gegen SchwG ${task.difficulty}</p><p>${success ? "Erfolg" : "Fehlschlag"}: <strong>${GT.escape(task.result)}</strong></p></div>`});
+        if (this.tasks.every(t => t.solved)) await this.finishTaskPotion();
+        this.render(false);
+      }
+    });
+  }
+  async finishTaskPotion() {
+    if (this.done) return;
+    this.done = true;
+    const name = this.mode === "manatrank" ? "Manatrank" : "Heiltrank";
+    const effectText = this.effects.join(" ") || "keine Wirkung";
+    await this.createPotion(`${name} (${effectText})`, `<p>Selbst gebrauter ${name}.</p><p>Wirkung: <strong>${GT.escape(effectText)}</strong></p>`);
+    await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-flask-vial"></i> ${GT.escape(name)} fertig</h2><p>Wirkung: <strong>${GT.escape(effectText)}</strong></p><p>Der Trank wurde ins Inventar gelegt.</p></div>`});
+  }
+  async brewSimple() {
+    const recipe = GT.ALCHEMY_SIMPLE_RECIPES.find(r => r.id === this.mode);
+    if (!recipe) return;
+    const rank = GT.alchemyRankInfo(this.actor);
+    await GT.chatRoll({
+      formula: GT.professionFormula(this.actor, rank.node || {attributes: ["konz", "ge"]}),
+      label: `Alchemie: ${recipe.label}`,
+      actor: this.actor,
+      flavor: `SchwG ${recipe.difficulty}`,
+      onRoll: async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        const criticalFailure = GT.criticalFailureFromMessage(message);
+        if (total >= recipe.difficulty) {
+          await this.createPotion(recipe.label, `<p>${GT.escape(recipe.description)}</p>`, recipe.value);
+          ui.notifications.info(`${recipe.label} wurde ins Inventar gelegt.`);
+        }
+        await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-flask"></i> ${GT.escape(recipe.label)}</h2><p>Wurf ${total} gegen SchwG ${recipe.difficulty}.</p><p>${total >= recipe.difficulty ? "Erfolg: Trank hergestellt." : (criticalFailure ? "Kritischer Fehlschlag: alle Ingredienzien verloren." : "Fehlschlag: eine Ingredienz verloren.")}</p></div>`});
+        this.render(false);
+      }
+    });
+  }
+  async brewPermanent(root) {
+    const id = String(root.querySelector(".gt-alchemy-permanent")?.value || "kraft");
+    const recipe = GT.ALCHEMY_PERMANENT.find(r => r.id === id) || GT.ALCHEMY_PERMANENT[0];
+    const rank = GT.alchemyRankInfo(this.actor);
+    await GT.chatRoll({
+      formula: GT.professionFormula(this.actor, rank.node || {attributes: ["konz", "ge"]}),
+      label: `Alchemie: ${recipe.label}`,
+      actor: this.actor,
+      flavor: `SchwG 30 · benötigt Kronstöckel und ${recipe.herb}`,
+      onRoll: async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        const criticalFailure = GT.criticalFailureFromMessage(message);
+        if (total >= 30) await this.createPotion(recipe.label, `<p>Permanenter Trank für ${GT.escape(recipe.attribute)}.</p><p>Benötigt: Kronstöckel und ${GT.escape(recipe.herb)}.</p>`, 120);
+        await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-vial-circle-check"></i> ${GT.escape(recipe.label)}</h2><p>Wurf ${total} gegen SchwG 30.</p><p>${total >= 30 ? "Erfolg: Permanenter Trank hergestellt." : (criticalFailure ? "Kritischer Fehlschlag: beide Ingredienzien verloren." : "Fehlschlag: eine Ingredienz nach Wahl verloren.")}</p></div>`});
+        this.render(false);
+      }
+    });
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-alchemy-mode")?.addEventListener("change", ev => {
+      this.mode = ev.currentTarget.value || "heiltrank";
+      this.tasks = [];
+      this.effects = [];
+      this.done = false;
+      this.render(false);
+    });
+    root.querySelector(".gt-alchemy-generate")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.generateTasks(root);
+    });
+    root.querySelectorAll(".gt-alchemy-solve").forEach(button => button.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.solveTask(ev.currentTarget.dataset.index);
+    }));
+    root.querySelector(".gt-alchemy-simple")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.brewSimple();
+    });
+    root.querySelector(".gt-alchemy-permanent-roll")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.brewPermanent(root);
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+/* ---------------------------- Schmiedekunst ------------------------------ */
+
+GT.SMITHING_TASKS = [
+  {id: 1, label: "Erz einschichten", skills: "Objekte Bewegen / Gewandtheit"},
+  {id: 2, label: "Kohle schaufeln", skills: "Objekte Bewegen / Durchhalten"},
+  {id: 3, label: "Hitze kontrollieren", skills: "Gewandtheit / Wahrnehmen"},
+  {id: 4, label: "Rohling wenden und halten", skills: "Gewandtheit / Objekte Bewegen"},
+  {id: 5, label: "Blasebalg betätigen", skills: "Durchhalten"}
+];
+
+GT.SMITHING_TYPES = [
+  {id: "einhand-schwert", label: "Einhand (Schwert)", difficulty: 10, attribute: "st", bonus: ""},
+  {id: "einhand-axt", label: "Einhand (Axt)", difficulty: 10, attribute: "st", bonus: ""},
+  {id: "einhand-streitkolben", label: "Einhand (Streitkolben)", difficulty: 10, attribute: "st", bonus: ""},
+  {id: "einhand-messer", label: "Einhand (Messer, Agil)", difficulty: 15, attribute: "ge", bonus: "Agil"},
+  {id: "zweihand-schwert", label: "Zweihand (Schwert, +1)", difficulty: 15, attribute: "st", bonus: "+1"},
+  {id: "zweihand-axt", label: "Zweihand (Axt, +1)", difficulty: 15, attribute: "st", bonus: "+1"},
+  {id: "zweihand-hammer", label: "Zweihand (Hammer, +1)", difficulty: 15, attribute: "st", bonus: "+1"}
+];
+
+GT.SMITHING_DICE = [
+  {id: "w2", label: "w2", difficulty: 5},
+  {id: "w4", label: "w4", difficulty: 10},
+  {id: "w6", label: "w6", difficulty: 15},
+  {id: "w8", label: "w8", difficulty: 20},
+  {id: "w10", label: "w10", difficulty: 25},
+  {id: "w12", label: "w12", difficulty: 30}
+];
+
+GT.SMITHING_BONUS = [
+  {id: "0", label: "0", difficulty: 5},
+  {id: "+1", label: "+1", difficulty: 10},
+  {id: "+2", label: "+2", difficulty: 15},
+  {id: "+3", label: "+3", difficulty: 20},
+  {id: "+4", label: "+4", difficulty: 25},
+  {id: "+5", label: "+5", difficulty: 30}
+];
+
+GT.SMITHING_PROPERTIES = [
+  {id: "lang", label: "Lang", difficulty: 20},
+  {id: "weiter-hieb-1", label: "Weiter Hieb I", difficulty: 20},
+  {id: "weiter-hieb-2", label: "Weiter Hieb II", difficulty: 25},
+  {id: "garstig", label: "Garstig", difficulty: 20},
+  {id: "wucht", label: "Wucht", difficulty: 20},
+  {id: "stossen-1", label: "Stoßen 1", difficulty: 15},
+  {id: "stossen-2", label: "Stoßen 2", difficulty: 20},
+  {id: "stossen-3", label: "Stoßen 3", difficulty: 25},
+  {id: "erzwaffe", label: "Erzwaffe", difficulty: 20}
+];
+
+GT.startSmithingSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Schmiedekunst vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {
+    type: "smithingStart",
+    userId,
+    session: {id: GT.safeRandomID(), gmId: game.user.id, hasForge: !!options.hasForge, hasHammer: !!options.hasHammer, note: String(options.note || "")}
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Schmiedekunst an ${target.name} gesendet.`);
+};
+
+class GothicTalesSmithingGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {userId: String(options.userId || ""), hasForge: options.hasForge !== false, hasHammer: options.hasHammer !== false, note: String(options.note || "")};
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-smithing-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-smithing-gm-window"],
+    window: {title: "Schmiedekunst vorbereiten", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-smithing-gm.hbs"}};
+  getData() { return {...this.settings, users: GT.lockpickingOnlineUsers(this.settings.userId)}; }
+  readForm(root) {
+    return {
+      userId: String(root.querySelector(".gt-smithing-user")?.value || ""),
+      hasForge: !!root.querySelector(".gt-smithing-forge")?.checked,
+      hasHammer: !!root.querySelector(".gt-smithing-hammer")?.checked,
+      note: String(root.querySelector(".gt-smithing-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startSmithingSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesSmithingPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.prep = GT.SMITHING_TASKS.map(t => ({...t, enabled: false, material: "iron", difficulty: null, helperTotal: 0, helperDie: "w4", success: false, awarded: ""}));
+    this.weapon = {name: "Geschmiedete Waffe", type: null, die: null, bonus: null, secondDie: "", properties: [], malus: 0};
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-smithing-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-smithing-player-window"],
+    window: {title: "Schmiedekunst", resizable: true},
+    position: {width: 820, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-smithing-player.hbs", scrollable: [".gt-smithing-player"]}};
+  get dicePool() {
+    return this.prep.flatMap(p => p.awarded ? [p.awarded] : []);
+  }
+  getData() {
+    const rank = GT.rankInfoForProfession(this.actor, "schmiedekunst", [{rank: 0, label: "gelernt"}]);
+    const blocked = [];
+    if (!rank.learned) blocked.push("Schmiedekunst nicht gelernt");
+    if (!this.session.hasForge) blocked.push("keine Schmiede vorhanden");
+    if (!this.session.hasHammer && !GT.hasItemNamed(this.actor, /schmiedehammer/i)) blocked.push("kein Schmiedehammer bestätigt/gefunden");
+    return {
+      actor: this.actor,
+      rank,
+      blocked: blocked.length > 0,
+      blockedReason: blocked.join("; "),
+      note: this.session.note || "",
+      prep: this.prep,
+      dicePool: this.dicePool,
+      typeOptions: GT.SMITHING_TYPES.map(o => ({...o, selected: this.weapon.type === o.id})),
+      dieOptions: GT.SMITHING_DICE.map(o => ({...o, selected: this.weapon.die === o.id})),
+      bonusOptions: GT.SMITHING_BONUS.map(o => ({...o, selected: this.weapon.bonus === o.id})),
+      secondDieOptions: [{id: "", label: "kein zweiter Waffen-W", difficulty: 0}, ...GT.SMITHING_DICE.map(d => ({...d, difficulty: d.difficulty + 25}))].map(o => ({...o, selected: this.weapon.secondDie === o.id})),
+      propertyOptions: GT.SMITHING_PROPERTIES.map(o => ({...o, selected: this.weapon.properties.includes(o.id)})),
+      weapon: this.weapon,
+      resultText: this.weaponResultText()
+    };
+  }
+  weaponResultText() {
+    const type = GT.SMITHING_TYPES.find(o => o.id === this.weapon.type)?.label || "Art offen";
+    const die = this.weapon.die || "Waffen-W offen";
+    const second = this.weapon.secondDie ? ` + ${this.weapon.secondDie}` : "";
+    const bonus = this.weapon.bonus || "Bonus offen";
+    const props = this.weapon.properties.map(id => GT.SMITHING_PROPERTIES.find(p => p.id === id)?.label || id).join(", ") || "keine Eigenschaften";
+    const malus = this.weapon.malus ? ` · Malus ${this.weapon.malus}` : "";
+    return `${type} · ${die}${second} · ${bonus} · ${props}${malus}`;
+  }
+  async smithFormulaRoll(label, difficulty, extraFormula, onRoll) {
+    const rank = GT.rankInfoForProfession(this.actor, "schmiedekunst", [{rank: 0, label: "gelernt"}]);
+    const formula = `${GT.professionFormula(this.actor, rank.node || {attributes: ["st", "erf"]})}${extraFormula ? ` + ${extraFormula}` : ""}`;
+    return GT.chatRoll({formula, label, actor: this.actor, flavor: `SchwG ${difficulty}${extraFormula ? ` · Zusatz: ${extraFormula}` : ""}`, onRoll});
+  }
+  readCurrentSelections(root) {
+    this.weapon.name = String(root.querySelector(".gt-smithing-name")?.value || "Geschmiedete Waffe");
+    this.weapon.type = String(root.querySelector(".gt-smithing-type")?.value || this.weapon.type || "");
+    this.weapon.die = String(root.querySelector(".gt-smithing-die")?.value || this.weapon.die || "");
+    this.weapon.bonus = String(root.querySelector(".gt-smithing-bonus")?.value || this.weapon.bonus || "");
+    this.weapon.secondDie = String(root.querySelector(".gt-smithing-second-die")?.value || "");
+    this.weapon.properties = Array.from(root.querySelectorAll(".gt-smithing-property:checked")).map(cb => cb.value);
+  }
+  async forgeStep(root, kind) {
+    this.readCurrentSelections(root);
+    const extra = String(root.querySelector(".gt-smithing-extra-dice")?.value || "").trim();
+    let opt = null;
+    if (kind === "type") opt = GT.SMITHING_TYPES.find(o => o.id === this.weapon.type);
+    if (kind === "die") opt = GT.SMITHING_DICE.find(o => o.id === this.weapon.die);
+    if (kind === "bonus") opt = GT.SMITHING_BONUS.find(o => o.id === this.weapon.bonus);
+    if (kind === "second") opt = [{id: "", label: "kein zweiter Waffen-W", difficulty: 0}, ...GT.SMITHING_DICE.map(d => ({...d, difficulty: d.difficulty + 25}))].find(o => o.id === this.weapon.secondDie);
+    if (!opt || !opt.difficulty) return ui.notifications.warn("Bitte eine gültige Auswahl mit SchwG wählen.");
+    await this.smithFormulaRoll(`Schmiedekunst: ${opt.label}`, opt.difficulty, extra, async message => {
+      const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+      const success = total >= opt.difficulty;
+      if (!success) this.weapon.malus -= 1;
+      await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-hammer"></i> Schmiedephase</h2><p>${GT.escape(opt.label)} · Wurf ${total} gegen SchwG ${opt.difficulty}</p><p>${success ? "Erfolg: Auswahl steht." : "Fehlschlag: Waffe erhält Malus -1."}</p></div>`});
+      this.render(false);
+    });
+  }
+  async createWeapon(root) {
+    this.readCurrentSelections(root);
+    const type = GT.SMITHING_TYPES.find(o => o.id === this.weapon.type);
+    const props = this.weapon.properties.map(id => GT.SMITHING_PROPERTIES.find(p => p.id === id)?.label || id);
+    const damage = `${this.weapon.die || "w2"}${this.weapon.secondDie ? ` + ${this.weapon.secondDie}` : ""}${this.weapon.bonus && this.weapon.bonus !== "0" ? ` ${this.weapon.bonus}` : ""}${this.weapon.malus ? ` ${this.weapon.malus}` : ""}`;
+    await GT.stackOrCreateItem(this.actor, {
+      name: this.weapon.name || "Geschmiedete Waffe",
+      type: "weapon",
+      quantity: 1,
+      category: "Nahkampfwaffe",
+      properties: props.join(", "),
+      description: `<p>Geschmiedete Waffe.</p><p>${GT.escape(this.weaponResultText())}</p><p>Gesammelte Vorbereitungswürfel: ${GT.escape(this.dicePool.join(", ") || "keine")}.</p>`,
+      system: {
+        damage,
+        attribute: type?.attribute || "st",
+        requirements: `${type?.attribute === "ge" ? "Geschick" : "Stärke"} des Schmieds`,
+        equipped: false
+      }
+    });
+    await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-sword"></i> Waffe fertig</h2><p><strong>${GT.escape(this.weapon.name || "Geschmiedete Waffe")}</strong> wurde ins Inventar gelegt.</p><p>${GT.escape(this.weaponResultText())}</p></div>`});
+    this.render(false);
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelectorAll(".gt-smithing-prep-roll").forEach(button => button.addEventListener("click", ev => {
+      ev.preventDefault();
+      const idx = Number(ev.currentTarget.dataset.index || 0);
+      const prep = this.prep[idx];
+      prep.enabled = true;
+      prep.material = String(root.querySelector(`.gt-smithing-prep-material[data-index="${idx}"]`)?.value || "iron");
+      this.smithFormulaRoll(`Schmiedekunst: Vorbereitung ${idx + 1}`, 0, "", async message => {
+        const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        prep.difficulty = Math.max(0, 30 - total);
+        await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-fire"></i> Vorbereitungsaufgabe</h2><p>${GT.escape(prep.label)}: 30 - ${total} = <strong>SchwG ${prep.difficulty}</strong>.</p><p>Material: ${prep.material === "magic" ? "Magisches Erz" : "Eisenerz"}.</p></div>`});
+        this.render(false);
+      });
+    }));
+    root.querySelectorAll(".gt-smithing-helper-save").forEach(button => button.addEventListener("click", ev => {
+      ev.preventDefault();
+      const idx = Number(ev.currentTarget.dataset.index || 0);
+      const prep = this.prep[idx];
+      prep.helperTotal = Number(root.querySelector(`.gt-smithing-helper-total[data-index="${idx}"]`)?.value || 0);
+      prep.helperDie = String(root.querySelector(`.gt-smithing-helper-die[data-index="${idx}"]`)?.value || "w4");
+      prep.success = prep.difficulty !== null && prep.helperTotal >= Number(prep.difficulty || 0);
+      prep.awarded = prep.success ? (prep.material === "magic" ? `${prep.helperDie} + ${prep.helperDie}` : prep.helperDie) : "";
+      this.render(false);
+    }));
+    root.querySelectorAll(".gt-smithing-forge-step").forEach(button => button.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.forgeStep(root, ev.currentTarget.dataset.step);
+    }));
+    root.querySelector(".gt-smithing-create")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.createWeapon(root);
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+/* ----------------------------- Schnitzkunst ------------------------------ */
+
+GT.CARVING_RANKS = [
+  {rank: 0, label: "Anfänger"},
+  {rank: 1, label: "geübt"},
+  {rank: 2, label: "gelehrt"}
+];
+
+GT.carvingRankInfo = function(actor) {
+  return GT.rankInfoForProfession(actor, "schnitzkunst", GT.CARVING_RANKS);
+};
+
+GT.SPECIAL_AMMO = [
+  {id: "reisszahn", label: "Reißzahn", difficulty: 10, material: "3 / 7 Zähne, Krallen und Klauen"},
+  {id: "breitkopf", label: "Breitkopf", difficulty: 10, material: "2 Eisenerz"},
+  {id: "erzbreitkopf", label: "Erzbreitkopf", difficulty: 15, material: "2 magisches Erz"},
+  {id: "widerhaken", label: "Widerhaken", difficulty: 15, material: "4 Eisenerz"},
+  {id: "bodkin", label: "Bodkin", difficulty: 15, material: "3 Eisenerz"}
+];
+
+GT.carvingDieFromPoints = function(points) {
+  const p = Number(points || 0);
+  if (p >= 19) return "w12 + w2";
+  if (p >= 17) return "w10 + w2";
+  if (p >= 15) return "w12";
+  if (p >= 12) return "w10";
+  if (p >= 10) return "w8";
+  if (p >= 8) return "w6";
+  if (p >= 4) return "w4";
+  return "w2";
+};
+
+GT.carvingBonusFromPoints = function(points) {
+  const p = Number(points || 0);
+  if (p >= 14) return "+5";
+  if (p >= 11) return "+4";
+  if (p >= 8) return "+3";
+  if (p >= 5) return "+2";
+  if (p >= 3) return "+1";
+  return "0";
+};
+
+GT.startCarvingSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Schnitzkunst vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {
+    type: "carvingStart",
+    userId,
+    session: {id: GT.safeRandomID(), gmId: game.user.id, hasKnife: !!options.hasKnife, suitableWood: !!options.suitableWood, note: String(options.note || "")}
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Schnitzkunst an ${target.name} gesendet.`);
+};
+
+class GothicTalesCarvingGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {userId: String(options.userId || ""), hasKnife: options.hasKnife !== false, suitableWood: options.suitableWood !== false, note: String(options.note || "")};
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-carving-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-carving-gm-window"],
+    window: {title: "Schnitzkunst vorbereiten", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-carving-gm.hbs"}};
+  getData() { return {...this.settings, users: GT.lockpickingOnlineUsers(this.settings.userId)}; }
+  readForm(root) {
+    return {
+      userId: String(root.querySelector(".gt-carving-user")?.value || ""),
+      hasKnife: !!root.querySelector(".gt-carving-knife")?.checked,
+      suitableWood: !!root.querySelector(".gt-carving-wood")?.checked,
+      note: String(root.querySelector(".gt-carving-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startCarvingSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesCarvingPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.mode = "basic";
+    this.specialSuccesses = 0;
+    this.bow = {woodQuality: 0, woodSteps: 0, woodPoints: 0, stringQuality: 0, stringSteps: 0, stringPoints: 0, range: "10/20", property: ""};
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-carving-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-carving-player-window"],
+    window: {title: "Schnitzkunst", resizable: true},
+    position: {width: 800, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-carving-player.hbs", scrollable: [".gt-carving-player"]}};
+  getData() {
+    const rank = GT.carvingRankInfo(this.actor);
+    const blocked = [];
+    if (!rank.learned) blocked.push("Schnitzkunst nicht gelernt");
+    if (!this.session.hasKnife && !GT.hasItemNamed(this.actor, /schnitzmesser/i)) blocked.push("kein Schnitzmesser bestätigt/gefunden");
+    const modeOptions = [
+      {id: "basic", label: "Pfeile/Bolzen", minRank: 0},
+      {id: "special", label: "Besondere Munition", minRank: 1},
+      {id: "bow", label: "Bogenbau", minRank: 2}
+    ].filter(o => rank.rank >= o.minRank).map(o => ({...o, selected: this.mode === o.id}));
+    return {
+      actor: this.actor,
+      rank,
+      blocked: blocked.length > 0,
+      blockedReason: blocked.join("; "),
+      note: this.session.note || "",
+      mode: this.mode,
+      modeOptions,
+      isBasic: this.mode === "basic",
+      isSpecial: this.mode === "special",
+      isBow: this.mode === "bow",
+      ammoOptions: GT.SPECIAL_AMMO.map(a => ({...a})),
+      specialSuccesses: this.specialSuccesses,
+      bow: this.bow,
+      bowDie: GT.carvingDieFromPoints(this.bow.woodPoints),
+      bowBonus: GT.carvingBonusFromPoints(this.bow.stringPoints)
+    };
+  }
+  async carvingRoll(label, flavor, onRoll) {
+    const rank = GT.carvingRankInfo(this.actor);
+    return GT.chatRoll({formula: GT.professionFormula(this.actor, rank.node || {attributes: ["ge", "ausd"]}), label, actor: this.actor, flavor, onRoll});
+  }
+  async handleCritFail(message) {
+    if (GT.criticalFailureFromMessage(message)) {
+      await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-bandage"></i> Kritischer Fehlschlag</h2><p>${GT.escape(this.actor.name)} schneidet sich in den Finger und erhält <strong>5 Schaden</strong>.</p></div>`});
+      return true;
+    }
+    return false;
+  }
+  async craftBasic(root) {
+    const kind = String(root.querySelector(".gt-carving-basic-kind")?.value || "Pfeile");
+    await this.carvingRoll(`Schnitzkunst: ${kind}`, "Pfeile/Bolzen während einer Rast schnitzen", async message => {
+      await this.handleCritFail(message);
+      const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+      const qty = Math.max(0, Math.floor(total / 3));
+      if (qty > 0) await GT.stackOrCreateItem(this.actor, {name: kind, type: "consumable", quantity: qty, value: "", category: "Munition", properties: "Munition", description: `<p>Geschnitzte ${GT.escape(kind)}.</p>`});
+      await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-feather-pointed"></i> Schnitzkunst</h2><p>Wurf ${total}: <strong>${qty}× ${GT.escape(kind)}</strong> hergestellt.</p></div>`});
+      this.render(false);
+    });
+  }
+  async craftSpecial(root) {
+    const ammo = GT.SPECIAL_AMMO.find(a => a.id === String(root.querySelector(".gt-carving-ammo")?.value || "")) || GT.SPECIAL_AMMO[0];
+    const amount = Math.max(1, Math.min(6, Number(root.querySelector(".gt-carving-ammo-count")?.value || 1)));
+    this.specialSuccesses = 0;
+    for (let i = 0; i < amount; i++) {
+      const message = await GT.chatRoll({
+        formula: GT.professionFormula(this.actor, GT.carvingRankInfo(this.actor).node || {attributes: ["ge", "ausd"]}),
+        label: `Schnitzkunst: ${ammo.label}`,
+        actor: this.actor,
+        flavor: `${i + 1}/${amount} · SchwG ${ammo.difficulty}`,
+        configure: false
+      });
+      await this.handleCritFail(message);
+      const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+      const critical = GT.criticalSuccessFromMessage(message);
+      if (critical) {
+        this.specialSuccesses = amount;
+        break;
+      }
+      if (total >= ammo.difficulty) this.specialSuccesses += 1;
+    }
+    if (this.specialSuccesses > 0) await GT.stackOrCreateItem(this.actor, {name: ammo.label, type: "consumable", quantity: this.specialSuccesses, value: "", category: "Besondere Munition", properties: ammo.material, description: `<p>${GT.escape(ammo.label)}.</p><p>Material: ${GT.escape(ammo.material)}.</p>`});
+    await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-location-crosshairs"></i> Besondere Munition</h2><p>${GT.escape(ammo.label)}: <strong>${this.specialSuccesses}/${amount}</strong> hergestellt.</p><p>Materialhinweis: ${GT.escape(ammo.material)}</p></div>`});
+    this.render(false);
+  }
+  async processMaterial(kind) {
+    const quality = kind === "wood" ? this.bow.woodQuality : this.bow.stringQuality;
+    if (!quality) return ui.notifications.warn("Es wurde noch keine Qualität bestimmt.");
+    await this.carvingRoll(`Schnitzkunst: ${kind === "wood" ? "Holz bearbeiten" : "Sehne drehen"}`, `SchwG ${quality}`, async message => {
+      await this.handleCritFail(message);
+      const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+      const critical = GT.criticalSuccessFromMessage(message);
+      const success = total >= quality;
+      const points = Math.floor(quality / (success ? 5 : 10)) + (critical ? 4 : 0);
+      if (kind === "wood") {
+        this.bow.woodSteps = Math.min(3, this.bow.woodSteps + 1);
+        this.bow.woodPoints += points;
+      } else {
+        this.bow.stringSteps = Math.min(3, this.bow.stringSteps + 1);
+        this.bow.stringPoints += points;
+      }
+      await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-tree"></i> Bogenbau</h2><p>Wurf ${total} gegen Qualität ${quality}: <strong>+${points} Punkte</strong>.</p></div>`});
+      this.render(false);
+    });
+  }
+  async createBow(root) {
+    this.bow.range = String(root.querySelector(".gt-carving-bow-range")?.value || "10/20");
+    this.bow.property = String(root.querySelector(".gt-carving-bow-property")?.value || "");
+    const die = GT.carvingDieFromPoints(this.bow.woodPoints);
+    const bonus = GT.carvingBonusFromPoints(this.bow.stringPoints);
+    const property = this.bow.property || "keine";
+    await GT.stackOrCreateItem(this.actor, {
+      name: "Geschnitzter Bogen",
+      type: "weapon",
+      quantity: 1,
+      category: "Fernkampfwaffe",
+      properties: property,
+      description: `<p>Selbst geschnitzter Bogen.</p><p>Holzpunkte: ${this.bow.woodPoints}; Sehnenpunkte: ${this.bow.stringPoints}; Reichweite: ${GT.escape(this.bow.range)}; Eigenschaft: ${GT.escape(property)}.</p>`,
+      system: {damage: `${die}${bonus !== "0" ? ` ${bonus}` : ""}`, attribute: "ge", range: this.bow.range, targetDefense: "rk"}
+    });
+    await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-bow-arrow"></i> Bogen fertig</h2><p>Waffen-W: <strong>${GT.escape(die)}</strong> · Bonus: <strong>${GT.escape(bonus)}</strong> · Reichweite: <strong>${GT.escape(this.bow.range)}</strong></p><p>Der Bogen wurde ins Inventar gelegt.</p></div>`});
+    this.render(false);
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-carving-mode")?.addEventListener("change", ev => {
+      this.mode = ev.currentTarget.value || "basic";
+      this.render(false);
+    });
+    root.querySelector(".gt-carving-basic-roll")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.craftBasic(root);
+    });
+    root.querySelector(".gt-carving-special-roll")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.craftSpecial(root);
+    });
+    root.querySelector(".gt-carving-wood-search")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      if (!this.session.suitableWood) return ui.notifications.warn("Die Umgebung ist nicht als geeignet für Bogenholz markiert.");
+      this.carvingRoll("Schnitzkunst: Holz suchen", "Qualität des Bogenholzes bestimmen", async message => {
+        await this.handleCritFail(message);
+        this.bow.woodQuality = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+        await ChatMessage.create({speaker: ChatMessage.getSpeaker({actor: this.actor}), content: `<div class="gothic-tales chat-card gt-crafting-result"><h2><i class="fas fa-tree"></i> Bogenholz</h2><p>Qualität: <strong>${this.bow.woodQuality}</strong>.</p><p class="gt-chat-note">Nächste Holzsuche in 60 Minuten.</p></div>`});
+        this.render(false);
+      });
+    });
+    root.querySelector(".gt-carving-string-quality")?.addEventListener("change", ev => {
+      this.bow.stringQuality = Math.max(0, Number(ev.currentTarget.value || 0));
+      this.render(false);
+    });
+    root.querySelector(".gt-carving-wood-process")?.addEventListener("click", ev => { ev.preventDefault(); this.processMaterial("wood"); });
+    root.querySelector(".gt-carving-string-process")?.addEventListener("click", ev => { ev.preventDefault(); this.processMaterial("string"); });
+    root.querySelector(".gt-carving-bow-create")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      this.createBow(root);
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+GT.hagglingDifficulty = function(price) {
+  const p = Number(price || 0);
+  if (p < 100) return 10;
+  if (p <= 200) return 15;
+  if (p <= 500) return 20;
+  if (p <= 1500) return 25;
+  return 30;
+};
+
+GT.hagglingCurrentPrice = function(basePrice, tenths) {
+  return Math.max(0, Math.ceil(Number(basePrice || 0) * Number(tenths || 10) / 10));
+};
+
+GT.hagglingAdvantageLabel = function(mode, level) {
+  if (!mode || mode === "none") return "Normal";
+  return GT.advantageLabel(mode, level) || "Normal";
+};
+
+GT.hagglingFormulaOptions = function(actor) {
+  const node = GT.actorBestProfessionEntry(actor, "feilschen")?.node
+    || GT._professionScaffold?.trees?.flatMap(t => t.nodes ?? [])?.find(n => n.id === "feilschen")
+    || {id: "feilschen", label: "Feilschen", attributes: ["intu", "erf"]};
+  const learned = GT.actorHasProfession(actor, "feilschen");
+  return {
+    formula: GT.professionFormula(actor, node),
+    label: "Feilschen",
+    summary: learned ? "Beruf gelernt" : "Feilschen nicht gelernt – SL entscheidet"
+  };
+};
+
+GT.startHagglingSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Feilschen vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const basePrice = Math.max(1, Number(options.basePrice || 1));
+  const maxFailures = Math.max(1, Number(options.maxFailures || 3));
+  const minTenths = Math.max(1, Math.min(10, Number(options.minTenths || 5)));
+  const payload = {
+    type: "hagglingStart",
+    userId,
+    session: {
+      id: foundry?.utils?.randomID?.() || String(Date.now()),
+      gmId: game.user.id,
+      merchant: String(options.merchant || "Händler"),
+      basePrice,
+      difficulty: GT.hagglingDifficulty(basePrice),
+      maxFailures,
+      minTenths,
+      note: String(options.note || "")
+    }
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Feilschen an ${target.name} gesendet.`);
+};
+
+class GothicTalesHagglingGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {
+      merchant: String(options.merchant || "Händler"),
+      basePrice: Number(options.basePrice || 100),
+      maxFailures: Number(options.maxFailures || 3),
+      minTenths: Number(options.minTenths || 5),
+      userId: String(options.userId || ""),
+      note: String(options.note || "")
+    };
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-haggling-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-haggling-gm-window"],
+    window: {title: "Feilschen vorbereiten", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-haggling-gm.hbs"}};
+  getData() {
+    return {
+      ...this.settings,
+      difficulty: GT.hagglingDifficulty(this.settings.basePrice),
+      users: GT.lockpickingOnlineUsers(this.settings.userId)
+    };
+  }
+  readForm(root) {
+    return {
+      merchant: String(root.querySelector(".gt-haggling-merchant")?.value || "Händler"),
+      basePrice: Math.max(1, Number(root.querySelector(".gt-haggling-price")?.value || 1)),
+      maxFailures: Math.max(1, Number(root.querySelector(".gt-haggling-max-fails")?.value || 3)),
+      minTenths: Math.max(1, Math.min(10, Number(root.querySelector(".gt-haggling-min-tenths")?.value || 5))),
+      userId: String(root.querySelector(".gt-haggling-user")?.value || ""),
+      note: String(root.querySelector(".gt-haggling-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    const syncDifficulty = () => {
+      this.settings = this.readForm(root);
+      const badge = root.querySelector(".gt-haggling-difficulty");
+      if (badge) badge.textContent = String(GT.hagglingDifficulty(this.settings.basePrice));
+    };
+    root.querySelector(".gt-haggling-price")?.addEventListener("input", syncDifficulty);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startHagglingSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesHagglingPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.priceTenths = 10;
+    this.failures = 0;
+    this.ended = false;
+    this.lastArgument = "";
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-haggling-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-haggling-player-window"],
+    window: {title: "Feilschen", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-haggling-player.hbs"}};
+  getData() {
+    const basePrice = Number(this.session.basePrice || 0);
+    const minTenths = Number(this.session.minTenths || 5);
+    const currentPrice = GT.hagglingCurrentPrice(basePrice, this.priceTenths);
+    const nextTenths = Math.max(minTenths, this.priceTenths - 1);
+    return {
+      actor: this.actor,
+      merchant: this.session.merchant || "Händler",
+      basePrice,
+      difficulty: Number(this.session.difficulty || GT.hagglingDifficulty(basePrice)),
+      maxFailures: Number(this.session.maxFailures || 3),
+      minTenths,
+      priceTenths: this.priceTenths,
+      currentPrice,
+      nextPrice: GT.hagglingCurrentPrice(basePrice, nextTenths),
+      failures: this.failures,
+      ended: this.ended,
+      note: this.session.note || "",
+      canImprove: this.priceTenths > minTenths,
+      learned: GT.actorHasProfession(this.actor, "feilschen"),
+      lastArgument: this.lastArgument,
+      advantageLevels: [
+        {value: 1, label: "klein"},
+        {value: 2, label: "mittel"},
+        {value: 3, label: "groß"}
+      ]
+    };
+  }
+  async postResult({success, total, critical, argument, advantageText}) {
+    const basePrice = Number(this.session.basePrice || 0);
+    const beforeTenths = this.priceTenths;
+    let resultText = "";
+    let icon = "fa-comments-dollar";
+
+    if (success) {
+      if (this.priceTenths > Number(this.session.minTenths || 5)) this.priceTenths -= 1;
+      const before = GT.hagglingCurrentPrice(basePrice, beforeTenths);
+      const after = GT.hagglingCurrentPrice(basePrice, this.priceTenths);
+      resultText = this.priceTenths < beforeTenths
+        ? `Erfolg! Der Preis sinkt von ${before} auf ${after} Erz.`
+        : `Erfolg! Der Mindestpreis von ${after} Erz ist bereits erreicht.`;
+      icon = "fa-handshake";
+    } else {
+      this.failures += 1;
+      resultText = `Fehlschlag. Der Händler bleibt hart. Fehlschläge: ${this.failures}/${Number(this.session.maxFailures || 3)}.`;
+      icon = "fa-face-angry";
+      if (this.failures >= Number(this.session.maxFailures || 3)) {
+        this.ended = true;
+        this.priceTenths = 10;
+        resultText = `Der Händler ist verärgert. Das Feilschen endet und der Normalpreis von ${GT.hagglingCurrentPrice(basePrice, 10)} Erz gilt wieder.`;
+      }
+    }
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-haggling-result">
+        <h2><i class="fas ${icon}"></i> Feilschen</h2>
+        <p><strong>${GT.escape(this.actor.name)}</strong> feilscht mit <strong>${GT.escape(this.session.merchant || "Händler")}</strong>.</p>
+        <p><em>${GT.escape(argument)}</em></p>
+        <p>Wurf: <strong>${Number(total || 0)}</strong> gegen SchwG <strong>${Number(this.session.difficulty || 10)}</strong>${critical ? " · Kritischer Erfolg" : ""}</p>
+        <p>${GT.escape(resultText)}</p>
+        <p class="gt-chat-note">Modus: ${GT.escape(advantageText || "Normal")}</p>
+      </div>`
+    });
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-haggling-roll")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      if (this.ended) return ui.notifications.warn("Diese Verhandlung ist bereits beendet.");
+      const argument = String(root.querySelector(".gt-haggling-argument")?.value || "").trim();
+      if (!argument) return ui.notifications.warn("Jeder Feilschen-Wurf braucht ein Argument.");
+      this.lastArgument = argument;
+      const mode = String(root.querySelector(".gt-haggling-advantage-mode")?.value || "none");
+      const level = Number(root.querySelector(".gt-haggling-advantage-level")?.value || 1);
+      const advantageText = GT.hagglingAdvantageLabel(mode, level);
+      const opts = GT.hagglingFormulaOptions(this.actor);
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        content: `<div class="gothic-tales chat-card gt-haggling-argument"><h3><i class="fas fa-comment-dots"></i> Feilschen-Argument</h3><p><strong>${GT.escape(this.actor.name)}:</strong> ${GT.escape(argument)}</p><p>${GT.escape(advantageText)}</p></div>`
+      });
+      await GT.chatRoll({
+        formula: opts.formula,
+        label: "Feilschen",
+        actor: this.actor,
+        flavor: `Feilschen gegen SchwG ${Number(this.session.difficulty || 10)} · ${opts.summary}`,
+        advantageMode: mode,
+        advantageLevel: level,
+        onRoll: async message => {
+          const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+          const critical = !!message?.getFlag?.("gothic-tales", "rollCritical");
+          await this.postResult({success: total >= Number(this.session.difficulty || 10), total, critical, argument, advantageText});
+          this.render(false);
+        }
+      });
+    });
+    root.querySelector(".gt-haggling-end")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      this.ended = true;
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({actor: this.actor}),
+        content: `<div class="gothic-tales chat-card gt-haggling-result"><h2><i class="fas fa-coins"></i> Feilschen beendet</h2><p>${GT.escape(this.actor.name)} beendet die Verhandlung.</p><p>Endpreis: <strong>${GT.hagglingCurrentPrice(Number(this.session.basePrice || 0), this.priceTenths)} Erz</strong>.</p></div>`
+      });
+      this.close();
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+};
+
+GT.HERBALISM_HERBS = [
+  {id: "heilkraeuter", label: "Heilkräuter", difficulty: 10, use: "Heiltränke", value: "Menge", quantityFromRoll: true},
+  {id: "manakraeuter", label: "Manakräuter", difficulty: 10, use: "Manatränke", value: "Menge", quantityFromRoll: true},
+  {id: "snapperkraut", label: "Snapperkraut", difficulty: 15, use: "Geschwindigkeit", value: 30},
+  {id: "blitzblatt", label: "Blitzblatt", difficulty: 20, use: "Initiative+", value: 40},
+  {id: "herrscherkraut", label: "Herrscherkraut", difficulty: 20, use: "TP+", value: 40},
+  {id: "flammenbeere", label: "Flammenbeere", difficulty: 20, use: "Mana+", value: 40},
+  {id: "drachenwurzel", label: "Drachenwurzel", difficulty: 25, use: "St+", value: 50},
+  {id: "goblinbeere", label: "Goblinbeere", difficulty: 25, use: "Ge+", value: 50},
+  {id: "harnischkraut", label: "Harnischkraut", difficulty: 25, use: "Ausd+", value: 50},
+  {id: "koenigsdistel", label: "Königsdistel", difficulty: 25, use: "Konz+", value: 50},
+  {id: "blutschilf", label: "Blutschilf", difficulty: 25, use: "Intu+", value: 50},
+  {id: "sonnenmoos", label: "Sonnenmoos", difficulty: 25, use: "Erf+", value: 50}
+];
+
+GT.HERBALISM_CROWN_HERB = {id: "kronstoeckel", label: "Kronstöckel", difficulty: 0, use: "Permanente Tränke", value: 120};
+
+GT.herbalismRankInfo = function(actor) {
+  const entry = GT.actorBestProfessionEntry(actor, "kraeuterkunde");
+  if (!entry) return {learned: false, rank: -1, label: "nicht gelernt", maxSearches: 0, node: {attributes: ["intu", "konz"], label: "Kräuterkunde"}};
+  const rank = Math.max(0, Math.min(3, Number(entry.node.rank || 0)));
+  const labels = ["Grundrang", "geübt", "gelehrt", "gemeistert"];
+  const maxByRank = [2, 3, 4, 5];
+  return {learned: true, rank, label: labels[rank] || "Grundrang", maxSearches: maxByRank[rank] || 2, node: entry.node};
+};
+
+GT.herbalismState = function(actor) {
+  const state = actor?.system?.professions?.uses?.kraeuterkunde ?? {};
+  return {
+    successes: Math.max(0, Number(state.successes || 0)),
+    nextAllowed: Math.max(0, Number(state.nextAllowed || 0))
+  };
+};
+
+GT.herbalismCooldownText = function(nextAllowed) {
+  const remaining = Number(nextAllowed || 0) - Date.now();
+  if (remaining <= 0) return "bereit";
+  const minutes = Math.ceil(remaining / 60000);
+  return `${minutes} Min.`;
+};
+
+GT.updateHerbalismState = async function(actor, patch = {}) {
+  const state = {...GT.herbalismState(actor), ...patch};
+  await actor.update({"system.professions.uses.kraeuterkunde": state});
+  return state;
+};
+
+GT.resetHerbalismState = async function(actor, {timer = true, successes = true} = {}) {
+  const state = GT.herbalismState(actor);
+  if (timer) state.nextAllowed = 0;
+  if (successes) state.successes = 0;
+  await actor.update({"system.professions.uses.kraeuterkunde": state});
+  return state;
+};
+
+GT.herbalismHerbById = function(id) {
+  return GT.HERBALISM_HERBS.find(h => h.id === id) || GT.HERBALISM_HERBS[0];
+};
+
+GT.addHerbToActor = async function(actor, herb, quantity = 1) {
+  const qty = Math.max(1, Number(quantity || 1));
+  const existing = Array.from(actor?.items ?? []).find(i => i.name === herb.label && i.type === "consumable");
+  if (existing) {
+    await existing.update({"system.quantity": Number(existing.system?.quantity || 0) + qty});
+    return existing;
+  }
+  const value = herb.quantityFromRoll ? String(qty) : String(herb.value ?? "");
+  const [item] = await actor.createEmbeddedDocuments("Item", [{
+    name: herb.label,
+    type: "consumable",
+    img: GT.itemImage?.("consumable", herb.label) || "systems/gothic-tales/assets/icons/verbrauchbar.svg",
+    system: {
+      quantity: qty,
+      value,
+      category: "Kräuter",
+      description: `<p><strong>${GT.escape(herb.label)}</strong></p><p>Nutzung: ${GT.escape(herb.use || "")}. Handelswert: ${GT.escape(value)}.</p>`,
+      properties: "Kraut"
+    }
+  }]);
+  return item;
+};
+
+GT.startHerbalismSession = function(options = {}) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Kräuterkunde vorbereiten.");
+  const userId = String(options.userId || "");
+  const target = game.users?.get?.(userId);
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {
+    type: "herbalismStart",
+    userId,
+    session: {
+      id: foundry?.utils?.randomID?.() || String(Date.now()),
+      gmId: game.user.id,
+      outdoors: !!options.outdoors,
+      note: String(options.note || "")
+    }
+  };
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+  ui.notifications.info(`Kräuterkunde an ${target.name} gesendet.`);
+};
+
+GT.resetHerbalismForUser = function(userId) {
+  if (!game.user?.isGM) return ui.notifications.warn("Nur der Spielleiter kann Kräuterkunde zurücksetzen.");
+  const target = game.users?.get?.(String(userId || ""));
+  if (!target?.active) return ui.notifications.warn("Der gewählte Spieler ist nicht aktiv.");
+  const payload = {type: "herbalismReset", userId: target.id};
+  game.socket?.emit?.("system.gothic-tales", payload);
+  GT.handleSocketMessage(payload);
+};
+
+class GothicTalesHerbalismGMDialog extends GothicTalesApplicationV2 {
+  constructor(options = {}) {
+    super(options);
+    this.settings = {
+      userId: String(options.userId || ""),
+      outdoors: options.outdoors !== false,
+      note: String(options.note || "")
+    };
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-herbalism-gm",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-herbalism-gm-window"],
+    window: {title: "Kräuterkunde vorbereiten", resizable: true},
+    position: {width: 660, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-herbalism-gm.hbs"}};
+  getData() {
+    return {...this.settings, users: GT.lockpickingOnlineUsers(this.settings.userId)};
+  }
+  readForm(root) {
+    return {
+      userId: String(root.querySelector(".gt-herbalism-user")?.value || ""),
+      outdoors: !!root.querySelector(".gt-herbalism-outdoors")?.checked,
+      note: String(root.querySelector(".gt-herbalism-note")?.value || "")
+    };
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.addEventListener("submit", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.startHerbalismSession(this.settings);
+      this.close();
+    });
+    root.querySelector(".gt-herbalism-reset")?.addEventListener("click", ev => {
+      ev.preventDefault();
+      this.settings = this.readForm(root);
+      GT.resetHerbalismForUser(this.settings.userId);
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
+
+class GothicTalesHerbalismPlayerDialog extends GothicTalesApplicationV2 {
+  constructor(actor, session = {}, options = {}) {
+    super(options);
+    this.actor = actor;
+    this.session = session;
+    this.selectedHerb = session.herbId || "heilkraeuter";
+  }
+  static DEFAULT_OPTIONS = {
+    id: "gothic-tales-herbalism-player",
+    classes: ["gothic-tales", "gt-app", "gt-v2-window", "gt-dialog-window", "gt-herbalism-player-window"],
+    window: {title: "Kräuterkunde", resizable: true},
+    position: {width: 700, height: "auto"}
+  };
+  static PARTS = {body: {template: "systems/gothic-tales/templates/dialog-herbalism-player.hbs", scrollable: [".gt-herbalism-player"]}};
+  getData() {
+    const rank = GT.herbalismRankInfo(this.actor);
+    const state = GT.herbalismState(this.actor);
+    const herb = GT.herbalismHerbById(this.selectedHerb);
+    const now = Date.now();
+    const blockedReasons = [];
+    if (!rank.learned) blockedReasons.push("Kräuterkunde nicht gelernt");
+    if (!this.session.outdoors) blockedReasons.push("Ort ist nicht als freie Natur markiert");
+    if (state.successes >= rank.maxSearches && rank.learned) blockedReasons.push("Suchen pro Sitzung aufgebraucht");
+    if (state.nextAllowed > now) blockedReasons.push(`Timer aktiv: ${GT.herbalismCooldownText(state.nextAllowed)}`);
+    return {
+      actor: this.actor,
+      herbs: GT.HERBALISM_HERBS.map(h => ({...h, selected: h.id === herb.id, valueText: h.value})),
+      selectedHerb: herb,
+      rank,
+      state,
+      successes: state.successes,
+      maxSearches: rank.maxSearches,
+      remaining: Math.max(0, rank.maxSearches - state.successes),
+      cooldownText: GT.herbalismCooldownText(state.nextAllowed),
+      outdoors: !!this.session.outdoors,
+      note: this.session.note || "",
+      blocked: blockedReasons.length > 0,
+      blockedReason: blockedReasons.join("; "),
+      isGM: !!game.user?.isGM
+    };
+  }
+  async applyResult({herb, total, critical, success}) {
+    const rank = GT.herbalismRankInfo(this.actor);
+    const state = GT.herbalismState(this.actor);
+    const nextAllowed = Date.now() + 30 * 60 * 1000;
+    let foundText = "";
+    const created = [];
+
+    if (success) {
+      const quantity = herb.quantityFromRoll ? Math.max(1, Number(total || 1)) : 1;
+      await GT.addHerbToActor(this.actor, herb, quantity);
+      created.push(`${quantity}× ${herb.label}`);
+      const newSuccesses = Math.min(rank.maxSearches, state.successes + 1);
+      await GT.updateHerbalismState(this.actor, {successes: newSuccesses, nextAllowed});
+      foundText = herb.quantityFromRoll
+        ? `Erfolg! Gefunden: ${quantity}× ${herb.label}.`
+        : `Erfolg! Gefunden: ${herb.label}.`;
+
+      if (critical) {
+        await GT.addHerbToActor(this.actor, GT.HERBALISM_CROWN_HERB, 1);
+        created.push("1× Kronstöckel");
+        foundText += " Kritischer Erfolg: Zusätzlich wurde ein Kronstöckel gefunden.";
+      }
+    } else {
+      await GT.updateHerbalismState(this.actor, {nextAllowed});
+      foundText = "Fehlschlag. Es wurden keine brauchbaren Kräuter gefunden. Der erfolgreiche Suchzähler wird nicht verbraucht.";
+    }
+
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({actor: this.actor}),
+      content: `<div class="gothic-tales chat-card gt-herbalism-result">
+        <h2><i class="fas fa-seedling"></i> Kräuterkunde</h2>
+        <p><strong>${GT.escape(this.actor.name)}</strong> sucht nach <strong>${GT.escape(herb.label)}</strong>.</p>
+        <p>Wurf: <strong>${Number(total || 0)}</strong> gegen SchwG <strong>${Number(herb.difficulty || 0)}</strong>${critical ? " · Kritischer Erfolg" : ""}</p>
+        <p>${GT.escape(foundText)}</p>
+        ${created.length ? `<p>Inventar: <strong>${GT.escape(created.join(", "))}</strong></p>` : ""}
+        <p class="gt-chat-note">Nächste Suche in 30 Minuten. Unterstützung ist nicht möglich.</p>
+      </div>`
+    });
+  }
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = GT.htmlRoot(html);
+    root.querySelector(".gt-herbalism-herb")?.addEventListener("change", ev => {
+      this.selectedHerb = ev.currentTarget.value || "heilkraeuter";
+      this.render(false);
+    });
+    root.querySelector(".gt-herbalism-search")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      const data = this.getData();
+      if (data.blocked) return ui.notifications.warn(data.blockedReason);
+      const herb = GT.herbalismHerbById(root.querySelector(".gt-herbalism-herb")?.value || this.selectedHerb);
+      const opts = GT.herbalismRankInfo(this.actor);
+      await GT.chatRoll({
+        formula: GT.professionFormula(this.actor, opts.node || {attributes: ["intu", "konz"]}),
+        label: "Kräuterkunde",
+        actor: this.actor,
+        flavor: `Kräutersuche nach ${herb.label} gegen SchwG ${herb.difficulty}`,
+        onRoll: async message => {
+          const total = Number(message?.getFlag?.("gothic-tales", "rollTotal") ?? 0);
+          const critical = !!message?.getFlag?.("gothic-tales", "rollCritical");
+          await this.applyResult({herb, total, critical, success: total >= Number(herb.difficulty || 0)});
+          this.render(false);
+        }
+      });
+    });
+    root.querySelector(".gt-herbalism-reset-timer")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      await GT.resetHerbalismState(this.actor, {timer: true, successes: false});
+      this.render(false);
+    });
+    root.querySelector(".gt-herbalism-reset-session")?.addEventListener("click", async ev => {
+      ev.preventDefault();
+      await GT.resetHerbalismState(this.actor, {timer: true, successes: true});
+      this.render(false);
+    });
+    root.querySelector(".gt-dialog-cancel")?.addEventListener("click", ev => { ev.preventDefault(); this.close(); });
+  }
+}
 
 class GothicTalesLockpickingGMDialog extends GothicTalesApplicationV2 {
   constructor(options = {}) {
@@ -4160,9 +6335,23 @@ Hooks.once("init", async function() {
     open: actor => new GothicTalesProfessionTree(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character).render(true),
     detail: (actor, treeId, nodeId) => GT.openProfessionDetail(actor ?? canvas.tokens?.controlled?.[0]?.actor ?? game.user.character, treeId || "berufe", nodeId),
     tools: {open: options => GT.openDMTools(options || {})},
+    alchemy: {open: options => new GothicTalesAlchemyGMDialog(options || {}).render(true)},
+    mining: {open: options => new GothicTalesMiningGMDialog(options || {}).render(true)},
+    smithing: {open: options => new GothicTalesSmithingGMDialog(options || {}).render(true)},
+    carving: {open: options => new GothicTalesCarvingGMDialog(options || {}).render(true)},
+    haggling: {open: options => new GothicTalesHagglingGMDialog(options || {}).render(true)},
+    pickpocketing: {open: options => new GothicTalesPickpocketingGMDialog(options || {}).render(true)},
+    herbalism: {open: options => new GothicTalesHerbalismGMDialog(options || {}).render(true)},
     lockpicking: {open: options => new GothicTalesLockpickingGMDialog(options || {}).render(true), macroText: options => GT.professionMacroText(options || {})}
   };
   game.gothicTales.dmTools = {open: options => GT.openDMTools(options || {})};
+  game.gothicTales.alchemy = game.gothicTales.professions.alchemy;
+  game.gothicTales.mining = game.gothicTales.professions.mining;
+  game.gothicTales.smithing = game.gothicTales.professions.smithing;
+  game.gothicTales.carving = game.gothicTales.professions.carving;
+  game.gothicTales.haggling = game.gothicTales.professions.haggling;
+  game.gothicTales.pickpocketing = game.gothicTales.professions.pickpocketing;
+  game.gothicTales.herbalism = game.gothicTales.professions.herbalism;
   game.gothicTales.lockpicking = game.gothicTales.professions.lockpicking;
   game.socket?.on?.("system.gothic-tales", payload => GT.handleSocketMessage(payload));
   GT.installGlobalClickHandlers();

@@ -1,0 +1,53 @@
+<div class="gothic-tales gt-dialog gt-haggling-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-comments-dollar"></i> Feilschen mit {{merchant}}</h2>
+      <p>Jeder Wurf braucht ein Argument. Der SL entscheidet, ob Vorteil oder Nachteil passend ist.</p>
+    </div>
+  </header>
+
+  {{#unless learned}}
+  <div class="gt-help-box gt-warning-box">
+    Feilschen ist bei diesem Charakter nicht gelernt. Der SL entscheidet, ob der Versuch erlaubt ist.
+  </div>
+  {{/unless}}
+
+  {{#if note}}
+  <div class="gt-help-box">{{note}}</div>
+  {{/if}}
+
+  <div class="gt-state-grid">
+    <div><span>Ausgangspreis</span><strong>{{basePrice}} Erz</strong></div>
+    <div><span>Aktueller Preis</span><strong>{{currentPrice}} Erz</strong></div>
+    <div><span>Preisstand</span><strong>{{priceTenths}}/10</strong></div>
+    <div><span>SchwG</span><strong>{{difficulty}}</strong></div>
+    <div><span>Fehlschläge</span><strong>{{failures}} / {{maxFailures}}</strong></div>
+    <div><span>Mindestpreis</span><strong>{{minTenths}}/10</strong></div>
+  </div>
+
+  <label class="gt-full-field">Argument
+    <textarea class="gt-haggling-argument" rows="4" placeholder="Warum sollte der Händler den Preis senken?">{{lastArgument}}</textarea>
+  </label>
+
+  <div class="gt-dialog-grid">
+    <label>Modus
+      <select class="gt-haggling-advantage-mode">
+        <option value="none">Normal</option>
+        <option value="advantage">Vorteil</option>
+        <option value="disadvantage">Nachteil</option>
+      </select>
+    </label>
+    <label>Stufe
+      <select class="gt-haggling-advantage-level">
+        {{#each advantageLevels}}<option value="{{value}}">{{label}}</option>{{/each}}
+      </select>
+    </label>
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-haggling-roll" {{#if ended}}disabled{{/if}}><i class="fas fa-dice-d20"></i> Argument vorbringen</button>
+    <button type="button" class="gt-haggling-end"><i class="fas fa-coins"></i> Aktuellen Preis zahlen</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

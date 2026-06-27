@@ -1,0 +1,104 @@
+<div class="gothic-tales gt-dialog gt-carving-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-feather-pointed"></i> Schnitzkunst</h2>
+      <p>Pfeile, besondere Munition oder Bögen herstellen.</p>
+    </div>
+  </header>
+
+  {{#if note}}<div class="gt-help-box">{{note}}</div>{{/if}}
+  {{#if blocked}}<div class="gt-help-box gt-warning-box">{{blockedReason}}</div>{{/if}}
+
+  <div class="gt-state-grid">
+    <div><span>Grad</span><strong>{{rank.label}}</strong></div>
+    <div><span>Krit. Fehlschlag</span><strong>5 Schaden</strong></div>
+    <div><span>Arbeit</span><strong>Rast / 1 Stunde</strong></div>
+  </div>
+
+  <label>Modus
+    <select class="gt-carving-mode">
+      {{#each modeOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+    </select>
+  </label>
+
+  {{#if isBasic}}
+  <section class="gt-mini-section">
+    <h3>Pfeile / Bolzen</h3>
+    <p>Wurf auf Schnitzkunst. Menge = Ergebnis / 3, abgerundet.</p>
+    <label>Art
+      <select class="gt-carving-basic-kind">
+        <option value="Pfeile">Pfeile</option>
+        <option value="Bolzen">Bolzen</option>
+      </select>
+    </label>
+    <button type="button" class="gt-carving-basic-roll"><i class="fas fa-dice-d20"></i> Schnitzen</button>
+  </section>
+  {{/if}}
+
+  {{#if isSpecial}}
+  <section class="gt-mini-section">
+    <h3>Besondere Munition</h3>
+    <p>Bis zu 6 Stück in 1 Stunde. Pro Stück ein Wurf gegen SchwG. Kritischer Erfolg lässt alle restlichen Würfe gelingen.</p>
+    <div class="gt-dialog-grid">
+      <label>Munition
+        <select class="gt-carving-ammo">
+          {{#each ammoOptions}}<option value="{{id}}">{{label}} · SchwG {{difficulty}} · {{material}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Anzahl
+        <input class="gt-carving-ammo-count" type="number" min="1" max="6" step="1" value="1">
+      </label>
+    </div>
+    <button type="button" class="gt-carving-special-roll"><i class="fas fa-dice-d20"></i> Besondere Munition schnitzen</button>
+    <p>Letzter Erfolg: <strong>{{specialSuccesses}}</strong> Stück</p>
+  </section>
+  {{/if}}
+
+  {{#if isBow}}
+  <section class="gt-mini-section">
+    <h3>Bogenbau</h3>
+    <p>Holz und Sehne werden getrennt gesucht/beschafft und je 3-mal bearbeitet.</p>
+
+    <div class="gt-dialog-grid">
+      <div>
+        <h4>Bogenholz</h4>
+        <p>Qualität: <strong>{{bow.woodQuality}}</strong> · Schritte: <strong>{{bow.woodSteps}}/3</strong> · Punkte: <strong>{{bow.woodPoints}}</strong> · WW: <strong>{{bowDie}}</strong></p>
+        <button type="button" class="gt-carving-wood-search">Holz suchen</button>
+        <button type="button" class="gt-carving-wood-process">Holz bearbeiten</button>
+      </div>
+      <div>
+        <h4>Sehne</h4>
+        <p>Qualität: <strong>{{bow.stringQuality}}</strong> · Schritte: <strong>{{bow.stringSteps}}/3</strong> · Punkte: <strong>{{bow.stringPoints}}</strong> · Bonus: <strong>{{bowBonus}}</strong></p>
+        <label>Qualität Wildtier-Darm
+          <input class="gt-carving-string-quality" type="number" min="0" step="1" value="{{bow.stringQuality}}">
+        </label>
+        <button type="button" class="gt-carving-string-process">Sehne bearbeiten</button>
+      </div>
+    </div>
+
+    <div class="gt-dialog-grid">
+      <label>Reichweite
+        <select class="gt-carving-bow-range">
+          <option value="10/20">10 / 20</option>
+          <option value="15/40">15 / 40</option>
+          <option value="20/70">20 / 70</option>
+        </select>
+      </label>
+      <label>Eigenschaft
+        <select class="gt-carving-bow-property">
+          <option value="">keine</option>
+          <option value="Stoßen 1">Stoßen 1</option>
+          <option value="Garstig">Garstig</option>
+          <option value="Wucht">Wucht</option>
+        </select>
+      </label>
+    </div>
+    <button type="button" class="gt-carving-bow-create"><i class="fas fa-plus"></i> Bogen ins Inventar schreiben</button>
+  </section>
+  {{/if}}
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

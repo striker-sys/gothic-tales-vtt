@@ -2,7 +2,7 @@
   "id": "gothic-tales",
   "title": "Gothic Tales",
   "description": "Spielsystem für Gothic Tales mit getrenntem Talentbaum, Magiekreisen, vorbereiteten Magiewürfeln und magischem ActorSheet-Bereich.",
-  "version": "0.6.39",
+  "version": "0.6.42",
   "authors": [
     {
       "name": "Kuberia"

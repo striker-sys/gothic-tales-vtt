@@ -1,0 +1,35 @@
+<form class="gothic-tales gt-dialog gt-alchemy-gm">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-flask"></i> Alchemie vorbereiten</h2>
+      <p>Alchemietisch bestätigen und Laborfenster an den Spieler senden.</p>
+    </div>
+  </header>
+
+  <div class="gt-dialog-grid">
+    <label>Zielspieler
+      <select class="gt-alchemy-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+    <label class="gt-check-row">
+      <input class="gt-alchemy-table" type="checkbox" {{#if hasTable}}checked{{/if}}>
+      Alchemietisch vorhanden
+    </label>
+  </div>
+
+  <label class="gt-full-field">Notiz
+    <textarea class="gt-alchemy-note" rows="3" placeholder="Optional: Labor, Zutaten, besondere Umstände">{{note}}</textarea>
+  </label>
+
+  <div class="gt-help-box">
+    Unterstützung ist bei Alchemie grundsätzlich nicht möglich. Permanente Tränke sind erst mit gemeisterter Alchemie vorgesehen.
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="submit"><i class="fas fa-paper-plane"></i> An Spieler senden</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</form>

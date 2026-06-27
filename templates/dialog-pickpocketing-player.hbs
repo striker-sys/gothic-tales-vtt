@@ -1,0 +1,85 @@
+<div class="gothic-tales gt-dialog gt-pickpocketing-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-user-secret"></i> Taschendiebstahl</h2>
+      <p>Zeitfenster erzeugen, Ablenkungen eintragen und dann unter Zeitdruck zugreifen.</p>
+    </div>
+  </header>
+
+  {{#unless learned}}
+  <div class="gt-help-box gt-warning-box">
+    Taschendiebstahl ist bei diesem Charakter nicht gelernt. Der SL entscheidet, ob der Versuch erlaubt ist.
+  </div>
+  {{/unless}}
+
+  {{#if note}}
+  <div class="gt-help-box">{{note}}</div>
+  {{/if}}
+
+  <div class="gt-state-grid">
+    <div><span>Ziel</span><strong>{{targetName}}</strong></div>
+    <div><span>Beute</span><strong>{{loot}}</strong></div>
+    <div><span>SchwG</span><strong>{{difficulty}}</strong></div>
+    <div><span>Art</span><strong>{{theftType}}</strong></div>
+    <div><span>Zeitfenster</span><strong>{{totalSeconds}} Sek.</strong></div>
+    <div><span>Restzeit</span><strong><span class="gt-pickpocket-remaining">{{remainingSeconds}}</span> Sek.</strong></div>
+  </div>
+
+  <section class="gt-mini-section">
+    <h3>1. Zeitfenster verschaffen</h3>
+    <p>Wurf auf Taschendiebstahl. Für jeden vollen 5er-Wert erhältst du +3 Sekunden.</p>
+    <p class="gt-chat-note">Modus: {{windowLabel}} · Formel: <code>{{formula}}</code></p>
+    <button type="button" class="gt-pickpocket-window-roll" {{#if started}}disabled{{/if}}>
+      <i class="fas fa-dice-d20"></i> Zeitfenster würfeln
+    </button>
+    {{#if windowRolled}}
+    <p class="gt-mini-result">Ergebnis: <strong>{{windowSeconds}} Sekunden</strong></p>
+    {{/if}}
+  </section>
+
+  <section class="gt-mini-section">
+    <h3>2. Unterstützung / Ablenkung</h3>
+    <p>Unterstützer werden flexibel eingetragen. Pro vollem 5er-Wert: +2 Sekunden.</p>
+    <div class="gt-dialog-grid">
+      <label>Name
+        <input class="gt-pickpocket-support-name" type="text" placeholder="z. B. Lester">
+      </label>
+      <label>Wurfergebnis
+        <input class="gt-pickpocket-support-total" type="number" min="1" step="1" placeholder="z. B. 14">
+      </label>
+    </div>
+    <label class="gt-full-field">Ablenkung
+      <textarea class="gt-pickpocket-support-action" rows="2" placeholder="Wie wird das Ziel abgelenkt?"></textarea>
+    </label>
+    <button type="button" class="gt-pickpocket-support-add" {{#if started}}disabled{{/if}}>
+      <i class="fas fa-plus"></i> Unterstützung hinzufügen
+    </button>
+
+    {{#if supports.length}}
+    <ul class="gt-mini-list">
+      {{#each supports}}
+      <li><strong>{{name}}</strong>: {{total}} → +{{seconds}} Sek. {{#if action}}<em>{{action}}</em>{{/if}}</li>
+      {{/each}}
+    </ul>
+    {{/if}}
+  </section>
+
+  <section class="gt-mini-section">
+    <h3>3. Diebstahl unter Zeitdruck</h3>
+    <p>Beim Zugreifen werden immer die gleichen Würfel benutzt: <strong>{{grabLabel}}</strong>.</p>
+    <p>Zwischen zwei Zugreifen-Würfen liegt eine feste <strong>2-Sekunden-Sperre</strong>.</p>
+    <div class="gt-dialog-actions">
+      <button type="button" class="gt-pickpocket-start" {{#unless canStart}}disabled{{/unless}}>
+        <i class="fas fa-stopwatch"></i> Timer starten
+      </button>
+      <button type="button" class="gt-pickpocket-grab" {{#unless started}}disabled{{/unless}}>
+        <i class="fas fa-hand-sparkles"></i> <span>Zugreifen!</span>
+      </button>
+    </div>
+  </section>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

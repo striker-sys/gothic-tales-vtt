@@ -96,24 +96,32 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Figuren unter Zeitdruck bestehlen.",
+          "summary": "Figuren unter Zeitdruck bestehlen: Zeitfenster aufbauen, dann im Timer zugreifen.",
           "description": "<p>Mit Taschendiebstahl kann man Figuren bestehlen. Man kann auf konkrete Gegenstände abzielen oder auf gut Glück aus Behältnissen wie Taschen oder Rucksäcken stehlen. Der Diebstahl läuft in drei Schritten ab: Schwierigkeitsgrad bestimmen, Zeitfenster verschaffen und den eigentlichen Diebstahl ausführen.</p><p>Das Ziel würfelt Wahrnehmen. Dieses Ergebnis ist der SchwG für den Diebstahl. Der Dieb erzeugt anschließend mit Taschendiebstahl ein Zeitfenster. Innerhalb dieses Zeitfensters darf er so oft würfeln, wie er schafft, muss aber immer die gleichen Würfel verwenden. Bei kritischem Fehlschlag bemerkt das Opfer den Diebstahl.</p>",
           "mechanics": [
             {
               "title": "Schritt 1: SchwG",
-              "text": "Das Ziel macht einen Wahrnehmen-Wurf. Das Ergebnis ist der SchwG. Der SL kann je nach Sicherung des Gegenstands Vorteil geben."
+              "text": "Das Ziel macht einen Wahrnehmen-Wurf. Das Ergebnis ist der SchwG. Der SL trägt diesen Wert ein und beurteilt die Sicherung des Gegenstands."
             },
             {
               "title": "Schritt 2: Zeitfenster",
-              "text": "Der Dieb würfelt Taschendiebstahl. Für jeden 5er-Wert erhält er +3 Sekunden. Verbündete können durch passende Würfe +2 Sekunden pro 5er-Wert beitragen."
+              "text": "Der Dieb würfelt Taschendiebstahl. Für jeden vollen 5er-Wert erhält er +3 Sekunden. Unterstützungen geben +2 Sekunden pro vollem 5er-Wert."
             },
             {
               "title": "Schritt 3: Diebstahl",
-              "text": "Innerhalb des Timers würfelt der Dieb auf Taschendiebstahl gegen den SchwG. Bei Fehlschlag scheitert der Diebstahl."
+              "text": "Innerhalb des Timers würfelt der Dieb auf Taschendiebstahl gegen den SchwG. Die Würfelkonfiguration bleibt für alle Zugreifen-Würfe gleich."
+            },
+            {
+              "title": "2-Sekunden-Sperre",
+              "text": "Zwischen zwei Zugreifen-Würfen liegt eine 2-Sekunden-Sperre, damit der Timer am Tisch spürbar bleibt."
+            },
+            {
+              "title": "Kritischer Fehlschlag",
+              "text": "Bei einer natürlichen 1 auf dem W20 bemerkt das Opfer den Diebstahl."
             }
           ],
           "tables": [],
-          "special": "",
+          "special": "pickpocketing",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -142,7 +150,7 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Beim Einkauf Preise durch Argumente senken.",
+          "summary": "Beim Einkauf Preise mit Argumenten senken.",
           "description": "<p>Mit Feilschen kann man beim Einkaufen den Preis drücken. Jeder Wurf braucht ein Argument. Ein Erfolg reduziert den Preis um ein Zehntel, bis zu einem Minimum von fünf Zehnteln. Bei drei Fehlschlägen ist der Händler verärgert; es kann nicht weiter gefeilscht werden und der Preis ist wieder der Normalpreis.</p><p>Man kann jederzeit aufhören und den aktuellen Preis zahlen. Der SL entscheidet, ob ein Argument Vorteil oder Nachteil bringt. Unterstützen ist mit sozialen Fähigkeiten möglich, muss aber dargestellt oder geschildert werden.</p>",
           "mechanics": [
             {
@@ -150,12 +158,16 @@
               "text": "Jeder Feilschen-Wurf braucht ein plausibles oder kreatives Argument."
             },
             {
-              "title": "Erfolg",
-              "text": "Der Preis sinkt um 1/10. Minimum ist 5/10."
+              "title": "Preisreduktion",
+              "text": "Ein Erfolg senkt den Preis um 1/10. Minimum ist 5/10."
             },
             {
-              "title": "Fehlschläge",
+              "title": "Risiko",
               "text": "Nach 3 Fehlschlägen ist der Händler verärgert und der Normalpreis gilt wieder."
+            },
+            {
+              "title": "SL-Urteil",
+              "text": "Argumente können Vorteil oder Nachteil bringen. Unterstützung ist mit sozialen Fähigkeiten möglich, muss aber ausgespielt werden."
             }
           ],
           "tables": [
@@ -189,7 +201,7 @@
               ]
             }
           ],
-          "special": "",
+          "special": "haggling",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -268,20 +280,28 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Kräuter suchen und sammeln.",
+          "summary": "Kräuter suchen und sammeln. Grundrang: 2 erfolgreiche Suchen pro Sitzung.",
           "description": "<p>Kräuterkunde ergänzt sich mit Alchemie. Diese Fähigkeit ermöglicht das Sammeln von Kräutern in der freien Natur. Nur bei erfolgreichem Wurf zählt der Versuch. Nach einer Suche wird ein Timer auf 30 Minuten gestellt. Unterstützen ist nicht möglich.</p><p>Der Spieler wählt zuerst ein Kraut aus und würfelt dann Kräuterkunde gegen den SchwG des Krauts. Bei Heil- und Manakräutern entspricht die Menge dem Kräuterkunde-Wurf. Bei kritischem Erfolg erhält man außerdem den seltenen Kronstöckel.</p>",
           "mechanics": [
             {
-              "title": "Suchen",
-              "text": "Nur in freier Natur. In Minen oder Städten ist normalerweise nichts zu finden."
+              "title": "Ort",
+              "text": "Nur in freier Natur. In Minen, Städten oder Dungeons ist normalerweise nichts zu finden."
+            },
+            {
+              "title": "Suchversuche",
+              "text": "Nur erfolgreiche Suchen zählen gegen das Sitzungslimit. Grundrang: 2 erfolgreiche Suchen pro Sitzung."
             },
             {
               "title": "Timer",
-              "text": "Nach dem Suchen 30 Minuten warten."
+              "text": "Nach jeder Suche 30 Minuten warten, bevor erneut gesucht werden kann."
             },
             {
-              "title": "Häufigkeit",
-              "text": "Mit höheren Graden sind mehr Suchen pro Sitzung vorgesehen: geübt 3, gelehrt 4, gemeistert 5."
+              "title": "Kritischer Erfolg",
+              "text": "Bei kritischem Erfolg erhält man zusätzlich einen Kronstöckel."
+            },
+            {
+              "title": "Unterstützung",
+              "text": "Unterstützen ist nicht möglich."
             }
           ],
           "tables": [
@@ -361,7 +381,7 @@
               ]
             }
           ],
-          "special": "",
+          "special": "herbalism",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -376,7 +396,367 @@
           },
           "category": "Berufe",
           "rankGroup": "kraeuterkunde",
-          "rank": 0
+          "rank": 0,
+          "herbalism": {
+            "searchesPerSession": 2
+          }
+        },
+        {
+          "id": "kraeuterkunde-geuebt",
+          "label": "Kräuterkunde: geübt",
+          "lpCost": 5,
+          "requires": [
+            "kraeuterkunde"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "intu",
+            "konz"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Kräuterkunde Grad 1: 3 erfolgreiche Suchen pro Sitzung.",
+          "description": "<p>Du bist geübt im Erkennen von Pflanzen, Fundstellen und brauchbaren Kräutern. Du kannst 3-mal pro Sitzung erfolgreich Kräuter sammeln.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 1 – geübt",
+              "text": "3 erfolgreiche Suchen pro Sitzung."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Kräuter",
+              "columns": [
+                "Kraut",
+                "SchwG",
+                "Nutzung/Wert"
+              ],
+              "rows": [
+                [
+                  "Heilkräuter",
+                  "10",
+                  "Heiltränke, Wert = Menge"
+                ],
+                [
+                  "Manakräuter",
+                  "10",
+                  "Manatränke, Wert = Menge"
+                ],
+                [
+                  "Snapperkraut",
+                  "15",
+                  "Geschwindigkeit, Wert 30"
+                ],
+                [
+                  "Blitzblatt",
+                  "20",
+                  "Initiative+, Wert 40"
+                ],
+                [
+                  "Herrscherkraut",
+                  "20",
+                  "TP+, Wert 40"
+                ],
+                [
+                  "Flammenbeere",
+                  "20",
+                  "Mana+, Wert 40"
+                ],
+                [
+                  "Drachenwurzel",
+                  "25",
+                  "St+, Wert 50"
+                ],
+                [
+                  "Goblinbeere",
+                  "25",
+                  "Ge+, Wert 50"
+                ],
+                [
+                  "Harnischkraut",
+                  "25",
+                  "Ausd+, Wert 50"
+                ],
+                [
+                  "Königsdistel",
+                  "25",
+                  "Konz+, Wert 50"
+                ],
+                [
+                  "Blutschilf",
+                  "25",
+                  "Intu+, Wert 50"
+                ],
+                [
+                  "Sonnenmoos",
+                  "25",
+                  "Erf+, Wert 50"
+                ],
+                [
+                  "Kronstöckel",
+                  "kritischer Erfolg",
+                  "Permanente Tränke, Wert 120"
+                ]
+              ]
+            }
+          ],
+          "special": "herbalism",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "kraeuterkunde",
+          "rank": 1,
+          "herbalism": {
+            "searchesPerSession": 3
+          }
+        },
+        {
+          "id": "kraeuterkunde-gelehrt",
+          "label": "Kräuterkunde: gelehrt",
+          "lpCost": 10,
+          "requires": [
+            "kraeuterkunde-geuebt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "intu",
+            "konz"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Kräuterkunde Grad 2: 4 erfolgreiche Suchen pro Sitzung.",
+          "description": "<p>Du kennst seltenere Pflanzen, passende Standorte und Erntezeiten besser. Du kannst 4-mal pro Sitzung erfolgreich Kräuter sammeln.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 2 – gelehrt",
+              "text": "4 erfolgreiche Suchen pro Sitzung."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Kräuter",
+              "columns": [
+                "Kraut",
+                "SchwG",
+                "Nutzung/Wert"
+              ],
+              "rows": [
+                [
+                  "Heilkräuter",
+                  "10",
+                  "Heiltränke, Wert = Menge"
+                ],
+                [
+                  "Manakräuter",
+                  "10",
+                  "Manatränke, Wert = Menge"
+                ],
+                [
+                  "Snapperkraut",
+                  "15",
+                  "Geschwindigkeit, Wert 30"
+                ],
+                [
+                  "Blitzblatt",
+                  "20",
+                  "Initiative+, Wert 40"
+                ],
+                [
+                  "Herrscherkraut",
+                  "20",
+                  "TP+, Wert 40"
+                ],
+                [
+                  "Flammenbeere",
+                  "20",
+                  "Mana+, Wert 40"
+                ],
+                [
+                  "Drachenwurzel",
+                  "25",
+                  "St+, Wert 50"
+                ],
+                [
+                  "Goblinbeere",
+                  "25",
+                  "Ge+, Wert 50"
+                ],
+                [
+                  "Harnischkraut",
+                  "25",
+                  "Ausd+, Wert 50"
+                ],
+                [
+                  "Königsdistel",
+                  "25",
+                  "Konz+, Wert 50"
+                ],
+                [
+                  "Blutschilf",
+                  "25",
+                  "Intu+, Wert 50"
+                ],
+                [
+                  "Sonnenmoos",
+                  "25",
+                  "Erf+, Wert 50"
+                ],
+                [
+                  "Kronstöckel",
+                  "kritischer Erfolg",
+                  "Permanente Tränke, Wert 120"
+                ]
+              ]
+            }
+          ],
+          "special": "herbalism",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "kraeuterkunde",
+          "rank": 2,
+          "herbalism": {
+            "searchesPerSession": 4
+          }
+        },
+        {
+          "id": "kraeuterkunde-gemeistert",
+          "label": "Kräuterkunde: gemeistert",
+          "lpCost": 10,
+          "requires": [
+            "kraeuterkunde-gelehrt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "intu",
+            "konz"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Kräuterkunde Grad 3: 5 erfolgreiche Suchen pro Sitzung.",
+          "description": "<p>Du bist ein Meister der Kräuterkunde und findest selbst unscheinbare Spuren seltener Pflanzen. Du kannst 5-mal pro Sitzung erfolgreich Kräuter sammeln.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 3 – gemeistert",
+              "text": "5 erfolgreiche Suchen pro Sitzung."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Kräuter",
+              "columns": [
+                "Kraut",
+                "SchwG",
+                "Nutzung/Wert"
+              ],
+              "rows": [
+                [
+                  "Heilkräuter",
+                  "10",
+                  "Heiltränke, Wert = Menge"
+                ],
+                [
+                  "Manakräuter",
+                  "10",
+                  "Manatränke, Wert = Menge"
+                ],
+                [
+                  "Snapperkraut",
+                  "15",
+                  "Geschwindigkeit, Wert 30"
+                ],
+                [
+                  "Blitzblatt",
+                  "20",
+                  "Initiative+, Wert 40"
+                ],
+                [
+                  "Herrscherkraut",
+                  "20",
+                  "TP+, Wert 40"
+                ],
+                [
+                  "Flammenbeere",
+                  "20",
+                  "Mana+, Wert 40"
+                ],
+                [
+                  "Drachenwurzel",
+                  "25",
+                  "St+, Wert 50"
+                ],
+                [
+                  "Goblinbeere",
+                  "25",
+                  "Ge+, Wert 50"
+                ],
+                [
+                  "Harnischkraut",
+                  "25",
+                  "Ausd+, Wert 50"
+                ],
+                [
+                  "Königsdistel",
+                  "25",
+                  "Konz+, Wert 50"
+                ],
+                [
+                  "Blutschilf",
+                  "25",
+                  "Intu+, Wert 50"
+                ],
+                [
+                  "Sonnenmoos",
+                  "25",
+                  "Erf+, Wert 50"
+                ],
+                [
+                  "Kronstöckel",
+                  "kritischer Erfolg",
+                  "Permanente Tränke, Wert 120"
+                ]
+              ]
+            }
+          ],
+          "special": "herbalism",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "kraeuterkunde",
+          "rank": 3,
+          "herbalism": {
+            "searchesPerSession": 5
+          }
         },
         {
           "id": "alchemie",
@@ -390,7 +770,7 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Tränke brauen und Kräuter verarbeiten.",
+          "summary": "Tränke brauen. Anfänger: Heil- & Manatränke.",
           "description": "<p>Alchemie ergänzt sich mit Kräuterkunde. Alchemie ist die Kunst, Tränke zu brauen. Dafür benötigt man einen Alchemietisch. Ein Trank dauert etwa fünf Minuten pro Trank und ist während des Kampfes nicht möglich.</p><p>Anfänger können Heil- und Manatränke brauen. Mit höheren Graden sind Erholung/Reinigung, Geschwindigkeit/Hast und permanente Tränke vorgesehen. Unterstützung ist grundsätzlich nicht möglich, außer bei permanenten Tränken durch genau einen passenden Helfer.</p>",
           "mechanics": [
             {
@@ -433,7 +813,7 @@
               ]
             }
           ],
-          "special": "",
+          "special": "alchemy",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -448,7 +828,240 @@
           },
           "category": "Berufe",
           "rankGroup": "alchemie",
-          "rank": 0
+          "rank": 0,
+          "alchemy": {
+            "modes": [
+              "heiltrank",
+              "manatrank"
+            ]
+          }
+        },
+        {
+          "id": "alchemie-geuebt",
+          "label": "Alchemie: geübt",
+          "lpCost": 10,
+          "requires": [
+            "alchemie"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "konz",
+            "ge"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Tränke der Erholung und Reinigung brauen.",
+          "description": "<p>Du bist geübt in Alchemie und kannst Tränke der Erholung und Reinigung herstellen.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 1",
+              "text": "Tränke der Erholung und Reinigung brauen."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Grad und Tränke",
+              "columns": [
+                "Grad",
+                "Mögliche Tränke"
+              ],
+              "rows": [
+                [
+                  "0 – Anfänger",
+                  "Heil- & Manatränke"
+                ],
+                [
+                  "1 – geübt",
+                  "Erholung & Reinigung"
+                ],
+                [
+                  "2 – gelehrt",
+                  "Geschwindigkeit & Hast"
+                ],
+                [
+                  "3 – gemeistert",
+                  "Permanente Tränke"
+                ]
+              ]
+            }
+          ],
+          "special": "alchemy",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "alchemie",
+          "rank": 1,
+          "alchemy": {
+            "modes": [
+              "heiltrank",
+              "manatrank",
+              "reinigung",
+              "erholung"
+            ]
+          }
+        },
+        {
+          "id": "alchemie-gelehrt",
+          "label": "Alchemie: gelehrt",
+          "lpCost": 10,
+          "requires": [
+            "alchemie-geuebt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "konz",
+            "ge"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Tränke der Geschwindigkeit und Hast brauen.",
+          "description": "<p>Du bist gelehrt in Alchemie und kannst zusätzlich Tränke der Geschwindigkeit und Hast herstellen.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 2",
+              "text": "Tränke der Geschwindigkeit und Hast brauen."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Grad und Tränke",
+              "columns": [
+                "Grad",
+                "Mögliche Tränke"
+              ],
+              "rows": [
+                [
+                  "0 – Anfänger",
+                  "Heil- & Manatränke"
+                ],
+                [
+                  "1 – geübt",
+                  "Erholung & Reinigung"
+                ],
+                [
+                  "2 – gelehrt",
+                  "Geschwindigkeit & Hast"
+                ],
+                [
+                  "3 – gemeistert",
+                  "Permanente Tränke"
+                ]
+              ]
+            }
+          ],
+          "special": "alchemy",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "alchemie",
+          "rank": 2,
+          "alchemy": {
+            "modes": [
+              "heiltrank",
+              "manatrank",
+              "reinigung",
+              "erholung",
+              "geschwindigkeit",
+              "hast"
+            ]
+          }
+        },
+        {
+          "id": "alchemie-gemeistert",
+          "label": "Alchemie: gemeistert",
+          "lpCost": 10,
+          "requires": [
+            "alchemie-gelehrt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "konz",
+            "ge"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Permanente Tränke mit Kronstöckel und Spezialkraut brauen.",
+          "description": "<p>Du hast Alchemie gemeistert und kannst permanente Tränke herstellen.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 3",
+              "text": "Permanente Tränke mit Kronstöckel und Spezialkraut brauen."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Grad und Tränke",
+              "columns": [
+                "Grad",
+                "Mögliche Tränke"
+              ],
+              "rows": [
+                [
+                  "0 – Anfänger",
+                  "Heil- & Manatränke"
+                ],
+                [
+                  "1 – geübt",
+                  "Erholung & Reinigung"
+                ],
+                [
+                  "2 – gelehrt",
+                  "Geschwindigkeit & Hast"
+                ],
+                [
+                  "3 – gemeistert",
+                  "Permanente Tränke"
+                ]
+              ]
+            }
+          ],
+          "special": "alchemy",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "alchemie",
+          "rank": 3,
+          "alchemy": {
+            "modes": [
+              "heiltrank",
+              "manatrank",
+              "reinigung",
+              "erholung",
+              "geschwindigkeit",
+              "hast",
+              "permanent"
+            ]
+          }
         },
         {
           "id": "schuerfen",
@@ -462,7 +1075,7 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Erzadern finden und Erz abbauen.",
+          "summary": "Erze suchen und abbauen. Grundrang: 2 erfolgreiche Schürfversuche pro Sitzung.",
           "description": "<p>Schürfen ergänzt sich mit Schmiedekunst. Diese Fähigkeit ermöglicht das Sammeln von Erzen an geeigneten Orten wie Höhlen oder Tunneln. Man benötigt eine Spitzhacke. Nur bei erfolgreichem Wurf zählt der Versuch. Nach dem Suchen wird ein Timer von 30 Minuten gestellt.</p><p>Schürfen geschieht in drei Schritten: Erz suchen, Menge bestimmen und Erz abbauen. Unterstützen ist nicht möglich.</p>",
           "mechanics": [
             {
@@ -501,7 +1114,7 @@
               ]
             }
           ],
-          "special": "",
+          "special": "mining",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -516,7 +1129,205 @@
           },
           "category": "Berufe",
           "rankGroup": "schuerfen",
-          "rank": 0
+          "rank": 0,
+          "mining": {
+            "searchesPerSession": 2
+          }
+        },
+        {
+          "id": "schuerfen-geuebt",
+          "label": "Schürfen: geübt",
+          "lpCost": 5,
+          "requires": [
+            "schuerfen"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "st",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Schürfen Grad 1: 3 erfolgreiche Schürfversuche pro Sitzung.",
+          "description": "<p>Du bist geübt im Finden und Abbauen von Erzadern.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 1",
+              "text": "Schürfen Grad 1: 3 erfolgreiche Schürfversuche pro Sitzung."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Erzfund",
+              "columns": [
+                "Wurf",
+                "Erze"
+              ],
+              "rows": [
+                [
+                  "2 – 10",
+                  "Kein Fund"
+                ],
+                [
+                  "11 – 24",
+                  "Eisenerz, Wert = Menge"
+                ],
+                [
+                  "25+",
+                  "Magisches Erz, Wert = Menge × 3"
+                ]
+              ]
+            }
+          ],
+          "special": "mining",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "schuerfen",
+          "rank": 1,
+          "mining": {
+            "searchesPerSession": 3
+          }
+        },
+        {
+          "id": "schuerfen-gelehrt",
+          "label": "Schürfen: gelehrt",
+          "lpCost": 10,
+          "requires": [
+            "schuerfen-geuebt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "st",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Schürfen Grad 2: 4 erfolgreiche Schürfversuche pro Sitzung.",
+          "description": "<p>Du erkennst ergiebige Erzadern sicherer und kannst öfter suchen.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 2",
+              "text": "Schürfen Grad 2: 4 erfolgreiche Schürfversuche pro Sitzung."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Erzfund",
+              "columns": [
+                "Wurf",
+                "Erze"
+              ],
+              "rows": [
+                [
+                  "2 – 10",
+                  "Kein Fund"
+                ],
+                [
+                  "11 – 24",
+                  "Eisenerz, Wert = Menge"
+                ],
+                [
+                  "25+",
+                  "Magisches Erz, Wert = Menge × 3"
+                ]
+              ]
+            }
+          ],
+          "special": "mining",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "schuerfen",
+          "rank": 2,
+          "mining": {
+            "searchesPerSession": 4
+          }
+        },
+        {
+          "id": "schuerfen-gemeistert",
+          "label": "Schürfen: gemeistert",
+          "lpCost": 10,
+          "requires": [
+            "schuerfen-gelehrt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "st",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Schürfen Grad 3: 5 erfolgreiche Schürfversuche pro Sitzung.",
+          "description": "<p>Du bist ein Meister des Schürfens.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 3",
+              "text": "Schürfen Grad 3: 5 erfolgreiche Schürfversuche pro Sitzung."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Erzfund",
+              "columns": [
+                "Wurf",
+                "Erze"
+              ],
+              "rows": [
+                [
+                  "2 – 10",
+                  "Kein Fund"
+                ],
+                [
+                  "11 – 24",
+                  "Eisenerz, Wert = Menge"
+                ],
+                [
+                  "25+",
+                  "Magisches Erz, Wert = Menge × 3"
+                ]
+              ]
+            }
+          ],
+          "special": "mining",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "schuerfen",
+          "rank": 3,
+          "mining": {
+            "searchesPerSession": 5
+          }
         },
         {
           "id": "schmiedekunst",
@@ -530,24 +1341,28 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Nahkampfwaffen herstellen.",
+          "summary": "Nahkampfwaffen als mehrstufiges Werkstattprojekt herstellen.",
           "description": "<p>Schmiedekunst ergänzt sich mit Schürfen. Man benötigt Schmiedehammer und Schmiede. Eine Waffe zu schmieden ist ein mehrstündiger Prozess und benötigt mehrere Helfer. Es gibt eine Vorbereitungsphase zum Sammeln von Würfeln und eine Schmiedephase zur Fertigung.</p><p>In der Schmiedephase werden Art, Waffenwürfel und Bonus festgelegt. Danach können Eigenschaften oder ein zweiter Waffenwürfel versucht werden. Fehlschläge erzeugen Malus oder Verlust je nach Schritt.</p>",
           "mechanics": [
             {
-              "title": "Vorbereitungsphase",
-              "text": "Der Schmied würfelt bis zu 5-mal. Helfer bearbeiten Aufgaben und geben bei Erfolg Würfel für die Schmiedephase."
+              "title": "Vorbereitung",
+              "text": "Bis zu 5 Aufgaben erzeugen SchwG. Helfer können Würfel für die Schmiedephase sammeln."
+            },
+            {
+              "title": "Material",
+              "text": "Pro Aufgabe 15 Eisenerz oder 15 magisches Erz. Magisches Erz verdoppelt den Helferwürfel bei Erfolg."
             },
             {
               "title": "Schmiedephase",
-              "text": "Art, Waffen-W und Bonus werden nacheinander gewählt und gegen SchwG erarbeitet."
+              "text": "Art, Waffen-W und Bonus werden einzeln ausgewählt und gewürfelt. Fehlschläge geben Malus -1."
             },
             {
               "title": "Verbesserungen",
-              "text": "Bis zu zwei Eigenschaften und/oder ein zweiter Waffenwürfel können versucht werden."
+              "text": "Eigenschaften und ein zweiter Waffen-W können ergänzt werden."
             }
           ],
           "tables": [],
-          "special": "",
+          "special": "smithing",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -576,7 +1391,7 @@
           ],
           "requiresTeacher": true,
           "maxLearnedWarning": true,
-          "summary": "Pfeile, Bolzen und Bögen herstellen.",
+          "summary": "Pfeile und Bolzen schnitzen. Anfänger: normale Pfeile/Bolzen.",
           "description": "<p>Schnitzkunst ist die Fähigkeit, Pfeile zu schnitzen und Bögen zu bauen. Man benötigt ein Schnitzmesser. Anfänger können Pfeile und Bolzen herstellen. Geübt sind besondere Pfeile und Bolzen möglich. Gelehrt können Bögen geschnitzt werden.</p><p>Schnitzen erfolgt während des Rastens. Jede Fertigung dauert etwa eine Stunde. Bei kritischem Fehlschlag schneidet man sich in den Finger und erleidet 5 Schaden.</p>",
           "mechanics": [
             {
@@ -629,7 +1444,7 @@
               ]
             }
           ],
-          "special": "",
+          "special": "carving",
           "uses": {
             "max": 0,
             "recovery": "combatEnd",
@@ -644,7 +1459,177 @@
           },
           "category": "Berufe",
           "rankGroup": "schnitzkunst",
-          "rank": 0
+          "rank": 0,
+          "carving": {
+            "modes": [
+              "basic"
+            ]
+          }
+        },
+        {
+          "id": "schnitzkunst-geuebt",
+          "label": "Schnitzkunst: geübt",
+          "lpCost": 10,
+          "requires": [
+            "schnitzkunst"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "ge",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Besondere Pfeile und Bolzen herstellen.",
+          "description": "<p>Du bist geübt in Schnitzkunst und kannst besondere Pfeile und Bolzen herstellen.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 1",
+              "text": "Besondere Pfeile und Bolzen herstellen."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Besondere Pfeile/Bolzen",
+              "columns": [
+                "Munition",
+                "SchwG",
+                "Material"
+              ],
+              "rows": [
+                [
+                  "Reißzahn",
+                  "10",
+                  "3 / 7 Zähne, Krallen und Klauen"
+                ],
+                [
+                  "Breitkopf",
+                  "10",
+                  "2 Eisenerz"
+                ],
+                [
+                  "Erzbreitkopf",
+                  "15",
+                  "2 magisches Erz"
+                ],
+                [
+                  "Widerhaken",
+                  "15",
+                  "4 Eisenerz"
+                ],
+                [
+                  "Bodkin",
+                  "15",
+                  "3 Eisenerz"
+                ]
+              ]
+            }
+          ],
+          "special": "carving",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "schnitzkunst",
+          "rank": 1,
+          "carving": {
+            "modes": [
+              "basic",
+              "special"
+            ]
+          }
+        },
+        {
+          "id": "schnitzkunst-gelehrt",
+          "label": "Schnitzkunst: gelehrt",
+          "lpCost": 10,
+          "requires": [
+            "schnitzkunst-geuebt"
+          ],
+          "attributeRequirements": {},
+          "attributes": [
+            "ge",
+            "ausd"
+          ],
+          "requiresTeacher": true,
+          "maxLearnedWarning": true,
+          "summary": "Bögen über Holz, Sehne, Punkte, Reichweite und Eigenschaft bauen.",
+          "description": "<p>Du bist gelehrt in Schnitzkunst und kannst Bögen bauen.</p>",
+          "mechanics": [
+            {
+              "title": "Grad 2",
+              "text": "Bögen über Holz, Sehne, Punkte, Reichweite und Eigenschaft bauen."
+            }
+          ],
+          "tables": [
+            {
+              "title": "Besondere Pfeile/Bolzen",
+              "columns": [
+                "Munition",
+                "SchwG",
+                "Material"
+              ],
+              "rows": [
+                [
+                  "Reißzahn",
+                  "10",
+                  "3 / 7 Zähne, Krallen und Klauen"
+                ],
+                [
+                  "Breitkopf",
+                  "10",
+                  "2 Eisenerz"
+                ],
+                [
+                  "Erzbreitkopf",
+                  "15",
+                  "2 magisches Erz"
+                ],
+                [
+                  "Widerhaken",
+                  "15",
+                  "4 Eisenerz"
+                ],
+                [
+                  "Bodkin",
+                  "15",
+                  "3 Eisenerz"
+                ]
+              ]
+            }
+          ],
+          "special": "carving",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Berufe",
+          "rankGroup": "schnitzkunst",
+          "rank": 2,
+          "carving": {
+            "modes": [
+              "basic",
+              "special",
+              "bow"
+            ]
+          }
         }
       ]
     }

@@ -1,9 +1,89 @@
 # Gothic Tales für Foundry VTT
 
-## Release 0.6.39
+## Release 0.6.42
 
 Version 0.6.17 stellt die Talentbeschreibungen aus dem zuletzt hochgeladenen Talentbaum-JSON wieder her und trennt Magiekreise, Druidenkunst und Berufe vom normalen Talentbaum. Der Actorbogen erhält eigene Bereiche für Zauber, Magiekreise und Druidenkunst. Magiekreise besitzen nun eine eigene JSON-Datei, einen eigenen Lernbaum und vier magische Würfelfelder, die abhängig vom aktuell gelernten Magiekreis gefüllt werden.
 
+
+### 0.6.42 – Crafting-Berufe erweitert
+
+- DM-Tools erweitert um:
+  - `Alchemie`
+  - `Schürfen`
+  - `Schmiedekunst`
+  - `Schnitzkunst`
+- Alchemie:
+  - Laborfenster mit Alchemietisch-Prüfung.
+  - Heil- und Manatrank mit Aufgaben-Erzeugung über FähW&B ohne W20.
+  - Aufgaben werden einzeln gegen SchwG gelöst.
+  - Ergebnis wird als Trank ins Inventar geschrieben.
+  - Erholung/Reinigung, Geschwindigkeit/Hast und permanente Tränke als erste spielbare Modi.
+- Schürfen:
+  - Ort, Spitzhacke, 30-Minuten-Timer und Sitzungslimit.
+  - Erz suchen, Vorkommen bestimmen, Erz abbauen.
+  - Eisenerz und Magisches Erz werden ins Inventar geschrieben.
+  - Schürfen-Ränge für 2/3/4/5 erfolgreiche Schürfversuche pro Sitzung.
+- Schmiedekunst:
+  - Vorbereitung mit 5 Helferaufgaben.
+  - SchwG aus `30 - Schmiedewurf`.
+  - Helferwürfel und magisches Erz als doppelte Würfel abbildbar.
+  - Schmiedephase für Art, Waffen-W, Bonus, 2. Waffen-W und Eigenschaften.
+  - Fertige Waffe wird ins Inventar geschrieben.
+- Schnitzkunst:
+  - Normale Pfeile/Bolzen.
+  - Besondere Munition.
+  - Bogenbau mit Holzqualität, Sehnenqualität, Punkten, Reichweite und Eigenschaft.
+  - Kritischer Fehlschlag wird als 5 Schaden im Chat dokumentiert.
+- Ränge ergänzt:
+  - Alchemie: geübt, gelehrt, gemeistert.
+  - Schürfen: geübt, gelehrt, gemeistert.
+  - Schnitzkunst: geübt, gelehrt.
+- Berufsränge zählen weiterhin nur als ein Beruf für die 3-Berufe-Grenze.
+
+### 0.6.41 – Taschendiebstahl Mini-Spiel
+
+- DM-Tools erweitert um `Taschendiebstahl`.
+- SL-Fenster:
+  - Zielspieler / Dieb
+  - Ziel / Opfer
+  - Beute
+  - Diebstahlart
+  - Sicherung
+  - SchwG aus Wahrnehmen
+  - Vorteil/Nachteil für Zeitfenster und Zugreifen
+- Spielerfenster:
+  - Zeitfenster-Wurf auf Taschendiebstahl
+  - Unterstützungen / Ablenkungen manuell eintragbar
+  - Timer für das gesammelte Zeitfenster
+  - Zugreifen-Würfe gegen den SchwG
+- Zwischen zwei Zugreifen-Würfen liegt jetzt eine feste 2-Sekunden-Sperre.
+- Zugreifen nutzt immer die gleiche vorher festgelegte Würfelkonfiguration.
+- Kritischer Fehlschlag wird als natürliche 1 auf dem W20 erkannt und beendet den Diebstahl.
+
+### 0.6.40 – Feilschen & Kräuterkunde Mini-Spiele
+
+- DM-Tools erweitert:
+  - `Feilschen`
+  - `Kräuterkunde`
+- Feilschen:
+  - SL bereitet Händler, Ausgangspreis, Zielspieler, Mindestpreis und Fehlschläge vor.
+  - SchwG wird automatisch aus dem Ausgangspreis berechnet.
+  - Spieler muss vor jedem Wurf ein Argument eintragen.
+  - Erfolg senkt den Preis um 1/10 bis zum Mindestpreis.
+  - Bei zu vielen Fehlschlägen ist der Händler verärgert und der Normalpreis gilt wieder.
+- Kräuterkunde:
+  - SL startet eine Kräutersuche für einen Zielspieler.
+  - Spieler wählt ein Kraut und würfelt gegen den jeweiligen SchwG.
+  - Erfolgreiche Funde werden automatisch als Verbrauchsgegenstand ins Inventar gelegt.
+  - Heil- und Manakräuter erhalten als Menge das Wurfergebnis.
+  - Kritischer Erfolg fügt zusätzlich Kronstöckel hinzu.
+  - 30-Minuten-Timer und Sitzungslimit sind eingebaut.
+- Kräuterkunde-Ränge ergänzt:
+  - Grundrang: 2 erfolgreiche Suchen pro Sitzung
+  - geübt: 3 erfolgreiche Suchen pro Sitzung
+  - gelehrt: 4 erfolgreiche Suchen pro Sitzung
+  - gemeistert: 5 erfolgreiche Suchen pro Sitzung
+- Berufsränge zählen nur als ein Beruf für die 3-Berufe-Grenze.
 
 ### 0.6.39 – Dynamische Schalteranzahl beim Schlösserknacken
 
