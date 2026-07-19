@@ -23,21 +23,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .github/gt-upload-0715/part-*.txt > /tmp/gothic-tales-0715.b64
-          base64 --decode /tmp/gothic-tales-0715.b64 > /tmp/gothic-tales-0715.tar.xz
+          cat .github/gt-upload-0715/part-*.b32 > /tmp/gothic-tales-0715.b32
+          base32 --decode /tmp/gothic-tales-0715.b32 > /tmp/gothic-tales-0715.tar.xz
           mkdir -p /tmp/gothic-tales-0715
           tar -xJf /tmp/gothic-tales-0715.tar.xz -C /tmp/gothic-tales-0715
           test -f /tmp/gothic-tales-0715/system.json
           grep -q '"version": "0.7.15"' /tmp/gothic-tales-0715/system.json
 
           rsync -a /tmp/gothic-tales-0715/ ./
-
           rm -rf .github/gt-upload-0715
           rm -f .github/workflows/gt-upload-0715.yml
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet && exit 0
-          git commit -m "Release 0.7.15"
-          git push origin HEAD:main
+          TREE_SHA="$(git write-tree)"
+          RELEASE_SHA="$(printf '%s\n' 'Release 0.7.15' | git commit-tree "$TREE_SHA" -p afeacd4f1956ff6e17e6c744419a9d76dece6415)"
+          git push --force origin "$RELEASE_SHA:main"
