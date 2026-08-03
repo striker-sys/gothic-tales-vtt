@@ -200,20 +200,6 @@ Manifestadresse:
 https://raw.githubusercontent.com/striker-sys/gothic-tales-vtt/main/system.json
 ```
 
-Das GitHub-Release muss die installierbare Datei unter folgendem Namen enthalten:
-
-```text
-gothic-tales.zip
-```
-
-Empfohlener Release-Tag:
-
-```text
-v0.8.0
-```
-
-Die Verteilung über GitHub ist eine öffentliche Weitergabe. Daher dürfen auch dort nur Dateien veröffentlicht werden, für die ausreichende Nutzungs- und Verbreitungsrechte bestehen.
-
 ---
 
 ## Entwicklung und Prüfung
