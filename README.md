@@ -319,4 +319,4 @@ Fehlerberichte sollten nach Möglichkeit folgende Angaben enthalten:
 **Community:** [Gothic-Tales-Discord](https://discord.gg/fsqV7TyAGA)  
 **Repository:** [striker-sys/gothic-tales-vtt](https://github.com/striker-sys/gothic-tales-vtt)
 
-Weitere projektspezifische Hinweise befinden sich in `LICENSE.txt`, [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) und `RELEASE-0.8.0.md`.
+Weitere projektspezifische Hinweise befinden sich in `LICENSE.txt`, [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) und `RELEASE-.md`.
