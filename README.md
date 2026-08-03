@@ -1,4 +1,4 @@
-# Gothic Tales VTT 0.8.0
+# Gothic Tales VTT 0.8.0 DEMO
 
 ![Version](https://img.shields.io/badge/Version-0.8.0-8f1111)
 ![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-14-5b2b18)
