@@ -1,0 +1,125 @@
+{{!-- Gegenstandsbogenlayout: bearbeitet allgemeine Itemmetadaten, Kampfwerte, Ausrüstungsstatus, Beschreibungen und Quellenangaben. --}}
+<form class="{{cssClass}} gt-sheet gt-v2-form item-sheet {{#if editMode}}gt-item-editing{{else}}gt-item-viewing{{/if}}" autocomplete="off">
+  <header class="gt-header item-header gt-paper-header">
+    <button type="button" class="gt-image-picker gt-document-image-button small gt-item-edit-only" title="Bild auswählen"><img class="gt-document-image" src="{{documentImage}}" alt="{{item.name}}"></button>
+    <img class="gt-document-image small gt-item-view-only" src="{{documentImage}}" alt="{{item.name}}">
+    <div class="gt-title-block">
+      <label class="gt-small-label">{{lookupType config.itemTypes item.type}}</label>
+      <input class="gt-name gt-item-edit-only" name="name" type="text" value="{{item.name}}" placeholder="Name">
+      <h1 class="gt-item-view-only">{{item.name}}</h1>
+    </div>
+    {{#if editable}}<button type="button" class="gt-item-mode-toggle" title="Ansicht/Bearbeitung umschalten"><i class="fas {{#if editMode}}fa-eye{{else}}fa-pen{{/if}}"></i> {{#if editMode}}Ansehen{{else}}Bearbeiten{{/if}}</button>{{/if}}
+  </header>
+
+  <nav class="sheet-tabs tabs gt-tabs" data-group="primary">
+    <a class="item" data-tab="main">Werte</a>
+    <a class="item" data-tab="rules">Beschreibung</a>
+    <a class="item" data-tab="source">Quelle</a>
+  </nav>
+
+  <section class="sheet-body">
+    <div class="tab main" data-group="primary" data-tab="main">
+      <section class="gt-panel gt-parchment-panel gt-item-view-only gt-item-overview-card">
+        <h2>{{item.name}}</h2>
+        <div class="gt-item-overview-grid">
+          {{#if system.category}}<span><b>Kategorie</b>{{system.category}}</span>{{/if}}
+          {{#if system.quantity}}<span><b>Menge</b>{{system.quantity}}</span>{{/if}}
+          {{#if system.attribute}}<span><b>Attribut</b>{{system.attribute}}</span>{{/if}}
+          {{#if system.damage}}<span><b>Schaden/Effekt</b>{{system.damage}}</span>{{/if}}
+          {{#if system.targetDefense}}<span><b>Ziel</b>{{system.targetDefense}}</span>{{/if}}
+          {{#if system.mana}}<span><b>Mana</b>{{system.mana}}</span>{{/if}}
+          {{#if system.circle}}<span><b>Kreis/Stufe</b>{{system.circle}}</span>{{/if}}
+          {{#if system.range}}<span><b>Reichweite</b>{{system.range}}</span>{{/if}}
+          {{#if system.properties}}<span><b>Eigenschaften</b>{{system.properties}}</span>{{/if}}
+          {{#if system.requirements}}<span><b>Voraussetzungen</b>{{system.requirements}}</span>{{/if}}
+          {{#if system.value}}<span><b>Wert</b>{{system.value}}</span>{{/if}}
+          {{#if system.rk}}<span><b>RK</b>{{system.rk}}</span>{{/if}}
+          {{#if system.ele}}<span><b>ELE</b>{{system.ele}}</span>{{/if}}
+          {{#if system.ma}}<span><b>MA</b>{{system.ma}}</span>{{/if}}
+        </div>
+        <div class="gt-action-row">{{#if system.damage}}<button type="button" class="gt-roll" data-formula="{{system.damage}}"><i class="fas fa-dice"></i> Schaden/Effekt würfeln</button>{{/if}}</div>
+      </section>
+      <section class="gt-panel gt-parchment-panel gt-item-edit-only">
+        <div class="gt-two-col">
+          <label>Kategorie <input name="system.category" type="text" value="{{system.category}}"></label>
+          <label>Menge <input name="system.quantity" type="number" value="{{system.quantity}}"></label>
+          <label class="gt-checkbox-label"><input name="system.equipped" type="checkbox" {{#if system.equipped}}checked{{/if}}> Ausgerüstet</label>
+          <label class="gt-checkbox-label"><input name="system.favorite" type="checkbox" {{#if system.favorite}}checked{{/if}}> Favorit</label>
+          <label>Attribut <select name="system.attribute">
+            <option value="">—</option>
+            {{#each attributeOptions}}
+            <option value="{{key}}" {{#if selected}}selected{{/if}}>{{label}} ({{key}})</option>
+            {{/each}}
+          </select></label>
+          <label>Schaden/Effekt <input name="system.damage" type="text" value="{{system.damage}}"></label>
+          <label>Ziel-Verteidigung <input name="system.targetDefense" type="text" value="{{system.targetDefense}}"></label>
+          <label>Mana <input name="system.mana" type="text" value="{{system.mana}}"></label>
+          <label>Kreis <input name="system.circle" type="text" value="{{system.circle}}"></label>
+          <label>Reichweite <input name="system.range" type="text" value="{{system.range}}"></label>
+          <label>Eigenschaften <input name="system.properties" type="text" value="{{system.properties}}"></label>
+          <label>Voraussetzungen <input name="system.requirements" type="text" value="{{system.requirements}}"></label>
+          {{#if (eq item.type "talent")}}
+          <div class="gt-fieldset gt-full-row">
+            <strong>Mindestattribute</strong>
+            <div class="gt-mini-grid">
+              {{#each attributeRequirementOptions}}
+              <label>{{label}} <input name="system.attributeRequirements.{{key}}" type="number" value="{{value}}" min="0"></label>
+              {{/each}}
+            </div>
+          </div>
+          <div class="gt-fieldset gt-full-row">
+            <strong>Talent-Anwendungen</strong>
+            <div class="gt-mini-grid">
+              <label>Aktuell <input name="system.uses.value" type="number" value="{{system.uses.value}}" min="0"></label>
+              <label>Maximum <input name="system.uses.max" type="number" value="{{system.uses.max}}" min="0"></label>
+              <label>Regeneration <select name="system.usesRecovery">
+                <option value="combatEnd" {{#if (eq system.usesRecovery "combatEnd")}}selected{{/if}}>Nach Kampf</option>
+                <option value="longRest" {{#if (eq system.usesRecovery "longRest")}}selected{{/if}}>Lange Rast (alt)</option>
+                <option value="none" {{#if (eq system.usesRecovery "none")}}selected{{/if}}>Keine automatische Regeneration</option>
+              </select></label>
+              <label>Pool-Key <input name="system.usesPool" type="text" value="{{system.usesPool}}" placeholder="z. B. einhand"></label>
+              <label>Pool-Name <input name="system.usesPoolLabel" type="text" value="{{system.usesPoolLabel}}" placeholder="z. B. Einhand"></label>
+            </div>
+            <p class="gt-help">Maximum 0 bedeutet: keine begrenzten Anwendungen. Standard-Regeneration ist nach Kampfende.</p>
+          </div>
+          <div class="gt-fieldset gt-full-row">
+            <strong>Verbrauch eines anderen Talents</strong>
+            <div class="gt-mini-grid">
+              <label>Talent-Key <input name="system.consumeTalentKey" type="text" value="{{system.consumeTalentKey}}" placeholder="z. B. einhand.stoss"></label>
+              <label>Pool-Key <input name="system.consumePoolKey" type="text" value="{{system.consumePoolKey}}" placeholder="z. B. einhand"></label>
+              <label>Menge <input name="system.consumeAmount" type="number" value="{{system.consumeAmount}}" min="0"></label>
+            </div>
+            <p class="gt-help">Leer lassen, wenn dieses Talent seine eigenen Anwendungen verbraucht. Talent-Key: <code>baumId.talentId</code>. Pool-Key: z. B. <code>einhand</code>.</p>
+          </div>
+          {{/if}}
+          <label>Wert <input name="system.value" type="text" value="{{system.value}}"></label>
+          <label>RK <input name="system.rk" type="number" value="{{system.rk}}"></label>
+          <label>ELE <input name="system.ele" type="number" value="{{system.ele}}"></label>
+          <label>MA <input name="system.ma" type="number" value="{{system.ma}}"></label>
+          {{#unless (eq item.type "talent")}}<label>Benutzungen <span><input name="system.uses.value" type="number" value="{{system.uses.value}}"> / <input name="system.uses.max" type="number" value="{{system.uses.max}}"></span></label>{{/unless}}
+        </div>
+        <div class="gt-action-row">
+          <button type="button" class="gt-roll" data-formula="{{system.damage}}"><i class="fas fa-dice"></i> Schaden/Effekt würfeln</button>
+        </div>
+      </section>
+    </div>
+    <div class="tab rules" data-group="primary" data-tab="rules">
+      <section class="gt-panel gt-text-panel gt-parchment-panel">
+        <h2>Beschreibung</h2>
+        <div class="gt-description-preview gt-scroll">{{{system.description}}}</div>
+        <button type="button" class="gt-description-edit gt-item-edit-only" data-path="description" data-label="Beschreibung"><i class="fas fa-edit"></i> Beschreibung bearbeiten</button>
+      </section>
+    </div>
+    <div class="tab source" data-group="primary" data-tab="source">
+      <section class="gt-panel source-panel gt-parchment-panel">
+        <h2>Quelle</h2>
+        <div class="gt-source-meta gt-item-edit-only">
+          <label>Buch <input name="system.sourceBook" type="text" value="{{system.sourceBook}}"></label>
+          <label>Seite <input name="system.sourcePage" type="text" value="{{system.sourcePage}}"></label>
+        </div>
+        <div class="gt-source-text gt-scroll">{{{system.sourceText}}}</div>
+        <button type="button" class="gt-description-edit gt-item-edit-only" data-path="sourceText" data-label="Quellentext"><i class="fas fa-edit"></i> Quellentext bearbeiten</button>
+      </section>
+    </div>
+  </section>
+</form>

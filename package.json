@@ -1,0 +1,14 @@
+{
+  "name": "gothic-tales-vtt",
+  "version": "0.8.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "npm run check:json && npm run check:js && npm run check:runtime && npm run check:builder && npm run check:chatcards",
+    "check:json": "node tools/validate-package.mjs",
+    "check:js": "node --check scripts/gothic-tales.mjs && node --check scripts/gothic-tales-version.mjs",
+    "check:runtime": "node tools/validate-runtime.mjs",
+    "check:builder": "node tools/validate-layout-builder.mjs",
+    "check:chatcards": "node tools/validate-druid-magic-chat.mjs"
+  }
+}

@@ -1,0 +1,1577 @@
+{
+  "version": "0.6.46",
+  "schools": [
+    {
+      "id": "wurzelwirker",
+      "label": "Schule des Wurzelwirkers",
+      "summary": "Gelände, Dornen, Wurzeln und Erdformung."
+    },
+    {
+      "id": "gestaltwandler",
+      "label": "Schule des Gestaltwandlers",
+      "summary": "Tiergestalten und Zauber in Tierform."
+    },
+    {
+      "id": "seelenweber",
+      "label": "Schule des Seelenwebers",
+      "summary": "Seelenbänder, Schutz, Heilung und Naturgeister."
+    }
+  ],
+  "rituals": [
+    {
+      "id": "initiation",
+      "label": "Die Initiation",
+      "lpCost": 20,
+      "requires": [],
+      "attributeRequirements": {},
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "chooseSchool": 1,
+        "spellChoices": [
+          {
+            "school": "chosen",
+            "count": 3
+          }
+        ]
+      },
+      "summary": "Wähle deine 1. Schule & +3 Zauber dieser Schule."
+    },
+    {
+      "id": "ritus-2",
+      "label": "2. Ritus",
+      "lpCost": 0,
+      "requires": [
+        "initiation"
+      ],
+      "attributeRequirements": {
+        "erf": 20
+      },
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "first",
+            "count": 1
+          }
+        ]
+      },
+      "summary": "+1 Zauber der 1. Schule."
+    },
+    {
+      "id": "weggabelung",
+      "label": "3. Ritus – Die Weggabelung",
+      "lpCost": 5,
+      "requires": [
+        "ritus-2"
+      ],
+      "attributeRequirements": {},
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "chooseSchool": 1,
+        "spellChoices": [
+          {
+            "school": "chosen",
+            "count": 1
+          }
+        ]
+      },
+      "summary": "Wähle deine 2. Schule & +1 Zauber dieser Schule."
+    },
+    {
+      "id": "ritus-4",
+      "label": "4. Ritus",
+      "lpCost": 0,
+      "requires": [
+        "weggabelung"
+      ],
+      "attributeRequirements": {
+        "intu": 25
+      },
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "first",
+            "count": 2
+          }
+        ]
+      },
+      "summary": "+2 Zauber der 1. Schule."
+    },
+    {
+      "id": "ritus-5",
+      "label": "5. Ritus",
+      "lpCost": 10,
+      "requires": [
+        "ritus-4"
+      ],
+      "attributeRequirements": {},
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "second",
+            "count": 2
+          }
+        ]
+      },
+      "summary": "+2 Zauber der 2. Schule."
+    },
+    {
+      "id": "ritus-6",
+      "label": "6. Ritus",
+      "lpCost": 5,
+      "requires": [
+        "ritus-5"
+      ],
+      "attributeRequirements": {
+        "erf": 30
+      },
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "first",
+            "count": 2
+          }
+        ]
+      },
+      "summary": "+2 Zauber der 1. Schule."
+    },
+    {
+      "id": "ritus-7",
+      "label": "7. Ritus",
+      "lpCost": 5,
+      "requires": [
+        "ritus-6"
+      ],
+      "attributeRequirements": {
+        "intu": 30
+      },
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "second",
+            "count": 2
+          }
+        ]
+      },
+      "summary": "+2 Zauber der 2. Schule."
+    },
+    {
+      "id": "ritus-8",
+      "label": "8. Ritus",
+      "lpCost": 5,
+      "requires": [
+        "ritus-7"
+      ],
+      "attributeRequirements": {},
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "first",
+            "count": 1
+          }
+        ]
+      },
+      "summary": "+1 Zauber der 1. Schule."
+    },
+    {
+      "id": "ritus-9",
+      "label": "9. Ritus",
+      "lpCost": 10,
+      "requires": [
+        "ritus-8"
+      ],
+      "attributeAny": [
+        {
+          "erf": 35
+        },
+        {
+          "intu": 35
+        }
+      ],
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "first",
+            "count": 2
+          }
+        ]
+      },
+      "summary": "+2 Zauber der 1. Schule."
+    },
+    {
+      "id": "ritus-10",
+      "label": "10. Ritus",
+      "lpCost": 0,
+      "requires": [
+        "ritus-9"
+      ],
+      "attributeAny": [
+        {
+          "erf": 40
+        },
+        {
+          "intu": 40
+        }
+      ],
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "first",
+            "count": 1
+          }
+        ]
+      },
+      "summary": "+1 Zauber der 1. Schule."
+    },
+    {
+      "id": "letzte-schule",
+      "label": "Die letzte Schule",
+      "lpCost": 25,
+      "requires": [
+        "ritus-10"
+      ],
+      "attributeAny": [
+        {
+          "erf": 45
+        },
+        {
+          "intu": 45
+        }
+      ],
+      "teacherRequired": true,
+      "repeatable": false,
+      "effect": {
+        "chooseRemainingSchool": true,
+        "spellChoices": [
+          {
+            "school": "all",
+            "count": 1
+          }
+        ]
+      },
+      "summary": "+1 Zauber für jede Schule."
+    },
+    {
+      "id": "vertiefungsritus",
+      "label": "Vertiefungsritus",
+      "lpCost": 15,
+      "requires": [
+        "initiation"
+      ],
+      "attributeRequirements": {},
+      "teacherRequired": true,
+      "repeatable": true,
+      "effect": {
+        "spellChoices": [
+          {
+            "school": "unlocked",
+            "count": 2
+          }
+        ]
+      },
+      "summary": "+2 beliebige Zauber. Dieser Ritus ist wiederholbar."
+    }
+  ],
+  "spells": [
+    {
+      "id": "geister-der-natur",
+      "label": "Geister der Natur",
+      "school": "ritual",
+      "maxRank": 1,
+      "kind": "rite-talent",
+      "action": "Standardaktion",
+      "summary": "1x ErfW&B Mana. Mehrfach: nur 1 Standardaktion, Würfel zusammen. 5x pro Kampf und 5x pro Tag.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": "1xErfW&B",
+          "properties": "Mana-Regeneration, 5x/Kampf und 5x/Tag"
+        }
+      ],
+      "description": "Der Druide beschwört die Geister der Natur und erhält 1xErfW&B Mana. Bei mehrfacher Anwendung benutzt man nur 1 Standardaktion und wirft die Würfel zusammen. Benutze dafür zwei Büroklammern."
+    },
+    {
+      "id": "blaettersturm",
+      "label": "Blättersturm",
+      "school": "wurzelwirker",
+      "maxRank": 5,
+      "kind": "spell",
+      "action": "Angriffsaktion",
+      "roll": "Intuition vs ELE",
+      "targetDefense": "ele",
+      "summary": "Flächenzauber um den Druiden. Kein Schaden. Ziele werden gehindert, Verbündete nicht betroffen.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 8,
+          "properties": "Fl-Umkreis 2, Dauer 2, Hindern"
+        },
+        {
+          "rank": 2,
+          "mana": 10,
+          "properties": "Fl-Umkreis 3, Dauer 2, Hindern"
+        },
+        {
+          "rank": 3,
+          "mana": 15,
+          "properties": "Fl-Umkreis 3, Dauer 3, Hindern, Bewegen"
+        },
+        {
+          "rank": 4,
+          "mana": 20,
+          "properties": "Fl-Umkreis 4, Dauer 3, Hindern, Bewegen"
+        },
+        {
+          "rank": 5,
+          "mana": 25,
+          "properties": "Fl-Umkreis 4, Dauer 3, Hindern, Bewegen"
+        }
+      ],
+      "description": "Ein Blättersturm wirbelt um den Druiden. Dies ist ein Flächenzauber (Umkreis) mit einer Dauer X, der Ziele hindert. Verbündete sind nicht betroffen. Ab Stufe 3 darf der Druide in seinem Zug Verbündete im Wirkungsbereich um 1 Feld in beliebiger Richtung bewegen."
+    },
+    {
+      "id": "dornenpfad",
+      "label": "Dornenpfad",
+      "school": "wurzelwirker",
+      "maxRank": 7,
+      "kind": "spell",
+      "action": "Standardaktion",
+      "roll": "Intuition vs ELE",
+      "targetDefense": "ele",
+      "range": "10",
+      "summary": "Pfad aus Ranken und Dornen. Schwieriges Terrain; Angriff nur, wenn ein Ziel die Fläche verlässt.",
+      "levels": [
+        {
+          "rank": 1,
+          "weapon": "w2",
+          "mana": 5,
+          "properties": "Fl-Pfad 3, Dauer 2"
+        },
+        {
+          "rank": 2,
+          "weapon": "w2",
+          "mana": 5,
+          "properties": "Fl-Pfad 4, Dauer 3"
+        },
+        {
+          "rank": 3,
+          "weapon": "w4",
+          "mana": 8,
+          "properties": "Fl-Pfad 5, Dauer 3"
+        },
+        {
+          "rank": 4,
+          "weapon": "w4",
+          "mana": 10,
+          "properties": "Fl-Pfad 6, Dauer 4"
+        },
+        {
+          "rank": 5,
+          "weapon": "w6",
+          "mana": 12,
+          "properties": "Fl-Pfad 7, Dauer 4"
+        },
+        {
+          "rank": 6,
+          "weapon": "w6",
+          "mana": 15,
+          "properties": "Fl-Pfad 8, Dauer 5"
+        },
+        {
+          "rank": 7,
+          "weapon": "w8",
+          "mana": 20,
+          "properties": "Fl-Pfad 8, Dauer 5"
+        }
+      ],
+      "description": "Ranken mit spitzen Dornen sprießen aus dem Boden. Dies ist ein Flächenzauber (Pfad) mit einer Dauer X. Die Fläche gilt als schwieriges Terrain. Der Angriffswurf wird nur gemacht, wenn ein Ziel ein Feld der Fläche verlässt, forciert oder aktiv."
+    },
+    {
+      "id": "eichenspiess",
+      "label": "Eichenspieß",
+      "school": "wurzelwirker",
+      "maxRank": 6,
+      "kind": "spell",
+      "action": "Angriffsaktion",
+      "roll": "Intuition vs RK",
+      "targetDefense": "rk",
+      "summary": "Beschwört einen Eichenspieß aus dem Erdboden und schießt ihn auf ein Ziel. Stoßen bewegt das Ziel in eine beliebige Richtung.",
+      "levels": [
+        {
+          "rank": 1,
+          "weapon": "w4",
+          "mana": 2,
+          "properties": "Reichweite 8, Stoßen 1"
+        },
+        {
+          "rank": 2,
+          "weapon": "w6+1",
+          "mana": 3,
+          "properties": "Reichweite 10, Stoßen 1"
+        },
+        {
+          "rank": 3,
+          "weapon": "w8+1",
+          "mana": 5,
+          "properties": "Reichweite 10, Stoßen 1"
+        },
+        {
+          "rank": 4,
+          "weapon": "w10+1",
+          "mana": 7,
+          "properties": "Reichweite 12, Stoßen 2"
+        },
+        {
+          "rank": 5,
+          "weapon": "w12+2",
+          "mana": 8,
+          "properties": "Reichweite 12, Stoßen 2"
+        },
+        {
+          "rank": 6,
+          "weapon": "w12+2",
+          "mana": 10,
+          "properties": "Reichweite 12, Stoßen 3"
+        }
+      ],
+      "description": "Der Druide beschwört einen Eichenspieß aus dem Erdboden von einem Feld in Reichweite und schießt diesen auf sein Ziel."
+    },
+    {
+      "id": "erde-verformen",
+      "label": "Erde verformen",
+      "school": "wurzelwirker",
+      "maxRank": 3,
+      "kind": "spell",
+      "action": "3 Aktionen",
+      "range": "10",
+      "prereqText": "2 Zauber dieser Schule auf max. Stufe",
+      "requires": {
+        "twoMaxInSchool": "wurzelwirker"
+      },
+      "summary": "Verformt Erdoberfläche dauerhaft mit umliegender Vegetation.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 20,
+          "properties": "Menge 3 m³"
+        },
+        {
+          "rank": 2,
+          "mana": 25,
+          "properties": "Menge 4 m³"
+        },
+        {
+          "rank": 3,
+          "mana": 30,
+          "properties": "Menge 5 m³"
+        }
+      ],
+      "description": "Der Druide verformt mithilfe der umliegenden Vegetation den Erdboden, türmt sie auf oder schafft Gruben. Nur mit geeignetem Untergrund möglich. Die neue Form ist stabil und permanent."
+    },
+    {
+      "id": "dornenwall",
+      "label": "Dornenwall",
+      "school": "wurzelwirker",
+      "maxRank": 4,
+      "kind": "spell",
+      "action": "Angriffsaktion",
+      "roll": "Intuition vs ELE",
+      "targetDefense": "ele",
+      "range": "5",
+      "prereqText": "Ritus 'Die letzte Schule' + Dornenpfad auf max. Stufe",
+      "requires": {
+        "rite": "letzte-schule",
+        "spellMax": "dornenpfad"
+      },
+      "summary": "1,5 Meter hohe Mauer aus dichtem Gestrüpp. Pfad, Dauer, schwieriges Terrain und Zugwirkung.",
+      "levels": [
+        {
+          "rank": 1,
+          "weapon": "w6",
+          "difficulty": 10,
+          "mana": 20,
+          "properties": "Fl-Pfad 3, Dauer 3"
+        },
+        {
+          "rank": 2,
+          "weapon": "w8",
+          "difficulty": 15,
+          "mana": 25,
+          "properties": "Fl-Pfad 4, Dauer 3"
+        },
+        {
+          "rank": 3,
+          "weapon": "w10",
+          "difficulty": 15,
+          "mana": 25,
+          "properties": "Fl-Pfad 4, Dauer 4"
+        },
+        {
+          "rank": 4,
+          "weapon": "w10",
+          "difficulty": 20,
+          "mana": 30,
+          "properties": "Fl-Pfad 5, Dauer 4"
+        }
+      ],
+      "description": "Beschwört eine 1,5 Meter hohe Mauer aus dichtem Gestrüpp. Figuren auf umliegenden Feldern würfeln mit Ge oder St gegen den SchwG; bei Fehlschlag werden sie zum Dornenwall gezogen. Neben regulären Angriffen wird auch angegriffen, wenn eine Figur auf ein Feld der Fläche kommt."
+    },
+    {
+      "id": "seelenband-geist",
+      "label": "Seelenband – Geist",
+      "school": "seelenweber",
+      "maxRank": 5,
+      "kind": "spell",
+      "action": "Standardaktion",
+      "summary": "Seelenband, Heilung und zusätzliche Aktionen für das Ziel.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 4,
+          "duration": 1,
+          "properties": "Heilung, Reichweite 3"
+        },
+        {
+          "rank": 2,
+          "mana": 10,
+          "duration": 1,
+          "properties": "Heilung, Reichweite 3, +1 Aktion"
+        },
+        {
+          "rank": 3,
+          "mana": 12,
+          "duration": 2,
+          "properties": "Heilung, Reichweite 4, +1 Aktion"
+        },
+        {
+          "rank": 4,
+          "mana": 14,
+          "duration": 2,
+          "properties": "Heilung, Reichweite 5, +1 Aktion"
+        },
+        {
+          "rank": 5,
+          "mana": 20,
+          "duration": 3,
+          "properties": "Heilung, Reichweite 5, 2x +1 Aktion"
+        }
+      ],
+      "description": "Der Druide spinnt ein magisches Band zwischen ihm und seinem Ziel. Nur ein Seelenband zugleich. Dieses Seelenband schärft und beschleunigt den Geist des Ziels: Das Ziel hat im ersten Zug +1 Aktion auf Stufen II-IV. Auf Stufe V sind es +1 Aktion im ersten und zweiten Zug."
+    },
+    {
+      "id": "seelenband-koerper",
+      "label": "Seelenband – Körper",
+      "school": "seelenweber",
+      "maxRank": 5,
+      "kind": "spell",
+      "action": "Standardaktion",
+      "summary": "Seelenband, Heilung und Bewegungsfolge ohne Gelegenheitsangriffe.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 5,
+          "duration": 1,
+          "properties": "Heilung, Reichweite 4, 2 Felder/Zug"
+        },
+        {
+          "rank": 2,
+          "mana": 9,
+          "duration": 2,
+          "properties": "Heilung, Reichweite 4, 3 Felder/Zug"
+        },
+        {
+          "rank": 3,
+          "mana": 14,
+          "duration": 3,
+          "properties": "Heilung, Reichweite 5, 4 Felder/Zug"
+        },
+        {
+          "rank": 4,
+          "mana": 15,
+          "duration": 3,
+          "properties": "Heilung, Reichweite 6, 4 Felder/Zug"
+        },
+        {
+          "rank": 5,
+          "mana": 20,
+          "duration": 4,
+          "properties": "Heilung, Reichweite 7, 5 Felder/Zug"
+        }
+      ],
+      "description": "Die beiden Seelengebundenen verschmelzen ihre Körperwahrnehmung: Für jedes Feld, das sich der eine in seinem Zug vom anderen wegbewegt, kann der andere sofort folgen. Gilt für eine maximale Anzahl von Feldern pro Zug. Provoziert keine Gelegenheitsangriffe."
+    },
+    {
+      "id": "wurzelbegleiter",
+      "label": "Wurzelbegleiter",
+      "school": "seelenweber",
+      "maxRank": 8,
+      "kind": "spell",
+      "action": "Standardaktion",
+      "duration": "5 Minuten",
+      "summary": "Schützende Wurzel erlaubt Blocken-Reaktionen gegen RK & ELE.",
+      "levels": [
+        {
+          "rank": 1,
+          "block": "w4",
+          "mana": 2,
+          "properties": ""
+        },
+        {
+          "rank": 2,
+          "block": "w6",
+          "mana": 4,
+          "properties": ""
+        },
+        {
+          "rank": 3,
+          "block": "2w4",
+          "mana": 7,
+          "properties": "Reichweite 2"
+        },
+        {
+          "rank": 4,
+          "block": "2w6",
+          "mana": 10,
+          "properties": "2 Begleiter, Reichweite 2"
+        },
+        {
+          "rank": 5,
+          "block": "2w8",
+          "mana": 13,
+          "properties": "2 Begleiter, Reichweite 3"
+        },
+        {
+          "rank": 6,
+          "block": "2w8",
+          "mana": 16,
+          "properties": "2 Begleiter, Reichweite 3, Schadensreduktion"
+        },
+        {
+          "rank": 7,
+          "block": "2w10",
+          "mana": 20,
+          "properties": "2 Begleiter, Reichweite 4, Schadensreduktion"
+        },
+        {
+          "rank": 8,
+          "block": "2w12",
+          "mana": 25,
+          "properties": "2 Begleiter, Reichweite 5, Schadensreduktion"
+        }
+      ],
+      "description": "Der Druide berührt eine Figur und bindet eine schützende Wurzel an sie. Diese Figur kann bei 2 Angriffen die Reaktion Blocken vs RK & ELE nutzen. Ab Stufe III hat der Zauber Reichweite. Ab Stufe IV können 2 Wurzelbegleiter zugleich aktiv sein. Ab Stufe VI reduzieren die BlockenW den Schaden, wenn Blocken fehlschlägt."
+    },
+    {
+      "id": "seelenweber",
+      "label": "Seelenweber",
+      "school": "seelenweber",
+      "maxRank": 3,
+      "kind": "spell",
+      "prereqText": "1 Seelenband auf Stufe V",
+      "requires": {
+        "oneOfSpellsMax": [
+          "seelenband-geist",
+          "seelenband-koerper"
+        ]
+      },
+      "summary": "Verbessert Seelenbänder und Geister der Natur.",
+      "levels": [
+        {
+          "rank": 1,
+          "properties": "Manaregeneration von Geister der Natur betrifft auch das Ziel"
+        },
+        {
+          "rank": 2,
+          "properties": "Seelenband-Heilung heilt Druiden und Ziel zugleich"
+        },
+        {
+          "rank": 3,
+          "properties": "1x/Tag beide Seelenbänder zugleich aktiv; Vor.: Beide Seelenbänder Stufe V"
+        }
+      ],
+      "description": "Während ein Seelenband besteht, betrifft die Manaregeneration von Geister der Natur auch das Ziel. Spätere Stufen stärken Heilung und erlauben beide Seelenbänder zugleich."
+    },
+    {
+      "id": "baum-des-lebens",
+      "label": "Baum des Lebens",
+      "school": "seelenweber",
+      "maxRank": 4,
+      "kind": "spell",
+      "action": "2 Standardaktionen",
+      "uses": "1x/Tag",
+      "prereqText": "Wurzelbegleiter VIII & Seelenweber I",
+      "requires": {
+        "spellRank": {
+          "wurzelbegleiter": 8,
+          "seelenweber": 1
+        }
+      },
+      "summary": "Großer Heilbaum mit TP- und Mana-Regeneration.",
+      "levels": [
+        {
+          "rank": 1,
+          "height": "2m",
+          "healing": "8 TP",
+          "manaReg": "5 Mana",
+          "mana": 15,
+          "properties": "Kreis 2, Dauer 2"
+        },
+        {
+          "rank": 2,
+          "height": "3m",
+          "healing": "12 TP",
+          "manaReg": "7 Mana",
+          "mana": 22,
+          "properties": "Kreis 2, Dauer 3"
+        },
+        {
+          "rank": 3,
+          "height": "3m",
+          "healing": "16 TP",
+          "manaReg": "10 Mana",
+          "mana": 30,
+          "properties": "Kreis 2, Dauer 3"
+        },
+        {
+          "rank": 4,
+          "height": "4m",
+          "healing": "20 TP",
+          "manaReg": "12 Mana",
+          "mana": 40,
+          "properties": "Kreis 3, Dauer 4"
+        }
+      ],
+      "description": "Der Druide erschafft den Baum des Lebens auf einem benachbarten Feld. Zu Beginn seines nächsten Zuges ist er ausgewachsen und entfaltet seine Wirkung. Verbündete Figuren können 2x/Runde TP & Mana regenerieren."
+    },
+    {
+      "id": "geist-des-biests",
+      "label": "Geist des Biests",
+      "school": "gestaltwandler",
+      "maxRank": 3,
+      "kind": "spell",
+      "summary": "Ausgewählte Zauber können in Tiergestalt gewirkt werden.",
+      "levels": [
+        {
+          "rank": 1,
+          "properties": "Wähle den ersten Zauber"
+        },
+        {
+          "rank": 2,
+          "properties": "Wähle den zweiten Zauber"
+        },
+        {
+          "rank": 3,
+          "properties": "Wähle den dritten Zauber"
+        }
+      ],
+      "description": "Du kannst fortan 1/2/3 ausgewählte Zauber auf ihrer aktuellen Zauberstufe auch in Tiergestalt wirken. Benutze in Tiergestalt die AttributsW&B und das Mana deiner menschlichen Form."
+    },
+    {
+      "id": "tiergestalt-fleischwanze",
+      "label": "Tiergestalt: Fleischwanze",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 10,
+      "levelRequirement": 0,
+      "formId": "fleischwanze",
+      "summary": "Verwandlung in Fleischwanze. Mana 10, Stufe frei.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 10,
+          "properties": "Stufe 0, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-blutfliege",
+      "label": "Tiergestalt: Blutfliege",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 20,
+      "levelRequirement": 3,
+      "formId": "blutfliege",
+      "summary": "Verwandlung in Blutfliege. Mana 20, Stufe 3.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 20,
+          "properties": "Stufe 3, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-feldraeuber",
+      "label": "Tiergestalt: Feldräuber",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 25,
+      "levelRequirement": 5,
+      "formId": "feldraeuber",
+      "summary": "Verwandlung in Feldräuber. Mana 25, Stufe 5.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 25,
+          "properties": "Stufe 5, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-sumpfblutfliege",
+      "label": "Tiergestalt: Sumpfblutfliege",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 35,
+      "levelRequirement": 10,
+      "formId": "sumpfblutfliege",
+      "summary": "Verwandlung in Sumpfblutfliege. Mana 35, Stufe 10.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 35,
+          "properties": "Stufe 10, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-minecrawler",
+      "label": "Tiergestalt: Minecrawler",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 40,
+      "levelRequirement": 15,
+      "formId": "minecrawler",
+      "summary": "Verwandlung in Minecrawler. Mana 40, Stufe 15.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 40,
+          "properties": "Stufe 15, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-sumpfhai",
+      "label": "Tiergestalt: Sumpfhai",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 50,
+      "levelRequirement": 30,
+      "formId": "sumpfhai",
+      "summary": "Verwandlung in Sumpfhai. Mana 50, Stufe 30.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 50,
+          "properties": "Stufe 30, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-scavenger",
+      "label": "Tiergestalt: Scavenger",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 10,
+      "levelRequirement": 0,
+      "formId": "scavenger",
+      "summary": "Verwandlung in Scavenger. Mana 10, Stufe frei.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 10,
+          "properties": "Stufe 0, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-wolf",
+      "label": "Tiergestalt: Wolf",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 25,
+      "levelRequirement": 5,
+      "formId": "wolf",
+      "summary": "Verwandlung in Wolf. Mana 25, Stufe 5.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 25,
+          "properties": "Stufe 5, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-warg",
+      "label": "Tiergestalt: Warg",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 35,
+      "levelRequirement": 10,
+      "formId": "warg",
+      "summary": "Verwandlung in Warg. Mana 35, Stufe 10.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 35,
+          "properties": "Stufe 10, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-snapper",
+      "label": "Tiergestalt: Snapper",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 50,
+      "levelRequirement": 18,
+      "formId": "snapper",
+      "summary": "Verwandlung in Snapper. Mana 50, Stufe 18.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 50,
+          "properties": "Stufe 18, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-drachensnapper",
+      "label": "Tiergestalt: Drachensnapper",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 60,
+      "levelRequirement": 25,
+      "formId": "drachensnapper",
+      "summary": "Verwandlung in Drachensnapper. Mana 60, Stufe 25.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 60,
+          "properties": "Stufe 25, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-molerat",
+      "label": "Tiergestalt: Molerat",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 15,
+      "levelRequirement": 0,
+      "formId": "molerat",
+      "summary": "Verwandlung in Molerat. Mana 15, Stufe frei.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 15,
+          "properties": "Stufe 0, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-fetter-molerat",
+      "label": "Tiergestalt: Fetter Molerat",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 20,
+      "levelRequirement": 3,
+      "formId": "fetter-molerat",
+      "summary": "Verwandlung in Fetter Molerat. Mana 20, Stufe 3.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 20,
+          "properties": "Stufe 3, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-wildschwein",
+      "label": "Tiergestalt: Wildschwein",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 30,
+      "levelRequirement": 6,
+      "formId": "wildschwein",
+      "summary": "Verwandlung in Wildschwein. Mana 30, Stufe 6.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 30,
+          "properties": "Stufe 6, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-lurker",
+      "label": "Tiergestalt: Lurker",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 40,
+      "levelRequirement": 12,
+      "formId": "lurker",
+      "summary": "Verwandlung in Lurker. Mana 40, Stufe 12.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 40,
+          "properties": "Stufe 12, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-feuerwaran",
+      "label": "Tiergestalt: Feuerwaran",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 50,
+      "levelRequirement": 18,
+      "formId": "feuerwaran",
+      "summary": "Verwandlung in Feuerwaran. Mana 50, Stufe 18.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 50,
+          "properties": "Stufe 18, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-baer",
+      "label": "Tiergestalt: Bär",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 60,
+      "levelRequirement": 25,
+      "formId": "baer",
+      "summary": "Verwandlung in Bär. Mana 60, Stufe 25.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 60,
+          "properties": "Stufe 25, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    },
+    {
+      "id": "tiergestalt-schattenlaeufer",
+      "label": "Tiergestalt: Schattenläufer",
+      "school": "gestaltwandler",
+      "maxRank": 1,
+      "kind": "form",
+      "mana": 80,
+      "levelRequirement": 35,
+      "formId": "schattenlaeufer",
+      "summary": "Verwandlung in Schattenläufer. Mana 80, Stufe 35.",
+      "levels": [
+        {
+          "rank": 1,
+          "mana": 80,
+          "properties": "Stufe 35, Tiergestalt"
+        }
+      ],
+      "description": "Verwandlungszauber. Benötigt 2 Aktionen. Nach einer Verwandlung spielt der Druide mit dem Monsterbogen des Tieres. Zauberwirken und Inventarzugriff sind in Tierform nicht möglich. Eine Verwandlung hält maximal 5 Minuten. Rückverwandlung mit Standardaktion."
+    }
+  ],
+  "forms": [
+    {
+      "id": "fleischwanze",
+      "label": "Fleischwanze",
+      "mana": 10,
+      "level": 0,
+      "chain": "insekten"
+    },
+    {
+      "id": "blutfliege",
+      "label": "Blutfliege",
+      "mana": 20,
+      "level": 3,
+      "chain": "insekten"
+    },
+    {
+      "id": "feldraeuber",
+      "label": "Feldräuber",
+      "mana": 25,
+      "level": 5,
+      "chain": "insekten"
+    },
+    {
+      "id": "sumpfblutfliege",
+      "label": "Sumpfblutfliege",
+      "mana": 35,
+      "level": 10,
+      "chain": "insekten"
+    },
+    {
+      "id": "minecrawler",
+      "label": "Minecrawler",
+      "mana": 40,
+      "level": 15,
+      "chain": "insekten"
+    },
+    {
+      "id": "sumpfhai",
+      "label": "Sumpfhai",
+      "mana": 50,
+      "level": 30,
+      "chain": "insekten"
+    },
+    {
+      "id": "scavenger",
+      "label": "Scavenger",
+      "mana": 10,
+      "level": 0,
+      "chain": "raeuber"
+    },
+    {
+      "id": "wolf",
+      "label": "Wolf",
+      "mana": 25,
+      "level": 5,
+      "chain": "raeuber"
+    },
+    {
+      "id": "warg",
+      "label": "Warg",
+      "mana": 35,
+      "level": 10,
+      "chain": "raeuber"
+    },
+    {
+      "id": "snapper",
+      "label": "Snapper",
+      "mana": 50,
+      "level": 18,
+      "chain": "raeuber"
+    },
+    {
+      "id": "drachensnapper",
+      "label": "Drachensnapper",
+      "mana": 60,
+      "level": 25,
+      "chain": "raeuber"
+    },
+    {
+      "id": "molerat",
+      "label": "Molerat",
+      "mana": 15,
+      "level": 0,
+      "chain": "wildnis"
+    },
+    {
+      "id": "fetter-molerat",
+      "label": "Fetter Molerat",
+      "mana": 20,
+      "level": 3,
+      "chain": "wildnis"
+    },
+    {
+      "id": "wildschwein",
+      "label": "Wildschwein",
+      "mana": 30,
+      "level": 6,
+      "chain": "wildnis"
+    },
+    {
+      "id": "lurker",
+      "label": "Lurker",
+      "mana": 40,
+      "level": 12,
+      "chain": "wildnis"
+    },
+    {
+      "id": "feuerwaran",
+      "label": "Feuerwaran",
+      "mana": 50,
+      "level": 18,
+      "chain": "wildnis"
+    },
+    {
+      "id": "baer",
+      "label": "Bär",
+      "mana": 60,
+      "level": 25,
+      "chain": "wildnis"
+    },
+    {
+      "id": "schattenlaeufer",
+      "label": "Schattenläufer",
+      "mana": 80,
+      "level": 35,
+      "chain": "final",
+      "requiresAnyCount": [
+        "baer",
+        "drachensnapper",
+        "sumpfhai"
+      ],
+      "requiresAnyCountN": 2
+    }
+  ],
+  "trees": [
+    {
+      "id": "druiden-riten",
+      "label": "Riten der Druiden",
+      "nodes": [
+        {
+          "id": "initiation",
+          "label": "Die Initiation",
+          "lpCost": 20,
+          "requires": [],
+          "attributeRequirements": {},
+          "description": "Wähle deine 1. Schule & +3 Zauber dieser Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 1,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-2",
+          "label": "2. Ritus",
+          "lpCost": 0,
+          "requires": [
+            "initiation"
+          ],
+          "attributeRequirements": {
+            "erf": 20
+          },
+          "description": "+1 Zauber der 1. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 2,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "weggabelung",
+          "label": "3. Ritus – Die Weggabelung",
+          "lpCost": 5,
+          "requires": [
+            "ritus-2"
+          ],
+          "attributeRequirements": {},
+          "description": "Wähle deine 2. Schule & +1 Zauber dieser Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 3,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-4",
+          "label": "4. Ritus",
+          "lpCost": 0,
+          "requires": [
+            "weggabelung"
+          ],
+          "attributeRequirements": {
+            "intu": 25
+          },
+          "description": "+2 Zauber der 1. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 4,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-5",
+          "label": "5. Ritus",
+          "lpCost": 10,
+          "requires": [
+            "ritus-4"
+          ],
+          "attributeRequirements": {},
+          "description": "+2 Zauber der 2. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 5,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-6",
+          "label": "6. Ritus",
+          "lpCost": 5,
+          "requires": [
+            "ritus-5"
+          ],
+          "attributeRequirements": {
+            "erf": 30
+          },
+          "description": "+2 Zauber der 1. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 6,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-7",
+          "label": "7. Ritus",
+          "lpCost": 5,
+          "requires": [
+            "ritus-6"
+          ],
+          "attributeRequirements": {
+            "intu": 30
+          },
+          "description": "+2 Zauber der 2. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 7,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-8",
+          "label": "8. Ritus",
+          "lpCost": 5,
+          "requires": [
+            "ritus-7"
+          ],
+          "attributeRequirements": {},
+          "description": "+1 Zauber der 1. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 8,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-9",
+          "label": "9. Ritus",
+          "lpCost": 10,
+          "requires": [
+            "ritus-8"
+          ],
+          "attributeRequirements": {},
+          "description": "+2 Zauber der 1. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 9,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "ritus-10",
+          "label": "10. Ritus",
+          "lpCost": 0,
+          "requires": [
+            "ritus-9"
+          ],
+          "attributeRequirements": {},
+          "description": "+1 Zauber der 1. Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 10,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "letzte-schule",
+          "label": "Die letzte Schule",
+          "lpCost": 25,
+          "requires": [
+            "ritus-10"
+          ],
+          "attributeRequirements": {},
+          "description": "+1 Zauber für jede Schule.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 11,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        },
+        {
+          "id": "vertiefungsritus",
+          "label": "Vertiefungsritus",
+          "lpCost": 15,
+          "requires": [
+            "initiation"
+          ],
+          "attributeRequirements": {},
+          "description": "+2 beliebige Zauber. Dieser Ritus ist wiederholbar.",
+          "category": "Riten der Druiden",
+          "rankGroup": "druid-rite",
+          "rank": 12,
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          }
+        }
+      ]
+    }
+  ]
+}

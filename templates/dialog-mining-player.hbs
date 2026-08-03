@@ -1,0 +1,50 @@
+<div class="gothic-tales gt-dialog gt-mining-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-mountain"></i> Schürfen</h2>
+      <p>Erz suchen, Vorkommen bestimmen und pro Vorkommen abbauen.</p>
+    </div>
+  </header>
+
+  {{#if note}}<div class="gt-help-box">{{note}}</div>{{/if}}
+  {{#if blocked}}<div class="gt-help-box gt-warning-box">{{blockedReason}}</div>{{/if}}
+
+  <div class="gt-state-grid">
+    <div><span>Grad</span><strong>{{rank.label}}</strong></div>
+    <div><span>Suchen</span><strong>{{successes}} / {{maxSearches}}</strong></div>
+    <div><span>Timer</span><strong>{{cooldownText}}</strong></div>
+    <div><span>Ort</span><strong>{{#if suitable}}geeignet{{else}}ungeeignet{{/if}}</strong></div>
+    <div><span>Erz</span><strong>{{#if ore}}{{ore.label}}{{else}}offen{{/if}}</strong></div>
+    <div><span>Vorkommen</span><strong>{{currentMineRoll}} / {{deposits}}</strong></div>
+  </div>
+
+  <section class="gt-mini-section">
+    <h3>1. Erz suchen</h3>
+    <p>2–10 kein Fund, 11–24 Eisenerz, 25+ Magisches Erz.</p>
+    <button type="button" class="gt-mining-search" {{#unless canSearch}}disabled{{/unless}}>
+      <i class="fas fa-dice-d20"></i> Erz suchen
+    </button>
+  </section>
+
+  <section class="gt-mini-section">
+    <h3>2. Menge bestimmen</h3>
+    <p>1 Vorkommen + 1 weiteres Vorkommen je erreichter 10er-Stelle.</p>
+    <button type="button" class="gt-mining-amount" {{#unless canAmount}}disabled{{/unless}}>
+      <i class="fas fa-layer-group"></i> Vorkommen bestimmen
+    </button>
+  </section>
+
+  <section class="gt-mini-section">
+    <h3>3. Erz abbauen</h3>
+    <p>Pro Vorkommen ein Schürfen-Wurf. Alle Ergebnisse werden addiert.</p>
+    <p>Bisher abgebaut: <strong>{{minedTotal}}</strong></p>
+    <button type="button" class="gt-mining-mine" {{#unless canMine}}disabled{{/unless}}>
+      <i class="fas fa-pickaxe"></i> Vorkommen abbauen
+    </button>
+  </section>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

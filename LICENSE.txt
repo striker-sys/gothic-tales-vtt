@@ -1,0 +1,9 @@
+Gothic Tales System Package
+
+Autor des Foundry-Systems: Kuberia
+
+Die enthaltenen Spielmaterialien und Quellen stammen aus den bereitgestellten Gothic-Tales-PDFs und sind für die Nutzung im Spielsystem eingebunden.
+
+Drittinhalte und Fremdrechte
+----------------------------
+Diese Datei gewährt keine Rechte an Inhalten des Gothic-Tales-Pen-&-Paper-Systems, an Gothic beziehungsweise Gothic 1 Remake, an Kartenbildern, Marken oder sonstigen Drittmaterialien. Die Freigabe des Gothic-Tales-Projekts und alle weiteren Fremdrechte richten sich nach ihren jeweiligen Bedingungen. Einzelheiten stehen in THIRD_PARTY_NOTICES.md.

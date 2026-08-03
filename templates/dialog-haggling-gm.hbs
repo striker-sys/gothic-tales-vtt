@@ -1,0 +1,46 @@
+<form class="gothic-tales gt-dialog gt-haggling-gm">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-comments-dollar"></i> Feilschen vorbereiten</h2>
+      <p>Der Schwierigkeitsgrad wird automatisch aus dem Ausgangspreis berechnet.</p>
+    </div>
+  </header>
+
+  <div class="gt-dialog-grid">
+    <label>Händler
+      <input class="gt-haggling-merchant" type="text" value="{{merchant}}" placeholder="z. B. Matteo">
+    </label>
+    <label>Ausgangspreis
+      <input class="gt-haggling-price" type="number" min="1" step="1" value="{{basePrice}}">
+    </label>
+    <label>SchwG
+      <span class="gt-big-badge gt-haggling-difficulty">{{difficulty}}</span>
+    </label>
+    <label>Max. Fehlschläge
+      <input class="gt-haggling-max-fails" type="number" min="1" step="1" value="{{maxFailures}}">
+    </label>
+    <label>Mindestpreis in Zehnteln
+      <input class="gt-haggling-min-tenths" type="number" min="1" max="10" step="1" value="{{minTenths}}">
+    </label>
+    <label>Zielspieler
+      <select class="gt-haggling-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+  </div>
+
+  <label class="gt-full-field">Notiz / Warenpaket
+    <textarea class="gt-haggling-note" rows="3" placeholder="Optional: Ware, Händlerlaune, besondere Umstände">{{note}}</textarea>
+  </label>
+
+  <div class="gt-help-box">
+    <strong>Regel:</strong> Jeder Wurf braucht ein Argument. Erfolg senkt den Preis um 1/10, Minimum ist 5/10. Bei 3 Fehlschlägen ist der Händler verärgert und der Normalpreis gilt wieder.
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="submit"><i class="fas fa-paper-plane"></i> An Spieler senden</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</form>

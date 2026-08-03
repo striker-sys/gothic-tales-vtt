@@ -1,0 +1,48 @@
+<form class="gothic-tales gt-dialog gt-mining-gm">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-mountain"></i> Schürfen vorbereiten</h2>
+      <p>Erzsuche oder vorhandene Erzader für einen aktiven Spieler starten.</p>
+    </div>
+  </header>
+
+  <div class="gt-dialog-grid">
+    <label>Zielspieler
+      <select class="gt-mining-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+    <label class="gt-check-row">
+      <input class="gt-mining-suitable" type="checkbox" {{#if suitable}}checked{{/if}}>
+      Ort ist geeignet: Höhle, Tunnel, Mine
+    </label>
+    <label class="gt-check-row">
+      <input class="gt-mining-existing" type="checkbox" {{#if existingDeposit}}checked{{/if}}>
+      SL-Erzader verwenden
+    </label>
+    <label>Erzart der SL-Erzader
+      <select class="gt-mining-ore">
+        {{#each oreOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    <label>Vorkommen der SL-Erzader
+      <input class="gt-mining-deposits" type="number" min="1" step="1" value="{{deposits}}">
+    </label>
+  </div>
+
+  <label class="gt-full-field">Notiz
+    <textarea class="gt-mining-note" rows="3" placeholder="Optional: Fundort, Aderbeschreibung, Besonderheiten">{{note}}</textarea>
+  </label>
+
+  <div class="gt-help-box">
+    Für die normale Suche braucht der Spieler eine Spitzhacke. Nach jeder Suche läuft ein 30-Minuten-Timer. Nur ein erfolgreicher Fund zählt gegen das Sitzungslimit.
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="submit"><i class="fas fa-paper-plane"></i> An Spieler senden</button>
+    <button type="button" class="gt-mining-reset"><i class="fas fa-rotate-left"></i> Zähler/Timer zurücksetzen</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</form>

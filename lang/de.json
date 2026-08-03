@@ -1,0 +1,12 @@
+{
+  "GOTHICTALES.SystemName": "Gothic Tales",
+  "GOTHICTALES.ActorSheet": "Gothic Tales Bogen",
+  "GOTHICTALES.ItemSheet": "Gothic Tales Gegenstand",
+  "GOTHICTALES.Roll": "Wurf",
+  "GOTHICTALES.ImportTitle": "Gothic Tales Quellen importieren",
+  "GOTHICTALES.DeleteItem": "Gegenstand löschen",
+  "GOTHICTALES.Settings.AutoImport.Name": "Legacy Welt-Import automatisch ausführen",
+  "GOTHICTALES.Settings.AutoImport.Hint": "Veraltet seit 0.6.0: Die Kerninhalte liegen als System-Compendien im Manifest. Aktiviere dies nur, wenn die Inhalte zusätzlich automatisch in Welt-Compendien kopiert werden sollen.",
+  "GOTHICTALES.Equipment.Equipped": "Ausgerüstet",
+  "GOTHICTALES.Equipment.Toggle": "Ausrüstung umschalten"
+}

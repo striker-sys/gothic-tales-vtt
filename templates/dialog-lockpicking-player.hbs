@@ -1,0 +1,31 @@
+{{!-- Spielerfenster für das Schlösserknacken-Minispiel. --}}
+<div class="gothic-tales gt-dialog gt-lockpicking-player {{#if failed}}failed{{/if}}">
+  <header class="gt-lock-player-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Schlösserknacken</div>
+      <h2>Schloss knacken</h2>
+    </div>
+    <div class="gt-lock-difficulty-badge">SchwG {{difficulty}}</div>
+  </header>
+
+  {{#if hideCount}}
+    <p class="gt-help">Die Anzahl der Schalter ist verborgen. Merke dir deine Eingaben gut.</p>
+  {{else}}
+    <p class="gt-help">Dieses Schloss hat <strong>{{count}}</strong> Schalter. Gib die Reihenfolge in einem Rutsch ein.</p>
+  {{/if}}
+
+  <div class="gt-lock-progress">
+    {{#each progressDots}}
+      <span class="{{#if done}}done{{/if}}"></span>
+    {{/each}}
+  </div>
+
+  <div class="gt-lock-choice-grid">
+    <button type="button" class="gt-lock-choice" data-direction="left"><i class="fas fa-arrow-left"></i> Links</button>
+    <button type="button" class="gt-lock-choice" data-direction="right">Rechts <i class="fas fa-arrow-right"></i></button>
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-lock-abandon"><i class="fas fa-xmark"></i> Abbrechen</button>
+  </footer>
+</div>

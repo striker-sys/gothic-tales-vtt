@@ -1,0 +1,12 @@
+{
+  "GOTHICTALES.SystemName": "Gothic Tales",
+  "GOTHICTALES.ActorSheet": "Gothic Tales Sheet",
+  "GOTHICTALES.ItemSheet": "Gothic Tales Item",
+  "GOTHICTALES.Roll": "Roll",
+  "GOTHICTALES.ImportTitle": "Import Gothic Tales Sources",
+  "GOTHICTALES.DeleteItem": "Delete item",
+  "GOTHICTALES.Settings.AutoImport.Name": "Run legacy world import automatically",
+  "GOTHICTALES.Settings.AutoImport.Hint": "Deprecated since 0.6.0: Core content is delivered as manifest system compendia. Enable this only if content should additionally be copied into world compendia automatically.",
+  "GOTHICTALES.Equipment.Equipped": "Equipped",
+  "GOTHICTALES.Equipment.Toggle": "Toggle equipment"
+}

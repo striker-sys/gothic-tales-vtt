@@ -1,0 +1,83 @@
+<div class="gothic-tales gt-dialog gt-alchemy-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-flask"></i> Alchemie</h2>
+      <p>Trank wählen, Aufgaben erzeugen und die Brauschritte auswürfeln.</p>
+    </div>
+  </header>
+
+  {{#if note}}<div class="gt-help-box">{{note}}</div>{{/if}}
+  {{#if blocked}}<div class="gt-help-box gt-warning-box">{{blockedReason}}</div>{{/if}}
+
+  <div class="gt-state-grid">
+    <div><span>Grad</span><strong>{{rank.label}}</strong></div>
+    <div><span>Alchemietisch</span><strong>{{#if hasTable}}vorhanden{{else}}fehlt{{/if}}</strong></div>
+    <div><span>Unterstützung</span><strong>nicht möglich</strong></div>
+  </div>
+
+  <div class="gt-dialog-grid">
+    <label>Rezept
+      <select class="gt-alchemy-mode">
+        {{#each recipeOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+    </label>
+    {{#if isTaskPotion}}
+    <label>Ansätze
+      <input class="gt-alchemy-batches" type="number" min="1" max="{{maxBatches}}" step="1" value="{{batches}}">
+    </label>
+    {{/if}}
+  </div>
+
+  {{#if isTaskPotion}}
+  <section class="gt-mini-section">
+    <h3>Heil-/Manatrank</h3>
+    <p>Zutaten: {{herbCostText}}. Zuerst Aufgaben mit FähW&B ohne W20 erzeugen, danach jede Aufgabe lösen.</p>
+    <button type="button" class="gt-alchemy-generate">
+      <i class="fas fa-list-check"></i> Aufgaben erzeugen
+    </button>
+
+    {{#if tasks.length}}
+    <ul class="gt-mini-list">
+      {{#each tasks}}
+      <li>
+        <strong>{{task}}</strong> · SchwG {{difficulty}} · Aufgabe-Wurf {{roll}} ·
+        {{#if solved}}Ergebnis: {{result}}{{else}}offen <button type="button" class="gt-alchemy-solve" data-index="{{index}}">lösen</button>{{/if}}
+      </li>
+      {{/each}}
+    </ul>
+    <p>Aktuelle Wirkung: <strong>{{effectText}}</strong></p>
+    {{/if}}
+  </section>
+  {{/if}}
+
+  {{#if simpleRecipe}}
+  <section class="gt-mini-section">
+    <h3>{{simpleRecipe.label}}</h3>
+    <p>{{simpleRecipe.description}}</p>
+    <p>SchwG <strong>{{simpleRecipe.difficulty}}</strong>. Bei Fehlschlag geht eine Ingredienz verloren, bei kritischem Fehlschlag alle.</p>
+    <button type="button" class="gt-alchemy-simple">
+      <i class="fas fa-dice-d20"></i> Trank brauen
+    </button>
+  </section>
+  {{/if}}
+
+  {{#if isPermanent}}
+  <section class="gt-mini-section">
+    <h3>Permanenter Trank</h3>
+    <p>Benötigt immer Kronstöckel + spezifisches Kraut. SchwG 30.</p>
+    <label>Permanenter Trank
+      <select class="gt-alchemy-permanent">
+        {{#each permanentOptions}}<option value="{{id}}">{{label}} · {{herb}}</option>{{/each}}
+      </select>
+    </label>
+    <button type="button" class="gt-alchemy-permanent-roll">
+      <i class="fas fa-dice-d20"></i> Permanenten Trank brauen
+    </button>
+  </section>
+  {{/if}}
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

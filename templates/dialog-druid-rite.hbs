@@ -1,0 +1,52 @@
+<div class="gothic-tales gt-dialog gt-druid-rite-dialog">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Druidenkunst</div>
+      <h2><i class="fas fa-leaf"></i> {{rite.label}}</h2>
+      <p>{{rite.summary}}</p>
+    </div>
+  </header>
+
+  <div class="gt-help-box">
+    {{#if lpCost}}Kosten: <strong>{{lpCost}} LP</strong>.{{else}}Keine LP-Kosten.{{/if}}
+    Auch Riten ohne LP-Kosten benötigen einen Lehrer oder Lernmoment.
+  </div>
+
+  {{#if plan.chooseSchool}}
+  <label class="gt-full-field">Schule wählen
+    <select class="gt-druid-school-select">
+      {{#each schools}}
+      <option value="{{id}}">{{label}}</option>
+      {{/each}}
+    </select>
+  </label>
+  {{/if}}
+
+  {{#if plan.chooseRemainingSchool}}
+  <div class="gt-help-box">
+    Die noch fehlende Schule wird automatisch ergänzt.
+  </div>
+  {{/if}}
+
+  {{#if selectionSlots.length}}
+  <section class="gt-mini-section">
+    <h3>Zauber wählen oder steigern</h3>
+    <p>Wähle pro Feld einen Zauber. Bereits gelernte Zauber steigen um eine Stufe.</p>
+    {{#each selectionSlots}}
+    <label class="gt-full-field">Auswahl {{inc @index}} · {{label}}
+      <select class="gt-druid-spell-select" data-slot="{{index}}">
+        <option value="">— keine Auswahl —</option>
+        {{#each options}}
+        <option value="{{id}}" {{#if disabled}}disabled{{/if}}>{{optionLabel}}</option>
+        {{/each}}
+      </select>
+    </label>
+    {{/each}}
+  </section>
+  {{/if}}
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-druid-rite-apply"><i class="fas fa-check"></i> Ritus anwenden</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Abbrechen</button>
+  </footer>
+</div>

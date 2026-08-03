@@ -1,0 +1,93 @@
+<div class="gothic-tales gt-dialog gt-smithing-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-fire-burner"></i> Schmiedekunst</h2>
+      <p>Vorbereitungswürfel sammeln und eine Nahkampfwaffe schmieden.</p>
+    </div>
+  </header>
+
+  {{#if note}}<div class="gt-help-box">{{note}}</div>{{/if}}
+  {{#if blocked}}<div class="gt-help-box gt-warning-box">{{blockedReason}}</div>{{/if}}
+
+  <section class="gt-mini-section">
+    <h3>1. Vorbereitungsphase</h3>
+    <p>Pro Aufgabe 15 Eisenerz oder 15 magisches Erz. Vorbereitung erzeugt SchwG: 30 - Schmiedewurf.</p>
+    <div class="gt-crafting-table">
+      {{#each prep}}
+      <div class="gt-crafting-row">
+        <strong>{{id}}. {{label}}</strong>
+        <span>{{skills}}</span>
+        <select class="gt-smithing-prep-material" data-index="{{@index}}">
+          <option value="iron">15 Eisenerz</option>
+          <option value="magic">15 Magisches Erz</option>
+        </select>
+        <button type="button" class="gt-smithing-prep-roll" data-index="{{@index}}">SchwG erzeugen</button>
+        <span>SchwG: {{#if difficulty}}{{difficulty}}{{else}}offen{{/if}}</span>
+        <input class="gt-smithing-helper-total" data-index="{{@index}}" type="number" placeholder="Helferwurf">
+        <select class="gt-smithing-helper-die" data-index="{{@index}}">
+          <option value="w2">w2</option><option value="w4">w4</option><option value="w6">w6</option><option value="w8">w8</option><option value="w10">w10</option><option value="w12">w12</option>
+        </select>
+        <button type="button" class="gt-smithing-helper-save" data-index="{{@index}}">Helfer speichern</button>
+        <span>{{#if awarded}}Würfel: {{awarded}}{{else}}kein Würfel{{/if}}</span>
+      </div>
+      {{/each}}
+    </div>
+    <p>Gesammelte Würfel: <strong>{{#if dicePool.length}}{{dicePool}}{{else}}keine{{/if}}</strong></p>
+  </section>
+
+  <section class="gt-mini-section">
+    <h3>2. Schmiedephase</h3>
+    <label>Waffenname
+      <input class="gt-smithing-name" type="text" value="{{weapon.name}}">
+    </label>
+
+    <div class="gt-dialog-grid">
+      <label>Art
+        <select class="gt-smithing-type">
+          {{#each typeOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}} · SchwG {{difficulty}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Waffen-W
+        <select class="gt-smithing-die">
+          {{#each dieOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}} · SchwG {{difficulty}}</option>{{/each}}
+        </select>
+      </label>
+      <label>Bonus
+        <select class="gt-smithing-bonus">
+          {{#each bonusOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}} · SchwG {{difficulty}}</option>{{/each}}
+        </select>
+      </label>
+      <label>2. Waffen-W
+        <select class="gt-smithing-second-die">
+          {{#each secondDieOptions}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}{{#if difficulty}} · SchwG {{difficulty}}{{/if}}</option>{{/each}}
+        </select>
+      </label>
+    </div>
+
+    <label>Zusatzwürfel aus Vorbereitung
+      <input class="gt-smithing-extra-dice" type="text" placeholder="z. B. w6 + w4">
+    </label>
+
+    <div class="gt-dialog-actions">
+      <button type="button" class="gt-smithing-forge-step" data-step="type">Art würfeln</button>
+      <button type="button" class="gt-smithing-forge-step" data-step="die">Waffen-W würfeln</button>
+      <button type="button" class="gt-smithing-forge-step" data-step="bonus">Bonus würfeln</button>
+      <button type="button" class="gt-smithing-forge-step" data-step="second">2. Waffen-W würfeln</button>
+    </div>
+
+    <h4>Eigenschaften</h4>
+    <div class="gt-checkbox-grid">
+      {{#each propertyOptions}}
+      <label><input type="checkbox" class="gt-smithing-property" value="{{id}}" {{#if selected}}checked{{/if}}> {{label}} · SchwG {{difficulty}}</label>
+      {{/each}}
+    </div>
+
+    <p>Aktueller Entwurf: <strong>{{resultText}}</strong></p>
+    <button type="button" class="gt-smithing-create"><i class="fas fa-plus"></i> Waffe ins Inventar schreiben</button>
+  </section>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>

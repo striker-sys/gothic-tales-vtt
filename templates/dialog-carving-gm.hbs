@@ -1,0 +1,35 @@
+<form class="gothic-tales gt-dialog gt-carving-gm">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-feather-pointed"></i> Schnitzkunst vorbereiten</h2>
+      <p>Schnitzprojekt für einen Spieler starten.</p>
+    </div>
+  </header>
+
+  <div class="gt-dialog-grid">
+    <label>Zielspieler
+      <select class="gt-carving-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+    <label class="gt-check-row">
+      <input class="gt-carving-knife" type="checkbox" {{#if hasKnife}}checked{{/if}}>
+      Schnitzmesser bestätigt
+    </label>
+    <label class="gt-check-row">
+      <input class="gt-carving-wood" type="checkbox" {{#if suitableWood}}checked{{/if}}>
+      Umgebung für Bogenholz geeignet
+    </label>
+  </div>
+
+  <label class="gt-full-field">Notiz
+    <textarea class="gt-carving-note" rows="3" placeholder="Optional: Rast, Wald, Flussufer, Material">{{note}}</textarea>
+  </label>
+
+  <footer class="gt-dialog-actions">
+    <button type="submit"><i class="fas fa-paper-plane"></i> An Spieler senden</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</form>

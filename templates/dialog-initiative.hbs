@@ -1,0 +1,40 @@
+{{!-- Initiativeentscheidung für einen Spielercombatant. --}}
+<section class="gt-initiative-dialog gt-scroll">
+  <header class="gt-dialog-heading">
+    <div>
+      <small>Combat Encounter</small>
+      <h2><i class="fas fa-flag"></i> {{actor.name}}</h2>
+    </div>
+  </header>
+
+  <div class="gt-initiative-summary" aria-label="Initiativewerte">
+    <span><b>Wert</b>{{initiative.value}}</span>
+    <span><b>Würfel</b>{{initiative.die}}</span>
+    <span><b>Bonus</b>{{bonusText}}</span>
+  </div>
+
+  <fieldset>
+    <legend>Aktion</legend>
+    <label class="gt-choice-row"><input type="radio" name="method" value="roll" checked> Initiative würfeln</label>
+    <label class="gt-choice-row"><input type="radio" name="method" value="yield"> Würfel abgeben – nur der Bonus zählt</label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Wurfsituation</legend>
+    <label class="gt-choice-row"><input type="radio" name="mode" value="normal" checked> Normal</label>
+    <label class="gt-choice-row"><input type="radio" name="mode" value="advantage"> Vorteil</label>
+    <label class="gt-choice-row"><input type="radio" name="mode" value="disadvantage"> Nachteil</label>
+    <label>Stärke
+      <select name="level">
+        <option value="1">klein (W2)</option>
+        <option value="2" selected>mittel (W6)</option>
+        <option value="3">groß (W12)</option>
+      </select>
+    </label>
+  </fieldset>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-times"></i> Abbrechen</button>
+    <button type="button" class="gt-initiative-submit"><i class="fas fa-dice"></i> Bestätigen</button>
+  </footer>
+</section>

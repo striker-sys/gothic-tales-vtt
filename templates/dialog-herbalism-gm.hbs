@@ -1,0 +1,36 @@
+<form class="gothic-tales gt-dialog gt-herbalism-gm">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-seedling"></i> Kräuterkunde vorbereiten</h2>
+      <p>Kräutersuche für einen aktiven Spieler starten.</p>
+    </div>
+  </header>
+
+  <div class="gt-dialog-grid">
+    <label>Zielspieler
+      <select class="gt-herbalism-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}
+      </select>
+    </label>
+    <label class="gt-check-row">
+      <input class="gt-herbalism-outdoors" type="checkbox" {{#if outdoors}}checked{{/if}}>
+      Ort ist freie Natur
+    </label>
+  </div>
+
+  <label class="gt-full-field">Notiz
+    <textarea class="gt-herbalism-note" rows="3" placeholder="Optional: Wald, Sumpf, Jahreszeit, besondere Umstände">{{note}}</textarea>
+  </label>
+
+  <div class="gt-help-box">
+    Nur in freier Natur. Nach jeder Suche gilt ein 30-Minuten-Timer. Nur erfolgreiche Suchen zählen gegen das Sitzungslimit. Unterstützung ist nicht möglich.
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="submit"><i class="fas fa-paper-plane"></i> An Spieler senden</button>
+    <button type="button" class="gt-herbalism-reset"><i class="fas fa-rotate-left"></i> Zähler/Timer zurücksetzen</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</form>

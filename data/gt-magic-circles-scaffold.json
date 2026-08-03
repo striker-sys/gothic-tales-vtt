@@ -1,0 +1,529 @@
+{
+  "trees": [
+    {
+      "id": "magie",
+      "label": "Magiekreise",
+      "nodes": [
+        {
+          "id": "kreis-1",
+          "label": "1. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [],
+          "attributeRequirements": {
+            "konz": 15
+          },
+          "description": "<p>Du kannst nun magische Runen nutzen. Um zu zaubern, musst du deine Rune/Spruchrolle aktivieren (‚Waffe ziehen‘: Standardaktion). Bist du einmal zauberbereit, gilt das Wechseln zwischen Zaubern als freie Aktion.</p> <p>Du hast nun 10 Felder Zauberreichweite.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Magiekreise",
+          "rankGroup": "magiekreis",
+          "rank": 1,
+          "magicDice": []
+        },
+        {
+          "id": "kreis-2",
+          "label": "2. Kreis der Magie",
+          "lpCost": 5,
+          "requires": [
+            "kreis-1"
+          ],
+          "attributeRequirements": {
+            "konz": 20,
+            "erf": 20
+          },
+          "description": "<p>Du kannst nun magische Runen nutzen. Um zu zaubern, musst du deine Rune/Spruchrolle aktivieren (‚Waffe ziehen‘: Standardaktion). Bist du einmal zauberbereit, gilt das Wechseln zwischen Zaubern als freie Aktion.</p> <p><strong>Du hast nun 12 Felder Zauberreichweite.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Magiekreise",
+          "rankGroup": "magiekreis",
+          "rank": 2,
+          "magicDice": []
+        },
+        {
+          "id": "kreis-3",
+          "label": "3. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-2"
+          ],
+          "attributeRequirements": {
+            "konz": 30,
+            "erf": 30
+          },
+          "description": "<p>Du kannst nun magische Runen nutzen. Um zu zaubern, musst du deine Rune/Spruchrolle aktivieren (‚Waffe ziehen‘: Standardaktion). Bist du einmal zauberbereit, gilt das Wechseln zwischen Zaubern als freie Aktion.</p> <p><strong>Du hast nun 14 Felder Zauberreichweite.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Magiekreise",
+          "rankGroup": "magiekreis",
+          "rank": 3,
+          "magicDice": []
+        },
+        {
+          "id": "kreis-4",
+          "label": "4. Kreis der Magie",
+          "lpCost": 5,
+          "requires": [
+            "kreis-3"
+          ],
+          "attributeRequirements": {
+            "konz": 40,
+            "erf": 35
+          },
+          "description": "<p>Du kannst nun magische Runen nutzen. Um zu zaubern, musst du deine Rune/Spruchrolle aktivieren (‚Waffe ziehen‘: Standardaktion). Bist du einmal zauberbereit, gilt das Wechseln zwischen Zaubern als freie Aktion.</p> <p><strong>Du hast nun 16 Felder Zauberreichweite.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Magiekreise",
+          "rankGroup": "magiekreis",
+          "rank": 4,
+          "magicDice": []
+        },
+        {
+          "id": "kreis-5",
+          "label": "5. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-4"
+          ],
+          "attributeRequirements": {
+            "konz": 45,
+            "erf": 45
+          },
+          "description": "<p>Du kannst nun magische Runen nutzen. Um zu zaubern, musst du deine Rune/Spruchrolle aktivieren (‚Waffe ziehen‘: Standardaktion). Bist du einmal zauberbereit, gilt das Wechseln zwischen Zaubern als freie Aktion.</p> <p><strong>Du hast nun 18 Felder Zauberreichweite.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Magiekreise",
+          "rankGroup": "magiekreis",
+          "rank": 5,
+          "magicDice": []
+        },
+        {
+          "id": "kreis-6",
+          "label": "6. Kreis der Magie",
+          "lpCost": 10,
+          "requires": [
+            "kreis-5"
+          ],
+          "attributeRequirements": {
+            "konz": 50,
+            "erf": 50
+          },
+          "description": "<p>Du kannst nun magische Runen nutzen. Um zu zaubern, musst du deine Rune/Spruchrolle aktivieren (‚Waffe ziehen‘: Standardaktion). Bist du einmal zauberbereit, gilt das Wechseln zwischen Zaubern als freie Aktion.</p> <p><strong>Du hast nun 20 Felder Zauberreichweite.</strong></p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Magiekreise",
+          "rankGroup": "magiekreis",
+          "rank": 6,
+          "magicDice": []
+        },
+        {
+          "id": "zauberwuefel-1",
+          "label": "Zauberwürfel I",
+          "lpCost": 0,
+          "requires": [
+            "kreis-1"
+          ],
+          "attributeRequirements": {},
+          "description": "<p><strong> Freie Aktion</strong></p><p>Würfel immer zu Beginn eines Kampfes <strong>2w2</strong>! Lass die Ergebnisse liegen. Sie paschen jetzt nicht!</p><p>Diese Würfel kannst du für beliebige Zauber dazulegen - auch nach dem Auswürfeln! Jetzt können sie Pasche auslösen!</p><p>Du kannst <strong>3w6 Mana</strong> ausgeben, um für 10 Minuten neue Zauberwürfel zu erhalten.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zauberwürfel",
+          "rankGroup": "zauberwürfel",
+          "rank": 1,
+          "magicDice": [
+            "w2",
+            "w2"
+          ]
+        },
+        {
+          "id": "zauberwuefel-2",
+          "label": "Zauberwürfel II",
+          "lpCost": 0,
+          "requires": [
+            "kreis-2",
+            "zauberwuefel-1"
+          ],
+          "attributeRequirements": {},
+          "description": "<p><strong> Freie Aktion</strong></p><p>Würfel immer zu Beginn eines Kampfes <strong>3w2</strong>! Lass die Ergebnisse liegen. Sie paschen jetzt nicht!</p><p>Diese Würfel kannst du für beliebige Zauber dazulegen - auch nach dem Auswürfeln! Jetzt können sie Pasche auslösen!</p><p>Du kannst <strong>3w6 Mana</strong> ausgeben, um für 10 Minuten neue Zauberwürfel zu erhalten.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zauberwürfel",
+          "rankGroup": "zauberwürfel",
+          "rank": 2,
+          "magicDice": [
+            "w2",
+            "w2",
+            "w2"
+          ]
+        },
+        {
+          "id": "zauberwuefel-3",
+          "label": "Zauberwürfel III",
+          "lpCost": 0,
+          "requires": [
+            "kreis-3",
+            "zauberwuefel-2"
+          ],
+          "attributeRequirements": {},
+          "description": "<p><strong> Freie Aktion</strong></p><p>Würfel immer zu Beginn eines Kampfes <strong>3w4</strong>! Lass die Ergebnisse liegen. Sie paschen jetzt nicht!</p><p>Diese Würfel kannst du für beliebige Zauber dazulegen - auch nach dem Auswürfeln! Jetzt können sie Pasche auslösen!</p><p>Du kannst <strong>3w8 Mana</strong> ausgeben, um für 10 Minuten neue Zauberwürfel zu erhalten.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zauberwürfel",
+          "rankGroup": "zauberwürfel",
+          "rank": 3,
+          "magicDice": [
+            "w4",
+            "w4",
+            "w4"
+          ]
+        },
+        {
+          "id": "zauberwuefel-4",
+          "label": "Zauberwürfel IV",
+          "lpCost": 0,
+          "requires": [
+            "kreis-4",
+            "zauberwuefel-3"
+          ],
+          "attributeRequirements": {},
+          "description": "<p><strong> Freie Aktion</strong></p><p>Würfel immer zu Beginn eines Kampfes <strong>3w4</strong>! Lass die Ergebnisse liegen. Sie paschen jetzt nicht!</p><p>Diese Würfel kannst du für beliebige Zauber dazulegen - auch nach dem Auswürfeln! Jetzt können sie Pasche auslösen!</p><p>Du kannst <strong>4w6 Mana</strong> ausgeben, um für 10 Minuten neue Zauberwürfel zu erhalten.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zauberwürfel",
+          "rankGroup": "zauberwürfel",
+          "rank": 4,
+          "magicDice": [
+            "w4",
+            "w4",
+            "w4",
+            "w4"
+          ]
+        },
+        {
+          "id": "zauberwuefel-5",
+          "label": "Zauberwürfel V",
+          "lpCost": 0,
+          "requires": [
+            "kreis-6",
+            "zauberwuefel-4"
+          ],
+          "attributeRequirements": {},
+          "description": "<p><strong> Freie Aktion</strong></p><p>Würfel immer zu Beginn eines Kampfes <strong>4w6</strong>! Lass die Ergebnisse liegen. Sie paschen jetzt nicht!</p><p>Diese Würfel kannst du für beliebige Zauber dazulegen - auch nach dem Auswürfeln! Jetzt können sie Pasche auslösen!</p><p>Du kannst <strong>4w8 Mana</strong> ausgeben, um für 10 Minuten neue Zauberwürfel zu erhalten.</p>",
+          "uses": {
+            "max": 0,
+            "recovery": "combatEnd",
+            "pool": "",
+            "poolLabel": ""
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 0,
+            "pool": ""
+          },
+          "category": "Zauberwürfel",
+          "rankGroup": "zauberwürfel",
+          "rank": 5,
+          "magicDice": [
+            "w6",
+            "w6",
+            "w6",
+            "w6"
+          ]
+        },
+        {
+          "id": "meditation-1",
+          "label": "Meditation",
+          "lpCost": 0,
+          "requires": [
+            "kreis-1"
+          ],
+          "attributeRequirements": {},
+          "description": "<p>Einmal am Tag darfst du außerhalb eines Kampfes Mana in der Höhe von 3x ErfW&B regenerieren. Du brauchst dafür 5 Minuten.</p>",
+          "uses": {
+            "max": 1,
+            "recovery": "longRest",
+            "pool": "meditation",
+            "poolLabel": "Meditation"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "meditation"
+          },
+          "category": "Meditation",
+          "rankGroup": "meditation",
+          "rank": 1,
+          "magicDice": []
+        },
+        {
+          "id": "meditation-2",
+          "label": "Meditation",
+          "lpCost": 0,
+          "requires": [
+            "kreis-4",
+            "meditation-1"
+          ],
+          "attributeRequirements": {},
+          "description": "<p>Zweimal am Tag darfst du außerhalb eines Kampfes Mana in der Höhe von 3x ErfW&B regenerieren. Du brauchst dafür 5 Minuten.</p>",
+          "uses": {
+            "max": 2,
+            "recovery": "combatEnd",
+            "pool": "meditation",
+            "poolLabel": "Meditation"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "meditation"
+          },
+          "category": "Meditation",
+          "rankGroup": "meditation",
+          "rank": 2,
+          "magicDice": []
+        },
+        {
+          "id": "meditation-3",
+          "label": "Meditation",
+          "lpCost": 0,
+          "requires": [
+            "kreis-5",
+            "meditation-2"
+          ],
+          "attributeRequirements": {},
+          "description": "<p>Dreimal am Tag darfst du außerhalb eines Kampfes Mana in der Höhe von 3x ErfW&B regenerieren. Du brauchst dafür 5 Minuten.</p>",
+          "uses": {
+            "max": 3,
+            "recovery": "combatEnd",
+            "pool": "meditation",
+            "poolLabel": "Meditation"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "meditation"
+          },
+          "category": "Meditation",
+          "rankGroup": "meditation",
+          "rank": 3,
+          "magicDice": []
+        },
+        {
+          "id": "kampffokus-1",
+          "label": "Kampffokus I",
+          "lpCost": 5,
+          "requires": [
+            "kreis-2"
+          ],
+          "attributeRequirements": {
+            "intu": 15
+          },
+          "description": "<p><strong>2 AKTIONEN, STANDARD</strong></p><p>Einmal im Kampf kannst deine mentalen Kräfte sammeln und Mana in der Höhe von KonzW&B + ErfW&B wiederherstellen.</p>",
+          "uses": {
+            "max": 1,
+            "recovery": "combatEnd",
+            "pool": "kampffokus",
+            "poolLabel": "Kampffokus"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "kampffokus"
+          },
+          "category": "Kampffokus",
+          "rankGroup": "kampffokus",
+          "rank": 1,
+          "magicDice": []
+        },
+        {
+          "id": "kampffokus-2",
+          "label": "Kampffokus II",
+          "lpCost": 0,
+          "requires": [
+            "kreis-3",
+            "kampffokus-1"
+          ],
+          "attributeRequirements": {
+            "intu": 25
+          },
+          "description": "<p><strong>STANDARDAKTION</strong></p><p>Einmal im Kampf kannst deine mentalen Kräfte sammeln und Mana in der Höhe von 2x KonzW&B + ErfW&B wiederherstellen.</p>",
+          "uses": {
+            "max": 1,
+            "recovery": "combatEnd",
+            "pool": "kampffokus",
+            "poolLabel": "Kampffokus"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "kampffokus"
+          },
+          "category": "Kampffokus",
+          "rankGroup": "kampffokus",
+          "rank": 2,
+          "magicDice": []
+        },
+        {
+          "id": "kampffokus-3",
+          "label": "Kampffokus III",
+          "lpCost": 0,
+          "requires": [
+            "kreis-5",
+            "kampffokus-2"
+          ],
+          "attributeRequirements": {
+            "intu": 30
+          },
+          "description": "<p><strong>AKTION, STANDARD</strong></p><p>Zweimal im Kampf kannst deine mentalen Kräfte sammeln und Mana in der Höhe von 2x KonzW&B + ErfW&B wiederherstellen.</p>",
+          "uses": {
+            "max": 2,
+            "recovery": "combatEnd",
+            "pool": "kampffokus",
+            "poolLabel": "Kampffokus"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "kampffokus"
+          },
+          "category": "Kampffokus",
+          "rankGroup": "kampffokus",
+          "rank": 3,
+          "magicDice": []
+        },
+        {
+          "id": "kampffokus-4",
+          "label": "Kampffokus IV",
+          "lpCost": 0,
+          "requires": [
+            "kreis-6",
+            "kampffokus-3"
+          ],
+          "attributeRequirements": {},
+          "description": "<p><strong>FREIE AKTION</strong></p><p>Zweimal im Kampf kannst deine mentalen Kräfte sammeln und Mana in der Höhe von 2x KonzW&B + ErfW&B wiederherstellen.</p>",
+          "uses": {
+            "max": 2,
+            "recovery": "combatEnd",
+            "pool": "kampffokus",
+            "poolLabel": "Kampffokus"
+          },
+          "consumes": {
+            "treeId": "",
+            "nodeId": "",
+            "amount": 1,
+            "pool": "kampffokus"
+          },
+          "category": "Kampffokus",
+          "rankGroup": "kampffokus",
+          "rank": 4,
+          "magicDice": []
+        }
+      ]
+    }
+  ]
+}

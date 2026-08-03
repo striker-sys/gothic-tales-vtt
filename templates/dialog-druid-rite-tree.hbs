@@ -1,0 +1,48 @@
+<div class="gothic-tales gt-druid-rite-tree-app">
+  <header class="gt-talent-header gt-druid-rite-tree-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Druidenkunst</div>
+      <h2><i class="fas fa-seedling"></i> Riten der Druiden</h2>
+      <p>Wähle die Riten der Reihe nach. Auch Riten ohne LP-Kosten benötigen Lehrer oder Lernmoment.</p>
+    </div>
+    <div class="gt-druid-rite-tree-summary">
+      <strong>{{druid.learnedRites.length}} / {{druid.rites.length}}</strong>
+      <span>Riten gelernt</span>
+    </div>
+  </header>
+
+  <section class="gt-druid-rite-tree-page">
+    <div class="gt-druid-rite-tree">
+      {{#each druid.rites}}
+      <article class="gt-druid-rite-node {{#if learned}}learned{{/if}} {{#unless available}}{{#unless learned}}locked{{/unless}}{{/unless}}" data-rite-id="{{id}}">
+        <div class="gt-druid-rite-marker">
+          {{#if learned}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-circle"></i>{{/if}}
+        </div>
+        <div class="gt-druid-rite-content">
+          <div class="gt-druid-rite-title">
+            <strong>{{label}}</strong>
+            <span>{{costText}}</span>
+          </div>
+          <p>{{summary}}</p>
+          <div class="gt-druid-rite-meta">
+            <span>Lehrer/Lernmoment</span>
+            {{#if repeatable}}<span>wiederholbar</span>{{/if}}
+            {{#if learnedCount}}<span>{{learnedCount}}× gelernt</span>{{/if}}
+          </div>
+          {{#unless available}}{{#unless learned}}<small class="gt-warning-text">{{reason}}</small>{{/unless}}{{/unless}}
+        </div>
+        <div class="gt-druid-rite-actions">
+          {{#if learned}}
+            <button type="button" class="gt-unlearn-druid-rite" data-rite-id="{{id}}" {{#unless canUnlearn}}disabled title="{{unlearnReason}}"{{/unless}}>
+              verlernen
+            </button>
+          {{/if}}
+          <button type="button" class="gt-open-druid-rite" data-rite-id="{{id}}" {{#unless available}}disabled{{/unless}}>
+            {{#if learned}}{{#if repeatable}}erneut lernen{{else}}gelernt{{/if}}{{else}}lernen{{/if}}
+          </button>
+        </div>
+      </article>
+      {{/each}}
+    </div>
+  </section>
+</div>

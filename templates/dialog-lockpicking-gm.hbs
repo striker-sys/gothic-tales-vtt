@@ -1,0 +1,48 @@
+{{!-- GM-Fenster zum Vorbereiten eines Schlösserknacken-Minispiels. --}}
+<form class="gothic-tales gt-dialog gt-lockpicking-gm">
+  <h2><i class="fas fa-key"></i> Schloss vorbereiten</h2>
+  <p class="gt-help">Lege die Kombination fest und wähle einen aktiven Spieler. Das Spielerfenster zeigt nur Links/Rechts-Buttons.</p>
+
+  <div class="gt-form-grid">
+    <label>Schwierigkeitsgrad
+      <input class="gt-lock-difficulty" type="number" min="1" step="1" value="{{difficulty}}">
+    </label>
+    <label>Anzahl Schalter
+      <input class="gt-lock-count" type="number" min="1" step="1" value="{{count}}">
+    </label>
+    <label>Aktiver Spieler
+      <select class="gt-lock-user">
+        <option value="">Spieler wählen</option>
+        {{#each users}}
+        <option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </label>
+    <label class="gt-checkbox-label gt-lock-hide-count">
+      <input type="checkbox" class="gt-lock-hide" {{#if hideCount}}checked{{/if}}>
+      Anzahl der Schalter vor Spieler verbergen
+    </label>
+  </div>
+
+  <section class="gt-lock-switches">
+    <h3>Schalterfolge</h3>
+    <p class="gt-help">Die angezeigten Schalter passen sich der eingetragenen Anzahl an.</p>
+    <div class="gt-lock-switch-grid">
+      {{#each switchRows}}
+      <label class="gt-lock-switch-row">
+        <span>{{number}}</span>
+        <select data-index="{{index}}">
+          <option value="left" {{#if isLeft}}selected{{/if}}>Links</option>
+          <option value="right" {{#if isRight}}selected{{/if}}>Rechts</option>
+        </select>
+      </label>
+      {{/each}}
+    </div>
+  </section>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Abbrechen</button>
+    <button type="button" class="gt-lock-copy-macro"><i class="fas fa-code"></i> Makro kopieren</button>
+    <button type="submit" class="gt-lock-start"><i class="fas fa-play"></i> Starten</button>
+  </footer>
+</form>

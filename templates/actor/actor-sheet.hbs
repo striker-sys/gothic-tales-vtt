@@ -1,0 +1,560 @@
+{{!-- Gothic Tales 0.7.13: fester Codex-Actorbogen mit Statuswerten oberhalb der Verteidigung und Fortschritt unter den Aktionen. --}}
+<form class="{{cssClass}} gt-sheet gt-v2-form actor-sheet gt-codex-actor-sheet gt-actor-theme-{{sheetTheme}} gt-actor-type-{{actor.type}} {{#if sheetLocked}}gt-locked{{/if}}" data-sheet-theme="{{sheetTheme}}" autocomplete="off">
+  <div class="gt-codex-shell">
+    <aside class="gt-codex-sidebar" aria-label="Permanente Actorwerte">
+      <section class="gt-codex-portrait-card">
+        <button type="button" class="gt-image-picker gt-document-image-button" title="Bild auswählen">
+          <img class="gt-document-image" src="{{documentImage}}" alt="{{actor.name}}">
+        </button>
+        <div class="gt-codex-type-badge"><i class="fas {{#if isCharacter}}fa-user-shield{{else}}{{#if (eq actor.type "monster")}}fa-dragon{{else}}fa-user-secret{{/if}}{{/if}}"></i> {{actorTypeLabel}}</div>
+      </section>
+
+      <section class="gt-codex-sidebar-panel gt-codex-status-panel" aria-label="Statuswerte">
+        <header><i class="fas fa-heart-pulse"></i><span>Statuswerte</span></header>
+        <div class="gt-codex-resources gt-codex-status-grid">
+          <label class="gt-codex-resource gt-codex-hp"><span><i class="fas fa-heart"></i> TP</span><b><input name="system.hp.value" type="number" value="{{system.hp.value}}"><em>/</em><input name="system.hp.max" type="number" value="{{system.hp.max}}"></b></label>
+          <label class="gt-codex-resource gt-codex-mana"><span><i class="fas fa-droplet"></i> Mana</span><b><input name="system.mana.value" type="number" value="{{system.mana.value}}"><em>/</em><input name="system.mana.max" type="number" value="{{system.mana.max}}"></b></label>
+          <label class="gt-codex-resource gt-codex-movement"><span><i class="fas fa-person-running"></i> Bewegung</span><b><input name="system.movement.value" type="number" value="{{system.movement.value}}"></b></label>
+          <label class="gt-codex-resource gt-codex-exhaustion"><span><i class="fas fa-battery-quarter"></i> Erschöpfung</span><b><input name="system.exhaustion.value" type="number" value="{{system.exhaustion.value}}"><em>/</em><input name="system.exhaustion.max" type="number" value="{{system.exhaustion.max}}"></b></label>
+          <label class="gt-codex-resource gt-codex-death"><span><i class="fas fa-skull"></i> Todeskampf</span><b><input name="system.deathCounter.value" type="number" value="{{system.deathCounter.value}}"><em>/</em><input name="system.deathCounter.max" type="number" value="{{system.deathCounter.max}}"></b></label>
+        </div>
+      </section>
+      <section class="gt-codex-sidebar-panel gt-codex-defense-panel" aria-label="Verteidigung">
+        <header><i class="fas fa-shield"></i><span>Verteidigung</span></header>
+        <div class="gt-codex-defense-grid">
+          <label><span>RK</span><b><input name="system.defenses.rk.value" type="number" value="{{system.defenses.rk.value}}" readonly></b><small>Bonus <input name="system.armorBonus.rk" type="number" value="{{system.armorBonus.rk}}"></small></label>
+          <label><span>ELE</span><b><input name="system.defenses.ele.value" type="number" value="{{system.defenses.ele.value}}" readonly></b><small>Bonus <input name="system.armorBonus.ele" type="number" value="{{system.armorBonus.ele}}"></small></label>
+          <label><span>MA</span><b><input name="system.defenses.ma.value" type="number" value="{{system.defenses.ma.value}}" readonly></b><small>Bonus <input name="system.armorBonus.ma" type="number" value="{{system.armorBonus.ma}}"></small></label>
+        </div>
+      </section>
+
+      <section class="gt-codex-sidebar-panel gt-codex-initiative-panel" aria-label="Initiative">
+        <header><i class="fas fa-bolt"></i><span>Initiative</span></header>
+        <div class="gt-codex-initiative-grid">
+          {{#if isCharacter}}
+            <label><span>Wert</span><input name="system.initiative.value" type="number" value="{{system.initiative.value}}" readonly></label>
+            <label><span>Würfel</span><input name="system.initiative.die" type="text" value="{{system.initiative.die}}" readonly></label>
+            <label><span>Bonus</span><input name="system.initiative.bonus" type="number" value="{{system.initiative.bonus}}" readonly></label>
+          {{else}}
+            <label><span>Wert</span><input name="system.initiative.value" type="number" value="{{system.initiative.value}}"></label>
+            <label><span>Würfel</span><input name="system.initiative.die" type="text" value="{{system.initiative.die}}" placeholder="optional"></label>
+            <label><span>Bonus</span><input name="system.initiative.bonus" type="number" value="{{system.initiative.bonus}}"></label>
+          {{/if}}
+        </div>
+        <button type="button" class="gt-initiative-roll gt-codex-initiative-button" data-label="Initiative" data-formula="{{initiativeFormula}}"><i class="fas fa-dice"></i> {{initiativeFormula}}</button>
+      </section>
+
+    </aside>
+
+    <main class="gt-codex-main">
+      <header class="gt-codex-header">
+        <div class="gt-codex-identity">
+          <div class="gt-codex-name-line">
+            <div>
+              <span class="gt-codex-eyebrow">{{actorTypeLabel}}</span>
+              <input class="gt-name" name="name" type="text" value="{{actor.name}}" placeholder="Name des Helden / der Figur">
+            </div>
+          </div>
+
+          <div class="gt-codex-subline">
+            <label><span>Name des Spielers</span><input name="system.playerName" type="text" value="{{system.playerName}}"></label>
+            <label><span>Fraktion</span><input name="system.faction" type="text" value="{{system.faction}}"></label>
+          </div>
+        </div>
+
+        <div class="gt-codex-action-stack">
+        <div class="gt-codex-actions" aria-label="Actoraktionen">
+          <button type="button" class="gt-recalculate" title="Werte neu berechnen"><i class="fas fa-calculator"></i><span>Werte</span></button>
+          <button type="button" class="gt-rest-button" title="Ausruhen"><i class="fas fa-bed"></i><span>Rast</span></button>
+          <button type="button" class="gt-combat-end-button" title="Kampf beenden und Anwendungen auffüllen"><i class="fas fa-flag-checkered"></i><span>Kampfende</span></button>
+          <button type="button" class="gt-lock-toggle" title="Bearbeitungsmodus umschalten"><i class="fas {{#if sheetLocked}}fa-lock{{else}}fa-unlock{{/if}}"></i><span>{{#if sheetLocked}}Gesperrt{{else}}Bearbeiten{{/if}}</span></button>
+          <button type="button" class="gt-theme-toggle" title="Persönliche Darstellung umschalten"><i class="fas {{themeToggleIcon}}"></i><span>{{themeToggleLabel}}</span></button>
+        </div>
+          <div class="gt-codex-progression">
+            <label><span>Stufe</span><input name="system.stufe" type="number" value="{{system.stufe}}"></label>
+            {{#if isCharacter}}
+            <label class="gt-codex-lp"><span>LP</span><b><input name="system.lp.value" type="number" value="{{system.lp.value}}"><em>/</em><input name="system.lp.max" type="number" value="{{system.lp.max}}"></b></label>
+            <button type="button" class="gt-level-manage" title="Stufe und Lernpunkte verwalten"><i class="fas fa-arrow-up"></i></button>
+            {{/if}}
+          </div>
+        </div>
+
+      </header>
+
+      <section class="sheet-body gt-codex-sheet-body">
+        <div class="tab main gt-codex-overview" data-group="primary" data-tab="main">
+          <div class="gt-codex-primary-column">
+            <section class="gt-panel gt-parchment-panel gt-codex-main-abilities-panel">
+              <header class="gt-codex-panel-heading"><div><span>Grundlagen</span><h2>Attribute</h2></div><i class="fas fa-dice-d20"></i></header>
+              {{> "systems/gothic-tales/templates/actor/parts/attributes.hbs" list=attributeList path="attributes" kind="attr"}}
+            </section>
+
+            <section class="gt-panel gt-parchment-panel gt-codex-skills-panel">
+              <header class="gt-codex-panel-heading"><div><span>Proben & Können</span><h2>Fähigkeiten</h2></div><i class="fas fa-list-check"></i></header>
+              {{> "systems/gothic-tales/templates/actor/parts/attributes.hbs" list=skillList path="skills" kind="skill"}}
+            </section>
+          </div>
+
+          <section class="gt-panel gt-parchment-panel gt-equipped-overview-panel gt-codex-equipment-panel">
+            <header class="gt-codex-panel-heading"><div><span>Bereit für den Einsatz</span><h2>Ausgerüstet & Favoriten</h2></div><i class="fas fa-shield-halved"></i></header>
+            {{#if hasEquippedOverview}}
+              {{#if equippedGroups.weapons.items.length}}<div class="gt-equipped-overview-group"><h3>Waffen</h3>{{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "weapons") single=true compact=true}}</div>{{/if}}
+              {{#if equippedGroups.armor.items.length}}<div class="gt-equipped-overview-group"><h3>Rüstungen</h3>{{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "armor") single=true compact=true}}</div>{{/if}}
+              {{#if equippedGroups.spells.items.length}}<div class="gt-equipped-overview-group"><h3>Zauber</h3>{{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "spells") single=true compact=true}}</div>{{/if}}
+              {{#if equippedGroups.gear.items.length}}<div class="gt-equipped-overview-group"><h3>Gegenstände</h3>{{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup equippedGroups "gear") single=true compact=true}}</div>{{/if}}
+            {{else}}
+              <div class="gt-codex-empty"><i class="fas fa-backpack"></i><p>Noch keine ausgerüsteten oder favorisierten Gegenstände.</p></div>
+            {{/if}}
+          </section>
+        </div>
+
+      <div class="tab combat" data-group="primary" data-tab="combat">
+        <div class="gt-grid-main combat-grid">
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Waffen, Schilde & Zauber</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=combatGroups compact=true}}
+            <p class="gt-help gt-item-help-below">Angriff: W20 + Attributswürfel & Bonus. Schaden: Waffen-/Zauberwürfel und je nach Regel Attributswurf.</p>
+          </section>
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Schnellwürfe</h2>
+            <div class="gt-action-grid">
+              {{#each attributeList}}
+                <button type="button" class="gt-roll gt-quick-roll" data-label="{{label}}" data-formula="{{formula}}"><span>{{label}}</span><small>{{formula}}</small></button>
+              {{/each}}
+            </div>
+            <h3>Vorteil & Nachteil</h3>
+            <div class="gt-action-grid">
+              <button type="button" class="gt-roll" data-label="kleiner Vorteil/Nachteil" data-formula="w2">w2</button>
+              <button type="button" class="gt-roll" data-label="mittlerer Vorteil/Nachteil" data-formula="w6">w6</button>
+              <button type="button" class="gt-roll" data-label="großer Vorteil/Nachteil" data-formula="w12">w12</button>
+              <button type="button" class="gt-initiative-roll" data-label="Initiative" data-formula="{{initiativeFormula}}">Initiative <small>{{initiativeFormula}}</small></button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="tab inventory" data-group="primary" data-tab="inventory">
+        <div class="gt-inventory-stack">
+          {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=itemGroups}}
+          <section class="gt-panel gt-parchment-panel gt-inventory-text-panel">
+            <h2>Inventartext</h2>
+            <div class="gt-description-preview gt-scroll">{{{system.inventoryText}}}</div>
+            <button type="button" class="gt-description-edit" data-path="inventoryText" data-label="Inventartext"><i class="fas fa-edit"></i> Inventartext bearbeiten</button>
+          </section>
+        </div>
+      </div>
+
+      <div class="tab equipment" data-group="primary" data-tab="equipment">
+        <div class="gt-grid-main inventory-grid">
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Waffen</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "weapons") single=true}}
+          </section>
+          <section class="gt-panel gt-parchment-panel">
+            <h2>Schilde</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "shields") single=true}}
+            <h2>Rüstungen</h2>
+            {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "armor") single=true}}
+          </section>
+        </div>
+      </div>
+
+      <div class="tab spells" data-group="primary" data-tab="spells">
+        <section class="gt-panel gt-parchment-panel">
+          <h2>Zauber</h2>
+          {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "spells") single=true}}
+          <p class="gt-help gt-item-help-below">Dieser Bereich ist vorbereitet. Die Zauberlogik wird später getrennt ausgebaut.</p>
+        </section>
+      </div>
+
+      <div class="tab magic" data-group="primary" data-tab="magic">
+        <section class="gt-panel gt-parchment-panel gt-magic-circle-panel">
+          <header class="gt-magic-circle-header">
+            <div>
+              <h2><i class="fas fa-wand-sparkles"></i> Magiekreise</h2>
+              <p>Uraltes Wissen, gebundene Macht und vorbereitete Würfel für Zauberhandlungen.</p>
+            </div>
+            <div class="gt-magic-current">
+              <span>Aktueller Kreis</span>
+              <strong>{{currentMagicCircleLabel}}</strong>
+              <small>{{currentMagicCircleDiceText}}</small>
+            </div>
+          </header>
+
+          <div class="gt-magic-dice-grid">
+            {{#each magicCircleSlots}}
+            <button type="button" class="gt-magic-die-slot {{#if filled}}filled{{/if}} {{#if used}}used{{/if}} {{#unless active}}inactive{{/unless}}" data-slot-index="{{index}}" {{#unless active}}disabled{{/unless}}>
+              {{#if used}}<span class="gt-magic-die-used-mark">Benutzt</span>{{/if}}
+              <strong>{{#if filled}}{{result}}{{else}}—{{/if}}</strong>
+              <small>{{#if die}}{{label}}{{else}}kein Würfel{{/if}}</small>
+            </button>
+            {{/each}}
+          </div>
+
+          <div class="gt-magic-actions">
+            <button type="button" class="gt-magic-roll-all"><i class="fas fa-dice"></i> Alle Magiewürfel werfen</button>
+            <button type="button" class="gt-open-magic-tree"><i class="fas fa-circle-nodes"></i> Magiekreise öffnen</button>
+          </div>
+        </section>
+
+        <section class="gt-panel gt-parchment-panel gt-magic-skills-panel">
+          <h2>Gelerntes Wissen</h2>
+          {{#if hasMagicCircleCategories}}
+          <div class="gt-talent-category-list gt-magic-skill-list">
+            {{#each magicCircleCategories}}
+            <section class="gt-talent-category gt-magic-skill-category">
+              <header class="gt-talent-category-header">
+                <h3>{{label}}</h3>
+                <span>{{count}} gelernt</span>
+              </header>
+              <div class="gt-talent-card-list">
+                {{#each cards}}
+                <article class="gt-actor-talent-card gt-magic-skill-card" data-talent-key="{{key}}">
+                  <div class="gt-talent-card-main">
+                    <div class="gt-talent-card-text">
+                      <h3>{{name}}</h3>
+                      <small>{{treeLabel}}</small>
+                      {{#if attributeText}}<small class="gt-talent-consumes">{{attributeText}}</small>{{/if}}
+                    </div>
+                    <div class="gt-talent-card-side">
+                      <span class="gt-talent-uses unlimited"><i class="fas fa-moon"></i> Kreis</span>
+                      <div class="gt-talent-card-actions">
+                        <button type="button" class="gt-talent-info" data-gt-tooltip="{{tooltip}}"><i class="fas fa-circle-info"></i> Lesen</button>
+                        <button type="button" class="gt-use-magic-skill" data-tree-id="{{treeId}}" data-node-id="{{nodeId}}"><i class="fas fa-wand-sparkles"></i> Ausführen</button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+          </div>
+          {{else}}
+          <p class="gt-help">Noch kein Magiekreis gelernt. Öffne den Magiekreis-Baum und lerne den ersten Kreis.</p>
+          {{/if}}
+        </section>
+      </div>
+
+      <div class="tab druid" data-group="primary" data-tab="druid">
+        <section class="gt-panel gt-parchment-panel gt-druid-panel">
+          <header class="gt-druid-header">
+            <div>
+              <h2><i class="fas fa-leaf"></i> Druidenkunst</h2>
+              <p>Riten, Schulen, Zauber und Tiergestalten der Druiden.</p>
+            </div>
+            <div class="gt-druid-mode">
+              <span>{{#if druid.freeMode}}Freie Auswahl{{else}}Ritenpflicht{{/if}}</span>
+              <small>{{#if druid.itemSync}}Zauber-Items aktiv{{else}}keine Auto-Items{{/if}}</small>
+            </div>
+          </header>
+
+          <div class="gt-druid-overview-grid">
+            <article>
+              <strong>Schulen</strong>
+              {{#each druid.schools}}
+                <span class="gt-druid-school-pill {{#if unlocked}}active{{/if}}">{{label}}{{#if order}} · {{order}}.{{/if}}</span>
+              {{/each}}
+            </article>
+            <article>
+              <strong>Gelernte Zauber</strong>
+              <span>{{druid.learnedSpells.length}} Einträge</span>
+            </article>
+            <article>
+              <strong>Lernmodus</strong>
+              <span>{{#if druid.freeMode}}Zauber können frei gesteigert werden.{{else}}Zauber werden über Riten freigeschaltet.{{/if}}</span>
+            </article>
+          </div>
+
+          <section class="gt-druid-section gt-druid-rite-entry-section">
+            <div class="gt-druid-rite-entry">
+              <div>
+                <h3>Riten der Druiden</h3>
+                <p>Öffnet die separate Riten-Seite zum Lernen wie beim Talentbaum.</p>
+              </div>
+              <button type="button" class="gt-open-druid-rite-tree">
+                <i class="fas fa-seedling"></i> Ritenbaum öffnen
+              </button>
+            </div>
+          </section>
+
+          <section class="gt-druid-section gt-druid-learned-rites-section">
+            <h3>Gelernte Riten</h3>
+            {{#if druid.hasLearnedRites}}
+              <div class="gt-druid-learned-rites">
+                {{#each druid.learnedRites}}
+                <article class="gt-druid-learned-rite">
+                  <div>
+                    <strong>{{label}}</strong>
+                    <span>{{summary}}</span>
+                    <small>{{costText}}{{#if learnedCount}} · {{learnedCount}}× gelernt{{/if}}</small>
+                    {{#unless canUnlearn}}{{#if unlearnReason}}<small class="gt-warning-text">{{unlearnReason}}</small>{{/if}}{{/unless}}
+                  </div>
+                  <button type="button" class="gt-unlearn-druid-rite" data-rite-id="{{id}}" {{#unless canUnlearn}}disabled{{/unless}}>
+                    verlernen
+                  </button>
+                </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="gt-help">Noch kein Druidenritus gelernt.</p>
+            {{/if}}
+          </section>
+
+          <section class="gt-druid-section">
+            <h3>Gelernte Druidenzauber</h3>
+            {{#if druid.hasLearnedSpells}}
+              <div class="gt-druid-learned-list">
+                {{#each druid.learnedSpells}}
+                <article class="gt-druid-spell-card learned">
+                  <div>
+                    <h4>{{label}} <span>Stufe {{rank}}/{{maxRank}}</span></h4>
+                    <p>{{schoolLabel}} · Mana {{manaText}} · {{propertiesText}}</p>
+                  </div>
+                  <div class="gt-druid-card-actions">
+                    {{#if isForm}}
+                      <button type="button" class="gt-druid-transform" data-spell-id="{{id}}"><i class="fas fa-paw"></i> Verwandlung ansagen</button>
+                    {{else}}
+                      <button type="button" class="gt-druid-cast" data-spell-id="{{id}}"><i class="fas fa-dice-d20"></i> Wirken/Würfeln</button>
+                    {{/if}}
+                  </div>
+                </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="gt-help">Noch keine Druidenzauber gelernt. Beginne mit der Initiation.</p>
+            {{/if}}
+          </section>
+
+          <section class="gt-druid-section gt-druid-schools-section">
+            <h3>Schulen</h3>
+            <nav class="gt-druid-school-page-nav">
+              {{#each druid.spellGroups}}
+                <button type="button" class="gt-druid-school-page-select {{#if active}}active{{/if}} {{#if unlocked}}unlocked{{/if}}" data-druid-school-target="{{id}}">
+                  {{label}}
+                  <span>{{learnedCount}}/{{totalCount}}</span>
+                </button>
+              {{/each}}
+            </nav>
+
+            <div class="gt-druid-school-pages">
+              {{#each druid.spellGroups}}
+              <article class="gt-druid-school-page {{#if active}}active{{/if}} {{#if unlocked}}unlocked{{/if}}" data-druid-school-page="{{id}}">
+                <header>
+                  <div>
+                    <div class="gt-talent-chat-kicker">{{#if unlocked}}Freigeschaltete Schule{{else}}Nicht freigeschaltet{{/if}}</div>
+                    <h4>{{label}}</h4>
+                    <p>{{summary}}</p>
+                  </div>
+                  <div class="gt-druid-school-count">
+                    <strong>{{learnedCount}} / {{totalCount}}</strong>
+                    <span>Zauber gelernt</span>
+                  </div>
+                </header>
+
+                <div class="gt-druid-spell-grid">
+                  {{#each spells}}
+                  <article class="gt-druid-spell-card {{#if learned}}learned{{/if}}">
+                    <div class="gt-druid-spell-main">
+                      <h5>{{label}}</h5>
+                      <p>{{summary}}</p>
+                      <small>Stufe {{rank}}/{{maxRank}} · Mana {{manaText}}</small>
+                      {{#if cannotReason}}<small class="gt-warning-text">{{cannotReason}}</small>{{/if}}
+                    </div>
+                    <div class="gt-druid-card-actions">
+                      {{#if learned}}
+                        {{#if isForm}}
+                          <button type="button" class="gt-druid-transform" data-spell-id="{{id}}" title="Verwandlung ansagen"><i class="fas fa-paw"></i></button>
+                        {{else}}
+                          <button type="button" class="gt-druid-cast" data-spell-id="{{id}}" title="Wirken/Würfeln"><i class="fas fa-dice-d20"></i></button>
+                        {{/if}}
+                      {{/if}}
+                      {{#if ../../druid.freeMode}}
+                        <button type="button" class="gt-druid-free-learn" data-spell-id="{{id}}" {{#unless canImprove}}disabled{{/unless}}>
+                          {{#if learned}}+{{else}}lernen{{/if}}
+                        </button>
+                      {{/if}}
+                    </div>
+                  </article>
+                  {{/each}}
+                </div>
+              </article>
+              {{/each}}
+            </div>
+          </section>
+        </section>
+      </div>
+
+      <div class="tab professions" data-group="primary" data-tab="professions">
+        <section class="gt-panel gt-parchment-panel gt-professions-panel">
+          <header class="gt-professions-header">
+            <div>
+              <h2><i class="fas fa-hammer"></i> Berufe</h2>
+              <p>Erlernbare Berufs-Fähigkeiten mit eigenen Regeln, Mechaniken und Berufsseiten.</p>
+            </div>
+            <div class="gt-profession-header-actions">
+              <button type="button" class="gt-open-profession-tree"><i class="fas fa-sitemap"></i> Berufsbaum öffnen</button>
+            </div>
+          </header>
+
+          <div class="gt-profession-limit-note">
+            <strong>{{professionCount}} / 3 Berufe</strong>
+            <span>Mehr als 3 Berufe sind normalerweise nicht vorgesehen. Bei Story-Ausnahmen fragt das System nach.</span>
+          </div>
+
+          {{#if hasProfessionCards}}
+            <nav class="gt-profession-page-nav">
+              {{#each professionCards}}
+                <button type="button" class="gt-profession-page-select {{#if @first}}active{{/if}}" data-profession-target="{{anchorId}}">{{label}}</button>
+              {{/each}}
+            </nav>
+
+            <div class="gt-profession-pages">
+              {{#each professionCards}}
+              <article id="{{anchorId}}" class="gt-profession-page {{#if @first}}active{{/if}}" data-profession-page="{{anchorId}}">
+                <header>
+                  <div>
+                    <div class="gt-talent-chat-kicker">Gelernter Beruf</div>
+                    <h3>{{label}}</h3>
+                    <p>{{summary}}</p>
+                  </div>
+                  <div class="gt-profession-page-actions">
+                    <button type="button" class="gt-profession-roll" data-tree-id="{{treeId}}" data-node-id="{{nodeId}}"><i class="fas fa-dice-d20"></i> Würfeln</button>
+                    <button type="button" class="gt-profession-detail-open" data-tree-id="{{treeId}}" data-node-id="{{nodeId}}"><i class="fas fa-scroll"></i> Infokarte</button>
+                  </div>
+                </header>
+
+                <div class="gt-profession-meta-row">
+                  <span><i class="fas fa-dice-d20"></i> {{attributeText}}</span>
+                  <span><i class="fas fa-calculator"></i> {{formula}}</span>
+                </div>
+
+                <section class="gt-profession-description">
+                  {{{descriptionHtml}}}
+                </section>
+
+                {{#if mechanics.length}}
+                <section class="gt-profession-mechanics">
+                  <h4>Mechaniken</h4>
+                  {{#each mechanics}}
+                    <article>
+                      <h5>{{title}}</h5>
+                      <p>{{text}}</p>
+                    </article>
+                  {{/each}}
+                </section>
+                {{/if}}
+
+                {{#if tables.length}}
+                <section class="gt-profession-tables">
+                  {{#each tables}}
+                    <h4>{{title}}</h4>
+                    <table>
+                      <thead><tr>{{#each columns}}<th>{{this}}</th>{{/each}}</tr></thead>
+                      <tbody>
+                        {{#each rows}}
+                          <tr>{{#each this}}<td>{{this}}</td>{{/each}}</tr>
+                        {{/each}}
+                      </tbody>
+                    </table>
+                  {{/each}}
+                </section>
+                {{/if}}
+              </article>
+              {{/each}}
+            </div>
+          {{else}}
+            <p class="gt-help">Noch kein Beruf gelernt. Öffne den Berufsbaum und wähle einen Beruf.</p>
+          {{/if}}
+        </section>
+      </div>
+
+      <div class="tab talents" data-group="primary" data-tab="talents">
+        <section class="gt-panel gt-parchment-panel gt-talent-control-panel">
+          <h2>Talente & Anwendungen</h2>
+          {{#if isCharacter}}<p>Öffnet den anklickbaren Talentbaum. Lernpunkte werden bei Auswahl direkt verrechnet. Talente mit Anwendungen füllen sich nach einem Kampf über den Button „Kampf vorbei“ wieder auf.</p>{{else}}<p>Öffnet den Talentbaum. NSCs und Monster können Talente ohne Lernpunkte erhalten; Mindestattribute werden ignoriert.</p>{{/if}}
+          <button type="button" class="gt-open-talent-tree"><i class="fas fa-sitemap"></i> Talentbaum öffnen</button>
+
+          {{#if hasTalentCategories}}
+          <div class="gt-talent-category-list">
+            {{#each talentCategories}}
+            <section class="gt-talent-category">
+              <header class="gt-talent-category-header">
+                <h3>{{label}}</h3>
+                <span>{{count}} gelernt</span>
+              </header>
+              <div class="gt-talent-card-list">
+                {{#each cards}}
+                <article class="gt-actor-talent-card {{#unless canExecute}}depleted{{/unless}}" data-talent-key="{{key}}">
+                  <div class="gt-talent-card-main">
+                    <div class="gt-talent-card-text">
+                      <h3>{{name}}</h3>
+                      <small>{{treeLabel}}</small>
+                      {{#if consumeText}}<small class="gt-talent-consumes">{{consumeText}}</small>{{/if}}
+                    </div>
+                    <div class="gt-talent-card-side">
+                      <span class="gt-talent-uses {{#unless usesLimited}}unlimited{{/unless}}" data-pool="{{poolKey}}" title="{{poolLabel}}">
+                        {{#if usesLimited}}{{usesCurrent}} / {{usesMax}}{{else}}frei{{/if}}
+                      </span>
+                      <div class="gt-talent-card-actions">
+                        <button type="button" class="gt-talent-info" data-gt-tooltip="{{tooltip}}"><i class="fas fa-circle-info"></i> Lesen</button>
+                        <button type="button" class="gt-use-talent" data-source="{{source}}" data-tree-id="{{treeId}}" data-node-id="{{nodeId}}" data-item-id="{{itemId}}" {{#unless canExecute}}disabled{{/unless}}><i class="fas fa-bolt"></i> {{executeLabel}}</button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+          </div>
+          {{else}}
+          <p class="gt-help">Noch keine Talente gelernt oder als Talent-Item angelegt.</p>
+          {{/if}}
+        </section>
+        {{> "systems/gothic-tales/templates/actor/parts/items.hbs" groups=(lookup itemGroups "talents") single=true}}
+      </div>
+
+      <div class="tab creation" data-group="primary" data-tab="creation">
+        <section class="gt-panel gt-parchment-panel">
+          <h2>Editor & Generator</h2>
+          <p>Der Charakter-Editor führt durch Level, Lernpunkte, Attribute, Fähigkeiten, Stärken/Schwächen, Talente und Startausrüstung. Der NSC-Generator erzeugt NSCs mit fester Initiative, Inventar und Aktionszahl.</p>
+          <button type="button" class="gt-open-creator"><i class="fas fa-user-plus"></i> Charakter-Editor öffnen</button>
+          <button type="button" class="gt-open-npc-creator"><i class="fas fa-users"></i> NSC-Generator öffnen</button>
+        </section>
+        <section class="gt-panel gt-parchment-panel">
+          <h2>Stärken & Schwächen</h2>
+          <div class="gt-description-preview gt-scroll">{{{system.strengthsWeaknesses}}}</div><button type="button" class="gt-description-edit" data-path="strengthsWeaknesses" data-label="Stärken & Schwächen"><i class="fas fa-edit"></i> Stärken & Schwächen bearbeiten</button>
+        </section>
+      </div>
+
+      <div class="tab notes" data-group="primary" data-tab="notes">
+        <div class="gt-grid-main notes-grid">
+          <section class="gt-panel gt-parchment-panel"><h2>Hintergrund</h2><div class="gt-description-preview gt-scroll">{{{system.biography}}}</div><button type="button" class="gt-description-edit" data-path="biography" data-label="Hintergrund"><i class="fas fa-edit"></i> Hintergrund bearbeiten</button></section>
+          <section class="gt-panel gt-parchment-panel"><h2>Notizen</h2><div class="gt-description-preview gt-scroll">{{{system.notes}}}</div><button type="button" class="gt-description-edit" data-path="notes" data-label="Notizen"><i class="fas fa-edit"></i> Notizen bearbeiten</button></section>
+        </div>
+      </div>
+
+      <div class="tab source" data-group="primary" data-tab="source">
+        {{> "systems/gothic-tales/templates/actor/parts/source.hbs"}}
+      </div>
+
+      </section>
+    </main>
+
+    <nav class="sheet-tabs tabs gt-side-tabs gt-codex-tabs" data-group="primary" aria-label="Actorbereiche">
+      <a class="item" data-tab="main" title="Übersicht"><i class="fas fa-id-card"></i><span>Übersicht</span></a>
+      <a class="item" data-tab="combat" title="Kampf"><i class="fas fa-dice-d20"></i><span>Kampf</span></a>
+      <a class="item" data-tab="inventory" title="Inventar"><i class="fas fa-sack"></i><span>Inventar</span></a>
+      <a class="item" data-tab="equipment" title="Ausrüstung"><i class="fas fa-shield-halved"></i><span>Ausrüstung</span></a>
+      <a class="item" data-tab="spells" title="Zauber"><i class="fas fa-scroll"></i><span>Zauber</span></a>
+      <a class="item" data-tab="magic" title="Magiekreise"><i class="fas fa-wand-sparkles"></i><span>Magiekreise</span></a>
+      <a class="item" data-tab="druid" title="Druidenkunst"><i class="fas fa-leaf"></i><span>Druidenkunst</span></a>
+      <a class="item" data-tab="professions" title="Berufe"><i class="fas fa-hammer"></i><span>Berufe</span></a>
+      <a class="item" data-tab="talents" title="Talente"><i class="fas fa-sitemap"></i><span>Talente</span></a>
+      <a class="item" data-tab="creation" title="Editor"><i class="fas fa-pen-to-square"></i><span>Editor</span></a>
+      <a class="item" data-tab="notes" title="Notizen"><i class="fas fa-feather"></i><span>Notizen</span></a>
+      <a class="item" data-tab="source" title="Quelle"><i class="fas fa-book"></i><span>Quelle</span></a>
+    </nav>
+  </div>
+</form>

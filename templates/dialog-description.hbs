@@ -1,0 +1,26 @@
+{{!-- Ausschließlich Foundry-native Struktur: standard-form + prose-mirror.sized.compact --}}
+<form class="standard-form">
+  <fieldset>
+    <legend>{{label}}</legend>
+
+    <div class="form-group stacked">
+      <label>{{documentName}}</label>
+      <prose-mirror name="{{fieldName}}"
+                    value="{{html}}"
+                    document-uuid="{{documentUuid}}"
+                    class="sized"
+                    compact>
+        {{{enrichedHtml}}}
+      </prose-mirror>
+    </div>
+  </fieldset>
+
+  <footer class="form-footer">
+    <button type="button" data-action="cancel">
+      <i class="fas fa-xmark"></i> Abbrechen
+    </button>
+    <button type="button" data-action="save">
+      <i class="fas fa-save"></i> Speichern
+    </button>
+  </footer>
+</form>

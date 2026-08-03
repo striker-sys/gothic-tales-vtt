@@ -1,0 +1,201 @@
+{
+  "id": "gothic-tales",
+  "title": "Gothic Tales",
+  "description": "Spielsystem für Gothic Tales mit getrenntem Talentbaum, Magiekreisen, vorbereiteten Magiewürfeln und magischem ActorSheet-Bereich.",
+  "version": "0.8.0",
+  "authors": [
+    {
+      "name": "Kuberia"
+    }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.368",
+    "maximum": "14"
+  },
+  "url": "https://github.com/striker-sys/gothic-tales-vtt",
+  "manifest": "https://raw.githubusercontent.com/striker-sys/gothic-tales-vtt/main/system.json",
+  "download": "https://github.com/striker-sys/gothic-tales-vtt/releases/latest/download/gothic-tales.zip",
+  "esmodules": [
+    "scripts/gothic-tales.mjs",
+    "scripts/gothic-tales-version.mjs"
+  ],
+  "styles": [
+    "styles/gothic-tales.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    },
+    {
+      "lang": "de",
+      "name": "Deutsch",
+      "path": "lang/de.json"
+    },
+    {
+      "lang": "de-DE",
+      "name": "Deutsch (Deutschland)",
+      "path": "lang/de.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
+        ]
+      },
+      "npc": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
+        ]
+      },
+      "monster": {
+        "htmlFields": [
+          "biography",
+          "notes",
+          "sourceText",
+          "inventoryText",
+          "strengthsWeaknesses",
+          "lootText"
+        ]
+      }
+    },
+    "Item": {
+      "weapon": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "shield": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "armor": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "spell": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "talent": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "trait": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "equipment": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      },
+      "consumable": {
+        "htmlFields": [
+          "description",
+          "sourceText"
+        ]
+      }
+    }
+  },
+  "initiative": "@initiative.value",
+  "primaryTokenAttribute": "hp",
+  "secondaryTokenAttribute": "mana",
+  "license": "LICENSE.txt",
+  "grid": {
+    "type": 1,
+    "distance": 1,
+    "units": "Feld"
+  },
+  "background": "systems/gothic-tales/assets/gt-background.webp",
+  "thumbnail": "systems/gothic-tales/assets/gt-thumbnail.webp",
+  "readme": "https://github.com/striker-sys/gothic-tales-vtt/blob/main/README.md",
+  "bugs": "https://github.com/striker-sys/gothic-tales-vtt/issues",
+  "type": "system",
+  "packs": [
+    {
+      "name": "gt-nachschlagewerk",
+      "label": "GT Nachschlagewerk",
+      "path": "packs/gt-nachschlagewerk",
+      "type": "JournalEntry",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-actoren",
+      "label": "GT Actoren",
+      "path": "packs/gt-actoren",
+      "type": "Actor",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-ausruestung",
+      "label": "GT Ausrüstung",
+      "path": "packs/gt-ausruestung",
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    },
+    {
+      "name": "gt-talente",
+      "label": "GT Talente",
+      "path": "packs/gt-talente",
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "gothic-tales"
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Gothic Tales",
+      "color": "#8f1111",
+      "sorting": "m",
+      "packs": [
+        "gt-nachschlagewerk",
+        "gt-actoren",
+        "gt-ausruestung",
+        "gt-talente"
+      ]
+    }
+  ],
+  "socket": true
+}

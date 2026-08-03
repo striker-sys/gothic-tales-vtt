@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gothic Tales Actorbogen – Baukasten</title>
+<style>
+:root {
+  --ui-bg:#100d09;
+  --ui-panel:#1c1710;
+  --ui-panel-2:#261e14;
+  --ui-line:#765326;
+  --ui-text:#f0e2c3;
+  --ui-muted:#bfae8a;
+  --ui-accent:#b52d24;
+  --ui-gold:#d7ad5f;
+  --canvas-width:850px;
+  --canvas-height:800px;
+  --canvas-padding:8px;
+  --region-gap:8px;
+  --sheet-line:#62401f;
+  --sheet-accent:#8f201a;
+  --sheet-bg:#e7c98f;
+  --sheet-panel:#f7e8c0;
+  --sheet-soft:#efdbad;
+  --sheet-text:#321d10;
+  --sheet-radius:7px;
+}
+* { box-sizing:border-box; }
+html, body { margin:0; min-height:100%; background:var(--ui-bg); color:var(--ui-text); font-family:Inter,Segoe UI,Arial,sans-serif; }
+button, input, select, textarea { font:inherit; }
+button { cursor:pointer; }
+.builder-app { display:grid; grid-template-columns:290px minmax(420px,1fr) 310px; min-height:100vh; }
+.sidebar { min-width:0; padding:14px; background:linear-gradient(180deg,var(--ui-panel-2),var(--ui-panel)); overflow:auto; }
+.sidebar.left { border-right:1px solid var(--ui-line); }
+.sidebar.right { border-left:1px solid var(--ui-line); }
+h1 { margin:0 0 5px; font:800 20px Georgia,serif; color:#f4d798; }
+.intro { margin:0 0 12px; color:var(--ui-muted); font-size:12px; line-height:1.45; }
+.block { margin:0 0 11px; padding:10px; border:1px solid rgba(183,132,56,.42); border-radius:9px; background:rgba(255,255,255,.03); }
+.block h2 { margin:0 0 8px; font-size:12px; color:#e6c375; letter-spacing:.07em; text-transform:uppercase; }
+.block h3 { margin:10px 0 6px; font-size:11px; color:#d3ba86; text-transform:uppercase; }
+.field { display:grid; grid-template-columns:minmax(0,1fr) 92px; gap:7px; align-items:center; margin:6px 0; }
+.field > label { font-size:12px; color:#eadfc8; }
+.field input, .field select, .field textarea { width:100%; min-width:0; border:1px solid #806039; border-radius:5px; background:#15110d; color:#f2e6d0; padding:5px 6px; }
+.field textarea { grid-column:1/-1; min-height:58px; resize:vertical; }
+.field.full { grid-template-columns:1fr; }
+.field.check { grid-template-columns:auto 1fr; }
+.field.check input { width:auto; }
+.field input[type=color] { height:30px; padding:2px; }
+.field input[type=range] { grid-column:1/-1; accent-color:var(--ui-accent); }
+.field output { color:var(--ui-muted); font-size:11px; text-align:right; }
+.button-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.btn { min-height:32px; border:1px solid #95692f; border-radius:6px; background:linear-gradient(#d9a94e,#8e581e); color:#201309; font-weight:800; }
+.btn.secondary { background:#2a2117; color:#ead9b6; }
+.btn.danger { background:#5d201b; color:#f5d6ce; }
+.btn:disabled { opacity:.45; cursor:not-allowed; }
+.palette { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.palette-item { display:flex; align-items:center; gap:7px; min-height:38px; padding:6px 7px; border:1px solid #705029; border-radius:6px; background:#17130f; color:#eadfc8; font-size:11px; text-align:left; }
+.palette-item:hover { border-color:#c69344; background:#211a12; }
+.palette-item .glyph { display:grid; place-items:center; flex:0 0 24px; height:24px; border:1px solid #936a31; border-radius:5px; color:#eccb80; }
+.palette-item[draggable=true] { cursor:grab; }
+.palette-item[draggable=true]:active { cursor:grabbing; }
+.workspace { min-width:0; display:flex; flex-direction:column; background:#0a0806; }
+.toolbar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:48px; padding:8px 10px; border-bottom:1px solid #62451f; background:#17120d; }
+.toolbar strong { margin-right:auto; font:700 15px Georgia,serif; color:#efd28e; }
+.toolbar button, .toolbar select { min-height:30px; border:1px solid #755226; border-radius:5px; background:#2b2116; color:#ecdfc3; padding:4px 8px; }
+.canvas-viewport { flex:1; min-height:0; overflow:auto; padding:18px; background:radial-gradient(circle at center,#2b2217 0,#0b0907 70%); }
+.canvas-scale { width:max-content; min-width:100%; transform-origin:top left; }
+.sheet-canvas { width:var(--canvas-width); min-height:var(--canvas-height); margin:0 auto; padding:var(--canvas-padding); border:3px double var(--sheet-line); border-radius:10px; color:var(--sheet-text); background:linear-gradient(145deg,#f0dcaa,var(--sheet-bg)); box-shadow:0 12px 36px rgba(0,0,0,.55); container-type:inline-size; container-name:builder-sheet; }
+.sheet-canvas.dark { --sheet-line:#a27734; --sheet-accent:#e2b85f; --sheet-bg:#080807; --sheet-panel:#1b1915; --sheet-soft:#29241c; --sheet-text:#e7cf91; background:linear-gradient(145deg,#171510,#070706); }
+.empty-canvas { display:grid; place-items:center; min-height:300px; border:2px dashed color-mix(in srgb,var(--sheet-line) 45%,transparent); border-radius:8px; color:color-mix(in srgb,var(--sheet-text) 60%,transparent); }
+.layout-region { position:relative; display:grid; grid-template-columns:repeat(var(--region-columns),minmax(0,1fr)); grid-auto-rows:minmax(var(--region-row-height),auto); gap:var(--region-gap-local); margin-bottom:var(--region-gap); padding:24px 6px 6px; border:1px solid color-mix(in srgb,var(--sheet-line) 48%,transparent); border-radius:var(--sheet-radius); background:color-mix(in srgb,var(--sheet-panel) 84%,transparent); min-height:90px; }
+.layout-region:last-child { margin-bottom:0; }
+.layout-region.drag-over { outline:3px solid color-mix(in srgb,var(--sheet-accent) 70%,#fff 30%); outline-offset:2px; }
+.region-label { position:absolute; top:4px; left:8px; display:flex; align-items:center; gap:6px; color:var(--sheet-accent); font:700 11px Georgia,serif; text-transform:uppercase; letter-spacing:.06em; }
+.region-label button { width:20px; height:18px; padding:0; border:1px solid color-mix(in srgb,var(--sheet-line) 45%,transparent); border-radius:4px; background:transparent; color:inherit; }
+.layout-element { position:relative; min-width:0; min-height:42px; padding:6px; border:1px solid color-mix(in srgb,var(--sheet-line) 45%,transparent); border-radius:6px; background:color-mix(in srgb,var(--sheet-soft) 88%,white 12%); overflow:hidden; cursor:grab; }
+.dark .layout-element { background:color-mix(in srgb,var(--sheet-soft) 80%,black 20%); }
+.layout-element.selected { outline:3px solid #d64a37; outline-offset:1px; }
+.layout-element.dragging { opacity:.4; }
+.element-tools { position:absolute; top:3px; right:3px; display:none; gap:3px; z-index:2; }
+.layout-element:hover .element-tools, .layout-element.selected .element-tools { display:flex; }
+.element-tools button { width:23px; height:22px; padding:0; border:1px solid color-mix(in srgb,var(--sheet-line) 60%,transparent); border-radius:4px; background:var(--sheet-panel); color:var(--sheet-text); }
+.el-title { margin:0 0 5px; color:var(--sheet-accent); font:800 14px Georgia,serif; text-transform:uppercase; }
+.mock-portrait { display:grid; place-items:center; height:100%; min-height:120px; border:3px double var(--sheet-line); font-size:58px; background:var(--sheet-soft); }
+.mock-name { font:900 22px Georgia,serif; border-bottom:2px solid color-mix(in srgb,var(--sheet-line) 42%,transparent); padding-bottom:4px; }
+.mock-subline { display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:6px; }
+.mock-input { min-height:25px; padding:5px; border:1px solid color-mix(in srgb,var(--sheet-line) 42%,transparent); border-radius:4px; background:color-mix(in srgb,var(--sheet-panel) 80%,white 20%); font-size:10px; }
+.dark .mock-input { background:#0e0d0b; }
+.metric-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; }
+.metric { display:grid; gap:3px; text-align:center; font-size:9px; font-weight:700; text-transform:uppercase; }
+.metric b { min-height:25px; padding:5px; border:1px solid color-mix(in srgb,var(--sheet-line) 42%,transparent); border-radius:4px; background:color-mix(in srgb,var(--sheet-panel) 80%,white 20%); font:800 11px monospace; }
+.dark .metric b { background:#0e0d0b; }
+.resource-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; }
+.resource-pill { display:grid; grid-template-columns:1fr auto; gap:5px; align-items:center; min-height:34px; padding:5px; border:1px solid color-mix(in srgb,var(--sheet-line) 35%,transparent); border-left:4px solid var(--resource-color,#9d6b2c); border-radius:5px; font-size:9px; font-weight:800; text-transform:uppercase; }
+.action-stack { display:grid; gap:4px; }
+.action-stack button { min-height:27px; border:1px solid #80531f; border-radius:5px; background:linear-gradient(#e3b55d,#a36a25); color:#271507; font-size:10px; font-weight:800; }
+.dark .action-stack button { background:linear-gradient(#49351d,#1a150f); color:#e7c77d; border-color:#9b7130; }
+.tab-stack { display:flex; flex-wrap:wrap; gap:4px; }
+.tab-stack span { display:grid; place-items:center; width:30px; height:30px; border:1px solid var(--sheet-line); border-radius:6px; }
+.mock-table { width:100%; border-collapse:collapse; table-layout:fixed; font-size:10px; }
+.mock-table th, .mock-table td { padding:var(--table-pad,4px) 5px; border-bottom:1px solid color-mix(in srgb,var(--sheet-line) 28%,transparent); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.mock-table th { color:var(--sheet-accent); font-size:8px; text-transform:uppercase; }
+.mock-list { display:grid; gap:4px; }
+.mock-list-row { display:grid; grid-template-columns:28px 1fr auto; gap:5px; align-items:center; min-height:34px; padding:4px; border:1px solid color-mix(in srgb,var(--sheet-line) 25%,transparent); border-radius:5px; }
+.mock-icon { display:grid; place-items:center; width:25px; height:25px; border:1px solid var(--sheet-line); border-radius:5px; }
+.mock-notes { min-height:100px; padding:8px; border:1px dashed color-mix(in srgb,var(--sheet-line) 40%,transparent); line-height:1.5; font-size:11px; }
+.spacer-element { min-height:100%; border:2px dashed color-mix(in srgb,var(--sheet-line) 32%,transparent); background:transparent; }
+.statusbar { min-height:30px; padding:6px 10px; border-top:1px solid #62451f; background:#17120d; color:#bea981; font-size:11px; }
+.column-editor { display:grid; gap:6px; }
+.column-row { display:grid; grid-template-columns:minmax(0,1fr) 58px 76px auto; gap:4px; align-items:center; padding:5px; border:1px solid rgba(180,130,57,.32); border-radius:5px; }
+.column-row input, .column-row select { width:100%; min-width:0; border:1px solid #73522c; border-radius:4px; background:#15110d; color:#f1e4ca; padding:4px; font-size:10px; }
+.column-row button { width:24px; height:24px; padding:0; border:1px solid #7a5527; border-radius:4px; background:#2a2016; color:#f1dec0; }
+.hidden { display:none !important; }
+.drag-hint { padding:8px; border:1px dashed #876332; border-radius:6px; color:#c8b48c; font-size:11px; line-height:1.4; }
+@media (max-width:1180px) { .builder-app { grid-template-columns:270px minmax(400px,1fr); } .sidebar.right { grid-column:1/-1; border-left:0; border-top:1px solid var(--ui-line); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; } .sidebar.right > .block { margin:0; } }
+@media (max-width:780px) { .builder-app { grid-template-columns:1fr; } .sidebar.left { border-right:0; border-bottom:1px solid var(--ui-line); } .sidebar.right { display:block; } .workspace { min-height:720px; } }
+</style>
+</head>
+<body>
+<div class="builder-app">
+  <aside class="sidebar left">
+    <h1>Actorbogen-Baukasten</h1>
+    <p class="intro">Ziehe Bausteine in Bereiche, ordne sie neu an und passe Raster, Spalten und Tabellen an. Die Standardvorschau nutzt 850 × 800 Pixel.</p>
+
+    <section class="block">
+      <h2>Projekt</h2>
+      <div class="field"><label for="actorType">Actor-Typ</label><select id="actorType"><option value="character">Charakter</option><option value="npc">NSC</option><option value="monster">Monster</option></select></div>
+      <div class="field"><label for="theme">Theme</label><select id="theme"><option value="light">Hell</option><option value="dark">Dunkel</option></select></div>
+      <div class="field"><label for="windowWidth">Fensterbreite</label><input id="windowWidth" type="number" min="480" max="1600" step="10" value="800"></div>
+      <div class="field"><label for="windowHeight">Fensterhöhe</label><input id="windowHeight" type="number" min="600" max="1600" step="10" value="800"></div>
+      <div class="field"><label for="zoom">Vorschau-Zoom</label><select id="zoom"><option value="1">100 %</option><option value="0.85">85 %</option><option value="0.7">70 %</option><option value="0.55">55 %</option></select></div>
+    </section>
+
+    <section class="block">
+      <h2>Bausteine</h2>
+      <div class="palette" id="palette"></div>
+      <p class="drag-hint">Baustein mit der Maus greifen und in einen Bereich ziehen. Vorhandene Bausteine lassen sich ebenfalls zwischen Bereichen verschieben.</p>
+    </section>
+
+    <section class="block">
+      <h2>Bereiche</h2>
+      <div class="button-grid"><button class="btn" id="addRegion">Bereich hinzufügen</button><button class="btn secondary" id="resetLayout">Actor zurücksetzen</button></div>
+      <div class="field full"><label for="regionSelect">Bereich auswählen</label><select id="regionSelect"></select></div>
+      <div class="button-grid"><button class="btn secondary" id="regionUp">Nach oben</button><button class="btn secondary" id="regionDown">Nach unten</button><button class="btn danger" id="deleteRegion">Bereich löschen</button></div>
+    </section>
+
+    <section class="block">
+      <h2>Datei</h2>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+      <div class="button-grid"><button class="btn" id="downloadJson">JSON exportieren</button><button class="btn secondary" id="importJson">JSON importieren</button><button class="btn secondary" id="downloadCss">CSS-Gerüst</button><button class="btn secondary" id="copyJson">JSON kopieren</button></div>
+      <p class="intro">Exportiere die JSON-Datei und lade sie anschließend im Chat hoch. Sie enthält nur Layoutdaten.</p>
+    </section>
+  </aside>
+
+  <main class="workspace">
+    <div class="toolbar">
+      <strong>Live-Baukasten</strong>
+      <button id="undo" title="Rückgängig">↶</button>
+      <button id="redo" title="Wiederholen">↷</button>
+      <button data-size="800,1000">D&D5e 800×1000</button>
+      <button data-size="1000,900">Breit 1000×900</button>
+      <button data-size="620,900">Schmal 620×900</button>
+      <select id="preset"><option value="">Preset laden …</option><option value="character">Charakter</option><option value="npc">NSC</option><option value="monster">Monster</option></select>
+    </div>
+    <div class="canvas-viewport" id="viewport">
+      <div class="canvas-scale" id="canvasScale"><div class="sheet-canvas" id="canvas"></div></div>
+    </div>
+    <div class="statusbar" id="status">Bereit.</div>
+  </main>
+
+  <aside class="sidebar right">
+    <section class="block">
+      <h2>Bereich-Raster</h2>
+      <div class="field"><label for="regionTitle">Titel</label><input id="regionTitle" type="text"></div>
+      <div class="field"><label for="regionColumns">Spalten</label><input id="regionColumns" type="number" min="1" max="12"></div>
+      <div class="field"><label for="regionGap">Abstand</label><input id="regionGap" type="number" min="0" max="40"></div>
+      <div class="field"><label for="regionRowHeight">Mindest-Zeilenhöhe</label><input id="regionRowHeight" type="number" min="24" max="240"></div>
+      <div class="field check"><input id="regionVisible" type="checkbox"><label for="regionVisible">Bereich sichtbar</label></div>
+    </section>
+
+    <section class="block" id="elementInspector">
+      <h2>Element</h2>
+      <p class="intro" id="noSelection">Klicke einen Baustein in der Vorschau an.</p>
+      <div id="elementFields" class="hidden">
+        <div class="field"><label for="elementTitle">Titel</label><input id="elementTitle" type="text"></div>
+        <div class="field"><label for="elementView">Darstellung</label><select id="elementView"><option value="panel">Panel</option><option value="table">Tabelle</option><option value="list">Liste</option><option value="compact">Kompakt</option></select></div>
+        <div class="field"><label for="colSpan">Spaltenbreite</label><input id="colSpan" type="number" min="1" max="12"></div>
+        <div class="field"><label for="rowSpan">Zeilenhöhe</label><input id="rowSpan" type="number" min="1" max="8"></div>
+        <div class="field"><label for="minHeight">Mindesthöhe</label><input id="minHeight" type="number" min="30" max="800"></div>
+        <div class="field check"><input id="elementVisible" type="checkbox"><label for="elementVisible">Element sichtbar</label></div>
+        <h3>Actor-Typen</h3>
+        <div class="field check"><input id="showCharacter" type="checkbox"><label for="showCharacter">Charakter</label></div>
+        <div class="field check"><input id="showNpc" type="checkbox"><label for="showNpc">NSC</label></div>
+        <div class="field check"><input id="showMonster" type="checkbox"><label for="showMonster">Monster</label></div>
+        <div class="button-grid"><button class="btn secondary" id="duplicateElement">Duplizieren</button><button class="btn danger" id="deleteElement">Löschen</button></div>
+      </div>
+    </section>
+
+    <section class="block hidden" id="tableInspector">
+      <h2>Tabellenlayout</h2>
+      <div class="field check"><input id="showTableHeader" type="checkbox"><label for="showTableHeader">Tabellenkopf anzeigen</label></div>
+      <div class="field"><label for="tableDensity">Zeilenhöhe</label><select id="tableDensity"><option value="compact">Kompakt</option><option value="normal">Normal</option><option value="comfortable">Großzügig</option></select></div>
+      <div class="column-editor" id="columnEditor"></div>
+      <button class="btn" id="addColumn">Spalte hinzufügen</button>
+    </section>
+
+    <section class="block">
+      <h2>Farben & Form</h2>
+      <div class="field"><label for="sheetBg">Hintergrund</label><input id="sheetBg" type="color" value="#e7c98f"></div>
+      <div class="field"><label for="sheetPanel">Panel</label><input id="sheetPanel" type="color" value="#f7e8c0"></div>
+      <div class="field"><label for="sheetLine">Rahmen</label><input id="sheetLine" type="color" value="#62401f"></div>
+      <div class="field"><label for="sheetAccent">Akzent</label><input id="sheetAccent" type="color" value="#8f201a"></div>
+      <div class="field"><label for="canvasPadding">Außenabstand</label><input id="canvasPadding" type="number" min="0" max="40" value="8"></div>
+      <div class="field"><label for="globalGap">Bereichsabstand</label><input id="globalGap" type="number" min="0" max="40" value="8"></div>
+      <div class="field"><label for="radius">Eckenradius</label><input id="radius" type="number" min="0" max="30" value="7"></div>
+    </section>
+  </aside>
+</div>
+<script>
+(() => {
+  "use strict";
+  const STORAGE_KEY = "gothicTalesActorLayoutBuilderV2";
+  const paletteDefinitions = {
+    portrait: {title:"Portrait", glyph:"●", view:"panel", colSpan:1, rowSpan:3, minHeight:150},
+    identity: {title:"Identität", glyph:"Aa", view:"panel", colSpan:3, rowSpan:1, minHeight:86},
+    defense: {title:"Verteidigung", glyph:"🛡", view:"compact", colSpan:2, rowSpan:1, minHeight:76},
+    initiative: {title:"Initiative", glyph:"⚑", view:"compact", colSpan:2, rowSpan:1, minHeight:76},
+    resources: {title:"Ressourcen", glyph:"♥", view:"compact", colSpan:4, rowSpan:1, minHeight:86},
+    level: {title:"Stufe & LP", glyph:"↥", view:"compact", colSpan:2, rowSpan:1, minHeight:70},
+    actions: {title:"Aktionen", glyph:"☰", view:"compact", colSpan:1, rowSpan:2, minHeight:130},
+    tabs: {title:"Navigation", glyph:"▦", view:"compact", colSpan:1, rowSpan:2, minHeight:120},
+    attributes: {title:"Attribute", glyph:"✥", view:"table", colSpan:2, rowSpan:3, minHeight:210},
+    skills: {title:"Fähigkeiten", glyph:"⚙", view:"table", colSpan:2, rowSpan:4, minHeight:260},
+    equipment: {title:"Ausgerüstet", glyph:"⚔", view:"list", colSpan:2, rowSpan:3, minHeight:220},
+    inventory: {title:"Inventar", glyph:"▣", view:"table", colSpan:2, rowSpan:3, minHeight:220},
+    spells: {title:"Zauber", glyph:"✦", view:"table", colSpan:2, rowSpan:3, minHeight:220},
+    attacks: {title:"Angriffe", glyph:"🗡", view:"table", colSpan:3, rowSpan:3, minHeight:220},
+    resistances: {title:"Resistenzen", glyph:"◆", view:"table", colSpan:2, rowSpan:3, minHeight:210},
+    abilities: {title:"Sonderfähigkeiten", glyph:"★", view:"list", colSpan:3, rowSpan:3, minHeight:220},
+    loot: {title:"Beute", glyph:"◉", view:"table", colSpan:2, rowSpan:2, minHeight:150},
+    notes: {title:"Notizen", glyph:"✎", view:"panel", colSpan:2, rowSpan:2, minHeight:150},
+    biography: {title:"Beschreibung", glyph:"¶", view:"panel", colSpan:3, rowSpan:2, minHeight:170},
+    table: {title:"Eigene Tabelle", glyph:"▤", view:"table", colSpan:2, rowSpan:2, minHeight:160},
+    panel: {title:"Freies Panel", glyph:"□", view:"panel", colSpan:2, rowSpan:2, minHeight:140},
+    spacer: {title:"Abstand", glyph:"↔", view:"compact", colSpan:1, rowSpan:1, minHeight:50}
+  };
+  const tableDefaults = {
+    attributes:[{label:"Attribut",width:2,align:"left"},{label:"Wert",width:1,align:"center"},{label:"Würfel",width:1,align:"center"},{label:"Bonus",width:1,align:"center"}],
+    skills:[{label:"Fähigkeit",width:2,align:"left"},{label:"Wert",width:1,align:"center"},{label:"Würfel",width:1,align:"center"},{label:"Bonus",width:1,align:"center"},{label:"Grad",width:1,align:"center"}],
+    equipment:[{label:"Gegenstand",width:3,align:"left"},{label:"Menge",width:1,align:"center"},{label:"Aktion",width:1,align:"right"}],
+    inventory:[{label:"Gegenstand",width:3,align:"left"},{label:"Kategorie",width:2,align:"left"},{label:"Menge",width:1,align:"center"}],
+    spells:[{label:"Zauber",width:3,align:"left"},{label:"Kreis",width:1,align:"center"},{label:"Mana",width:1,align:"center"}],
+    attacks:[{label:"Angriff",width:3,align:"left"},{label:"Treffer",width:1,align:"center"},{label:"Schaden",width:2,align:"center"},{label:"Reichweite",width:1,align:"center"}],
+    resistances:[{label:"Art",width:2,align:"left"},{label:"Wert",width:2,align:"right"}],
+    loot:[{label:"Beute",width:3,align:"left"},{label:"Chance",width:1,align:"center"},{label:"Menge",width:1,align:"center"}],
+    table:[{label:"Name",width:2,align:"left"},{label:"Wert",width:1,align:"center"}]
+  };
+  const sampleRows = {
+    attributes:[["Stärke","50","W12","+4"],["Geschick","50","W12","+4"],["Intuition","50","W12","+4"]],
+    skills:[["Durchhalten","50","W12","+9","3"],["Gewandtheit","50","W12","+4","0"],["Heimlichkeit","50","W12","+4","0"]],
+    equipment:[["Spitzhacke","1","★ ⚙"],["Buddlerhose","1","★ ⚙"],["Heiltrank","2","★ ⚙"]],
+    inventory:[["Heiltrank","Verbrauch","2"],["Erz","Währung","35"],["Fackel","Ausrüstung","3"]],
+    spells:[["Geist des Biests","Druide","10"],["Tiergestalt","Druide","8"],["Licht","1","2"]],
+    attacks:[["Klauen","+7","2W6+4","Nahkampf"],["Biss","+7","2W8+4","Nahkampf"],["Heulen","+4","Effekt","18 m"]],
+    resistances:[["Hiebschaden","Resistenz"],["Kälteschaden","Resistenz"],["Silber","Verwundbar"]],
+    loot:[["Erz","100 %","2W6"],["Fell","75 %","1"],["Zahn","25 %","1W2"]],
+    table:[["Eigene Zeile","10"],["Weitere Zeile","20"]]
+  };
+  const presets = {
+    character: () => ({regions:[
+      region("header","Kopf",8,8,52,[el("portrait",1,3),el("identity",4,1),el("level",2,1),el("actions",1,3),el("defense",2,1),el("initiative",2,1),el("resources",4,1)]),
+      region("overview","Übersicht",6,8,50,[el("attributes",2,4),el("skills",2,5),el("equipment",2,5)]),
+      region("details","Weitere Bereiche",6,8,50,[el("spells",2,3),el("inventory",2,3),el("notes",2,3)])
+    ]}),
+    npc: () => ({regions:[
+      region("header","NSC-Kopf",8,8,52,[el("portrait",1,3),el("identity",4,1),el("level",2,1),el("actions",1,3),el("defense",2,1),el("initiative",2,1),el("resources",4,1)]),
+      region("overview","Kampfprofil",6,8,50,[el("attributes",2,4),el("skills",2,4),el("equipment",2,4),el("attacks",3,3),el("abilities",3,3)]),
+      region("details","Details",6,8,50,[el("spells",2,3),el("loot",2,3),el("notes",2,3)])
+    ]}),
+    monster: () => ({regions:[
+      region("header","Monster-Kopf",8,8,52,[el("portrait",2,4),el("identity",4,1),el("actions",2,4),el("defense",2,1),el("initiative",2,1),el("resources",4,1)]),
+      region("overview","Monsterwerte",6,8,50,[el("attributes",2,4),el("resistances",2,4),el("abilities",2,4),el("attacks",3,4),el("loot",3,3)]),
+      region("details","Beschreibung",6,8,50,[el("biography",4,3),el("notes",2,3)])
+    ]})
+  };
+  function uid(prefix="id") { return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`; }
+  function region(id,title,columns,gap,rowHeight,items=[]) { return {id,title,columns,gap,rowHeight,visible:true,items}; }
+  function el(type,colSpan,rowSpan) {
+    const d=paletteDefinitions[type];
+    return {id:uid(type),type,title:d.title,view:d.view,colSpan:colSpan||d.colSpan,rowSpan:rowSpan||d.rowSpan,minHeight:d.minHeight,visible:true,actorTypes:["character","npc","monster"],table:{showHeader:true,density:"normal",columns:structuredClone(tableDefaults[type]||tableDefaults.table)}};
+  }
+  const initialState = () => ({
+    format:"gothic-tales.actor-layout-builder",
+    formatVersion:2,
+    sourceVersion:"0.7.8",
+    window:{width:850,height:800},
+    theme:"light",
+    actorType:"character",
+    style:{canvasPadding:8,regionGap:8,radius:7,sheetBg:"#e7c98f",sheetPanel:"#f7e8c0",sheetLine:"#62401f",sheetAccent:"#8f201a"},
+    layouts:{character:presets.character(),npc:presets.npc(),monster:presets.monster()}
+  });
+  let state=initialState();
+  let selected={regionId:null,itemId:null};
+  let undoStack=[];
+  let redoStack=[];
+  const $=id=>document.getElementById(id);
+  const canvas=$("canvas"), status=$("status"), palette=$("palette"), regionSelect=$("regionSelect");
+  function currentLayout(){ return state.layouts[state.actorType]; }
+  function currentRegion(){ return currentLayout().regions.find(r=>r.id===selected.regionId)||currentLayout().regions[0]||null; }
+  function currentItem(){ const r=currentRegion(); return r?.items.find(i=>i.id===selected.itemId)||null; }
+  function snapshot(){ return JSON.stringify(state); }
+  function commit(mutator,message="Änderung gespeichert") { undoStack.push(snapshot()); if(undoStack.length>80) undoStack.shift(); redoStack=[]; mutator(); save(); render(); setStatus(message); }
+  function save(){ try { localStorage.setItem(STORAGE_KEY,JSON.stringify(state)); } catch {} }
+  function setStatus(text){ status.textContent=text; }
+  function escapeHtml(value){ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
+  function loadSaved(){ try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null"); if(saved?.format==="gothic-tales.actor-layout-builder") state=saved; } catch{} }
+  function renderPalette(){ palette.innerHTML=Object.entries(paletteDefinitions).map(([type,d])=>`<button type="button" class="palette-item" draggable="true" data-palette-type="${type}"><span class="glyph">${d.glyph}</span><span>${escapeHtml(d.title)}</span></button>`).join(""); }
+  function applyStyle(){
+    document.documentElement.style.setProperty("--canvas-width",`${state.window.width}px`);
+    document.documentElement.style.setProperty("--canvas-height",`${state.window.height}px`);
+    document.documentElement.style.setProperty("--canvas-padding",`${state.style.canvasPadding}px`);
+    document.documentElement.style.setProperty("--region-gap",`${state.style.regionGap}px`);
+    document.documentElement.style.setProperty("--sheet-radius",`${state.style.radius}px`);
+    document.documentElement.style.setProperty("--sheet-bg",state.style.sheetBg);
+    document.documentElement.style.setProperty("--sheet-panel",state.style.sheetPanel);
+    document.documentElement.style.setProperty("--sheet-line",state.style.sheetLine);
+    document.documentElement.style.setProperty("--sheet-accent",state.style.sheetAccent);
+    canvas.classList.toggle("dark",state.theme==="dark");
+    $("canvasScale").style.transform=`scale(${$("zoom").value})`;
+    $("canvasScale").style.marginBottom=`-${Math.max(0,1-Number($("zoom").value))*state.window.height}px`;
+  }
+  function renderTable(item){
+    const cols=(item.table?.columns||tableDefaults.table).filter(c=>c.visible!==false);
+    const rows=sampleRows[item.type]||sampleRows.table;
+    const total=cols.reduce((sum,c)=>sum+Math.max(.25,Number(c.width)||1),0);
+    const pad=item.table?.density==="compact"?"3px":item.table?.density==="comfortable"?"7px":"5px";
+    const colgroup=`<colgroup>${cols.map(c=>`<col style="width:${(Math.max(.25,Number(c.width)||1)/total*100).toFixed(2)}%">`).join("")}</colgroup>`;
+    return `<table class="mock-table" style="--table-pad:${pad}">${colgroup}${item.table?.showHeader===false?"":`<thead><tr>${cols.map(c=>`<th style="text-align:${c.align||"left"}">${escapeHtml(c.label)}</th>`).join("")}</tr></thead>`}<tbody>${rows.slice(0,4).map(row=>`<tr>${cols.map((c,idx)=>`<td style="text-align:${c.align||"left"}">${escapeHtml(row[idx]??"—")}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  }
+  function renderElementBody(item){
+    if(item.type==="portrait") return `<div class="mock-portrait">●</div>`;
+    if(item.type==="identity") return `<div class="mock-name">Neuer Held</div><div class="mock-subline"><div class="mock-input">Spielername</div><div class="mock-input">Fraktion</div></div>`;
+    if(item.type==="defense") return `<h3 class="el-title">${escapeHtml(item.title)}</h3><div class="metric-grid"><div class="metric">RK<b>19</b></div><div class="metric">ELE<b>18</b></div><div class="metric">MA<b>22</b></div></div>`;
+    if(item.type==="initiative") return `<h3 class="el-title">${escapeHtml(item.title)}</h3><div class="metric-grid"><div class="metric">Wert<b>66</b></div><div class="metric">Würfel<b>2W6</b></div><div class="metric">Bonus<b>6</b></div></div>`;
+    if(item.type==="resources") return `<div class="resource-grid"><div class="resource-pill" style="--resource-color:#a52b25">TP <b>36/36</b></div><div class="resource-pill" style="--resource-color:#2d6fa3">Mana <b>16/20</b></div><div class="resource-pill" style="--resource-color:#6b7d35">Bewegung <b>5</b></div><div class="resource-pill" style="--resource-color:#9a6b24">Erschöpfung <b>0/6</b></div></div>`;
+    if(item.type==="level") return `<h3 class="el-title">${escapeHtml(item.title)}</h3><div class="metric-grid"><div class="metric">Stufe<b>1</b></div><div class="metric">LP<b>20</b></div><div class="metric">Max<b>20</b></div></div>`;
+    if(item.type==="actions") return `<div class="action-stack"><button>Werte</button><button>Ausruhen</button><button>Kampf vorbei</button><button>Bearbeiten</button><button>Theme</button></div>`;
+    if(item.type==="tabs") return `<h3 class="el-title">${escapeHtml(item.title)}</h3><div class="tab-stack"><span>▦</span><span>✥</span><span>▣</span><span>⚔</span><span>✦</span><span>✎</span></div>`;
+    if(item.type==="notes"||item.type==="biography"||item.type==="panel") return `<h3 class="el-title">${escapeHtml(item.title)}</h3><div class="mock-notes">Freier Text- und Inhaltsbereich. Dieser Baustein kann später mit einem Foundry-Datenfeld verbunden werden.</div>`;
+    if(item.type==="spacer") return `<div class="spacer-element"></div>`;
+    if(item.view==="table"||tableDefaults[item.type]) return `<h3 class="el-title">${escapeHtml(item.title)}</h3>${renderTable(item)}`;
+    return `<h3 class="el-title">${escapeHtml(item.title)}</h3><div class="mock-list">${["Erster Eintrag","Zweiter Eintrag","Dritter Eintrag"].map((v,i)=>`<div class="mock-list-row"><span class="mock-icon">${i+1}</span><strong>${v}</strong><span>⚙</span></div>`).join("")}</div>`;
+  }
+  function renderCanvas(){
+    const layout=currentLayout();
+    canvas.innerHTML=layout.regions.length?layout.regions.filter(r=>r.visible!==false).map(r=>`<section class="layout-region${selected.regionId===r.id?" selected-region":""}" data-region-id="${r.id}" style="--region-columns:${r.columns};--region-gap-local:${r.gap}px;--region-row-height:${r.rowHeight}px"><div class="region-label"><button type="button" data-select-region="${r.id}">✥</button>${escapeHtml(r.title)}</div>${r.items.filter(i=>i.visible!==false&&i.actorTypes.includes(state.actorType)).map(item=>`<article class="layout-element${selected.itemId===item.id?" selected":""}" draggable="true" data-item-id="${item.id}" data-region-id="${r.id}" style="grid-column:span ${Math.min(item.colSpan,r.columns)};grid-row:span ${item.rowSpan};min-height:${item.minHeight}px"><div class="element-tools"><button type="button" data-duplicate="${item.id}" title="Duplizieren">⧉</button><button type="button" data-delete="${item.id}" title="Löschen">×</button></div>${renderElementBody(item)}</article>`).join("")}</section>`).join(""):`<div class="empty-canvas">Füge einen Bereich hinzu.</div>`;
+  }
+  function renderRegionControls(){
+    const layout=currentLayout();
+    if(!selected.regionId&&layout.regions[0]) selected.regionId=layout.regions[0].id;
+    regionSelect.innerHTML=layout.regions.map(r=>`<option value="${r.id}">${escapeHtml(r.title)}</option>`).join("");
+    if(selected.regionId) regionSelect.value=selected.regionId;
+    const r=currentRegion();
+    ["regionTitle","regionColumns","regionGap","regionRowHeight","regionVisible","regionUp","regionDown","deleteRegion"].forEach(id=>$(id).disabled=!r);
+    if(r){ $("regionTitle").value=r.title; $("regionColumns").value=r.columns; $("regionGap").value=r.gap; $("regionRowHeight").value=r.rowHeight; $("regionVisible").checked=r.visible!==false; }
+  }
+  function renderElementControls(){
+    const item=currentItem();
+    $("noSelection").classList.toggle("hidden",!!item); $("elementFields").classList.toggle("hidden",!item); $("tableInspector").classList.toggle("hidden",!item||!(item.view==="table"||tableDefaults[item.type]));
+    if(!item) return;
+    $("elementTitle").value=item.title; $("elementView").value=item.view; $("colSpan").value=item.colSpan; $("rowSpan").value=item.rowSpan; $("minHeight").value=item.minHeight; $("elementVisible").checked=item.visible!==false;
+    $("showCharacter").checked=item.actorTypes.includes("character"); $("showNpc").checked=item.actorTypes.includes("npc"); $("showMonster").checked=item.actorTypes.includes("monster");
+    $("showTableHeader").checked=item.table?.showHeader!==false; $("tableDensity").value=item.table?.density||"normal";
+    renderColumnEditor(item);
+  }
+  function renderColumnEditor(item){
+    const editor=$("columnEditor"); if(!item?.table){ editor.innerHTML=""; return; }
+    editor.innerHTML=item.table.columns.map((c,index)=>`<div class="column-row" data-column-index="${index}"><input data-column-field="label" value="${escapeHtml(c.label)}" title="Bezeichnung"><input data-column-field="width" type="number" min="0.25" max="8" step="0.25" value="${c.width}" title="Breite"><select data-column-field="align"><option value="left"${c.align==="left"?" selected":""}>Links</option><option value="center"${c.align==="center"?" selected":""}>Mitte</option><option value="right"${c.align==="right"?" selected":""}>Rechts</option></select><span><button type="button" data-column-up="${index}" title="Nach links">←</button><button type="button" data-column-down="${index}" title="Nach rechts">→</button><button type="button" data-column-delete="${index}" title="Löschen">×</button></span></div>`).join("");
+  }
+  function renderProjectControls(){
+    $("actorType").value=state.actorType; $("theme").value=state.theme; $("windowWidth").value=state.window.width; $("windowHeight").value=state.window.height;
+    $("sheetBg").value=state.style.sheetBg; $("sheetPanel").value=state.style.sheetPanel; $("sheetLine").value=state.style.sheetLine; $("sheetAccent").value=state.style.sheetAccent; $("canvasPadding").value=state.style.canvasPadding; $("globalGap").value=state.style.regionGap; $("radius").value=state.style.radius;
+    $("undo").disabled=!undoStack.length; $("redo").disabled=!redoStack.length;
+  }
+  function render(){ applyStyle(); renderCanvas(); renderRegionControls(); renderElementControls(); renderProjectControls(); }
+  function findItem(itemId){ for(const r of currentLayout().regions){ const index=r.items.findIndex(i=>i.id===itemId); if(index>=0) return {region:r,index,item:r.items[index]}; } return null; }
+  function addFromPalette(type,regionId,index=null){ const r=currentLayout().regions.find(x=>x.id===regionId); if(!r)return; const item=el(type); if(index===null||index<0)r.items.push(item);else r.items.splice(index,0,item); selected={regionId:r.id,itemId:item.id}; }
+  function moveItem(itemId,toRegionId,toIndex=null){ const found=findItem(itemId); const target=currentLayout().regions.find(r=>r.id===toRegionId); if(!found||!target)return; found.region.items.splice(found.index,1); const adjusted=found.region===target&&toIndex!==null&&found.index<toIndex?toIndex-1:toIndex; if(adjusted===null||adjusted<0)target.items.push(found.item);else target.items.splice(adjusted,0,found.item); selected={regionId:target.id,itemId:found.item.id}; }
+  function duplicateItem(itemId){ const found=findItem(itemId); if(!found)return; const copy=structuredClone(found.item); copy.id=uid(copy.type); found.region.items.splice(found.index+1,0,copy); selected={regionId:found.region.id,itemId:copy.id}; }
+  function deleteItem(itemId){ const found=findItem(itemId); if(!found)return; found.region.items.splice(found.index,1); selected={regionId:found.region.id,itemId:null}; }
+  function download(name,content,type){ const blob=new Blob([content],{type}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000); }
+  function exportState(){ return JSON.stringify(state,null,2); }
+  function exportCss(){ return `/* Gothic Tales Layout-Baukasten ${state.sourceVersion} */\n.gt-framed-actor-sheet {\n  --gt-builder-window-width: ${state.window.width}px;\n  --gt-builder-window-height: ${state.window.height}px;\n  --gt-builder-sheet-bg: ${state.style.sheetBg};\n  --gt-builder-panel-bg: ${state.style.sheetPanel};\n  --gt-builder-line: ${state.style.sheetLine};\n  --gt-builder-accent: ${state.style.sheetAccent};\n  --gt-builder-padding: ${state.style.canvasPadding}px;\n  --gt-builder-gap: ${state.style.regionGap}px;\n  --gt-builder-radius: ${state.style.radius}px;\n}\n`+currentLayout().regions.map(r=>`/* ${r.title}: ${r.columns} Spalten, ${r.gap}px Abstand, ${r.rowHeight}px Mindestzeile */`).join("\n"); }
+  renderPalette(); loadSaved();
+  palette.addEventListener("dragstart",ev=>{ const button=ev.target.closest("[data-palette-type]"); if(!button)return; ev.dataTransfer.setData("text/plain",JSON.stringify({source:"palette",type:button.dataset.paletteType})); ev.dataTransfer.effectAllowed="copy"; });
+  canvas.addEventListener("dragstart",ev=>{ const card=ev.target.closest(".layout-element"); if(!card)return; card.classList.add("dragging"); ev.dataTransfer.setData("text/plain",JSON.stringify({source:"canvas",itemId:card.dataset.itemId})); ev.dataTransfer.effectAllowed="move"; });
+  canvas.addEventListener("dragend",ev=>ev.target.closest(".layout-element")?.classList.remove("dragging"));
+  canvas.addEventListener("dragover",ev=>{ const regionEl=ev.target.closest(".layout-region"); if(!regionEl)return; ev.preventDefault(); regionEl.classList.add("drag-over"); ev.dataTransfer.dropEffect="move"; });
+  canvas.addEventListener("dragleave",ev=>{ const r=ev.target.closest(".layout-region"); if(r&&!r.contains(ev.relatedTarget))r.classList.remove("drag-over"); });
+  canvas.addEventListener("drop",ev=>{ const regionEl=ev.target.closest(".layout-region"); if(!regionEl)return; ev.preventDefault(); document.querySelectorAll(".drag-over").forEach(x=>x.classList.remove("drag-over")); let payload; try{payload=JSON.parse(ev.dataTransfer.getData("text/plain"));}catch{return;} const targetCard=ev.target.closest(".layout-element"); const r=currentLayout().regions.find(x=>x.id===regionEl.dataset.regionId); const index=targetCard?r.items.findIndex(i=>i.id===targetCard.dataset.itemId):null; commit(()=>payload.source==="palette"?addFromPalette(payload.type,r.id,index):moveItem(payload.itemId,r.id,index),"Baustein verschoben"); });
+  canvas.addEventListener("click",ev=>{ const regionButton=ev.target.closest("[data-select-region]"); if(regionButton){ selected={regionId:regionButton.dataset.selectRegion,itemId:null}; render(); return; } const duplicate=ev.target.closest("[data-duplicate]"); if(duplicate){ commit(()=>duplicateItem(duplicate.dataset.duplicate),"Baustein dupliziert"); return; } const del=ev.target.closest("[data-delete]"); if(del){ commit(()=>deleteItem(del.dataset.delete),"Baustein gelöscht"); return; } const card=ev.target.closest(".layout-element"); if(card){ selected={regionId:card.dataset.regionId,itemId:card.dataset.itemId}; render(); } });
+  $("actorType").addEventListener("change",()=>{ state.actorType=$("actorType").value; selected={regionId:null,itemId:null}; save(); render(); });
+  $("theme").addEventListener("change",()=>commit(()=>state.theme=$("theme").value,"Theme geändert"));
+  ["windowWidth","windowHeight"].forEach(id=>$(id).addEventListener("change",()=>commit(()=>state.window[id==="windowWidth"?"width":"height"]=Number($(id).value),"Fenstergröße geändert")));
+  $("zoom").addEventListener("change",render);
+  document.querySelectorAll("[data-size]").forEach(b=>b.addEventListener("click",()=>{ const [w,h]=b.dataset.size.split(",").map(Number); commit(()=>{state.window.width=w;state.window.height=h;},`Vorschau ${w} × ${h}`); }));
+  $("preset").addEventListener("change",()=>{ const type=$("preset").value; if(!type)return; commit(()=>{state.layouts[state.actorType]=presets[type]();selected={regionId:null,itemId:null};},`${type}-Preset geladen`); $("preset").value=""; });
+  $("addRegion").addEventListener("click",()=>commit(()=>{ const r=region(uid("region"),"Neuer Bereich",4,8,50,[]); currentLayout().regions.push(r); selected={regionId:r.id,itemId:null}; },"Bereich hinzugefügt"));
+  $("resetLayout").addEventListener("click",()=>commit(()=>{state.layouts[state.actorType]=presets[state.actorType]();selected={regionId:null,itemId:null};},"Actor-Layout zurückgesetzt"));
+  regionSelect.addEventListener("change",()=>{selected={regionId:regionSelect.value,itemId:null};render();});
+  [["regionTitle","title",String],["regionColumns","columns",Number],["regionGap","gap",Number],["regionRowHeight","rowHeight",Number]].forEach(([id,key,cast])=>$(id).addEventListener("change",()=>commit(()=>{const r=currentRegion();if(r)r[key]=cast($(id).value);},"Bereich angepasst")));
+  $("regionVisible").addEventListener("change",()=>commit(()=>{const r=currentRegion();if(r)r.visible=$("regionVisible").checked;},"Sichtbarkeit geändert"));
+  $("regionUp").addEventListener("click",()=>commit(()=>{const list=currentLayout().regions,i=list.findIndex(r=>r.id===selected.regionId);if(i>0)[list[i-1],list[i]]=[list[i],list[i-1]];},"Bereich verschoben"));
+  $("regionDown").addEventListener("click",()=>commit(()=>{const list=currentLayout().regions,i=list.findIndex(r=>r.id===selected.regionId);if(i>=0&&i<list.length-1)[list[i],list[i+1]]=[list[i+1],list[i]];},"Bereich verschoben"));
+  $("deleteRegion").addEventListener("click",()=>commit(()=>{const list=currentLayout().regions,i=list.findIndex(r=>r.id===selected.regionId);if(i>=0)list.splice(i,1);selected={regionId:list[0]?.id||null,itemId:null};},"Bereich gelöscht"));
+  [["elementTitle","title",String],["elementView","view",String],["colSpan","colSpan",Number],["rowSpan","rowSpan",Number],["minHeight","minHeight",Number]].forEach(([id,key,cast])=>$(id).addEventListener("change",()=>commit(()=>{const i=currentItem();if(i)i[key]=cast($(id).value);},"Baustein angepasst")));
+  $("elementVisible").addEventListener("change",()=>commit(()=>{const i=currentItem();if(i)i.visible=$("elementVisible").checked;},"Sichtbarkeit geändert"));
+  [["showCharacter","character"],["showNpc","npc"],["showMonster","monster"]].forEach(([id,type])=>$(id).addEventListener("change",()=>commit(()=>{const i=currentItem();if(!i)return;const set=new Set(i.actorTypes);$(id).checked?set.add(type):set.delete(type);i.actorTypes=[...set];},"Actor-Sichtbarkeit geändert")));
+  $("duplicateElement").addEventListener("click",()=>{const i=currentItem();if(i)commit(()=>duplicateItem(i.id),"Baustein dupliziert");});
+  $("deleteElement").addEventListener("click",()=>{const i=currentItem();if(i)commit(()=>deleteItem(i.id),"Baustein gelöscht");});
+  $("showTableHeader").addEventListener("change",()=>commit(()=>{const i=currentItem();if(i)i.table.showHeader=$("showTableHeader").checked;},"Tabellenkopf geändert"));
+  $("tableDensity").addEventListener("change",()=>commit(()=>{const i=currentItem();if(i)i.table.density=$("tableDensity").value;},"Tabellendichte geändert"));
+  $("columnEditor").addEventListener("change",ev=>{ const row=ev.target.closest("[data-column-index]"); const field=ev.target.dataset.columnField; if(!row||!field)return; commit(()=>{const i=currentItem(),c=i?.table?.columns[Number(row.dataset.columnIndex)];if(c)c[field]=field==="width"?Number(ev.target.value):ev.target.value;},"Tabellenspalte geändert"); });
+  $("columnEditor").addEventListener("click",ev=>{ const up=ev.target.closest("[data-column-up]"),down=ev.target.closest("[data-column-down]"),del=ev.target.closest("[data-column-delete]"); if(!up&&!down&&!del)return; const idx=Number((up||down||del).dataset.columnUp??(up||down||del).dataset.columnDown??(up||down||del).dataset.columnDelete); commit(()=>{const cols=currentItem().table.columns;if(up&&idx>0)[cols[idx-1],cols[idx]]=[cols[idx],cols[idx-1]];if(down&&idx<cols.length-1)[cols[idx],cols[idx+1]]=[cols[idx+1],cols[idx]];if(del&&cols.length>1)cols.splice(idx,1);},"Tabellenspalten angeordnet"); });
+  $("addColumn").addEventListener("click",()=>commit(()=>{const i=currentItem();if(i)i.table.columns.push({label:"Neue Spalte",width:1,align:"left"});},"Tabellenspalte hinzugefügt"));
+  [["sheetBg","sheetBg"],["sheetPanel","sheetPanel"],["sheetLine","sheetLine"],["sheetAccent","sheetAccent"],["canvasPadding","canvasPadding"],["globalGap","regionGap"],["radius","radius"]].forEach(([id,key])=>$(id).addEventListener("change",()=>commit(()=>state.style[key]=$(id).type==="number"?Number($(id).value):$(id).value,"Darstellung geändert")));
+  $("undo").addEventListener("click",()=>{if(!undoStack.length)return;redoStack.push(snapshot());state=JSON.parse(undoStack.pop());selected={regionId:null,itemId:null};save();render();setStatus("Rückgängig");});
+  $("redo").addEventListener("click",()=>{if(!redoStack.length)return;undoStack.push(snapshot());state=JSON.parse(redoStack.pop());selected={regionId:null,itemId:null};save();render();setStatus("Wiederholt");});
+  $("downloadJson").addEventListener("click",()=>download("gothic-tales-actor-layout-builder.json",exportState(),"application/json"));
+  $("downloadCss").addEventListener("click",()=>download("gothic-tales-actor-layout-builder.css",exportCss(),"text/css"));
+  $("copyJson").addEventListener("click",async()=>{try{await navigator.clipboard.writeText(exportState());setStatus("JSON kopiert.");}catch{setStatus("Browser blockiert Kopieren. Bitte JSON exportieren.");}});
+  $("importJson").addEventListener("click",()=>$("importFile").click());
+  $("importFile").addEventListener("change",async()=>{const file=$("importFile").files[0];if(!file)return;try{const parsed=JSON.parse(await file.text());if(parsed.format!=="gothic-tales.actor-layout-builder")throw new Error("Unbekanntes Format");undoStack.push(snapshot());state=parsed;selected={regionId:null,itemId:null};save();render();setStatus("Layout importiert.");}catch(err){setStatus(`Importfehler: ${err.message}`);}finally{$("importFile").value="";}});
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{{!-- Level-Dialog: kontrolliertes Level Up/Down mit LP-Anpassung. --}}
+<form class="gothic-tales gt-level-dialog gt-v2-form">
+  <header class="gt-app-title gt-paper-header compact">
+    <div>
+      <h1>Stufe ändern</h1>
+      <p>{{actor.name}} ist aktuell Stufe {{current}}.</p>
+    </div>
+  </header>
+
+  <section class="gt-panel gt-parchment-panel">
+    <div class="gt-level-summary">
+      <span><strong>Aktuelle LP</strong><b>{{currentLp}} / {{currentLpMax}}</b></span>
+    </div>
+    <label class="gt-level-select">Zielstufe
+      <select name="targetLevel">
+        {{#each levels}}<option value="{{level}}" {{#if selected}}selected{{/if}}>Stufe {{level}} – max. {{lp}} LP{{#if erz}}, {{erz}} Erz{{/if}}</option>{{/each}}
+      </select>
+    </label>
+    <div class="gt-level-dialog-actions">
+      <button type="button" data-level-step="-1"><i class="fa-solid fa-arrow-down"></i> Level Down</button>
+      <button type="button" data-level-step="1"><i class="fa-solid fa-arrow-up"></i> Level Up</button>
+    </div>
+    <p class="gt-help">Beim Level Up wird die Differenz der maximalen LP hinzugefügt. Beim Level Down wird die maximale LP-Grenze reduziert und freie LP werden auf das neue Maximum begrenzt.</p>
+  </section>
+
+  <footer class="sheet-footer flexrow">
+    <button type="button" class="gt-level-apply"><i class="fas fa-check"></i> Änderung übernehmen</button>
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-times"></i> Abbrechen</button>
+  </footer>
+</form>

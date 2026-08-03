@@ -1,0 +1,57 @@
+{{!-- Vollständige Infokarte für einen Beruf. --}}
+<div class="gothic-tales gt-dialog gt-profession-detail">
+  <header class="gt-profession-detail-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Beruf</div>
+      <h2>{{node.label}}</h2>
+      <p>{{node.summary}}</p>
+    </div>
+    <div class="gt-profession-cost">{{displayCost}}</div>
+  </header>
+
+  <div class="gt-profession-meta-row">
+    <span><i class="fas fa-dice-d20"></i> {{attributeText}}</span>
+    <span><i class="fas fa-scroll"></i> Lehrer oder Lernmoment nötig</span>
+    {{#if learned}}<span class="learned"><i class="fas fa-check"></i> Gelernt</span>{{/if}}
+  </div>
+
+  <section class="gt-profession-description">
+    {{{node.descriptionHtml}}}
+  </section>
+
+  {{#if node.mechanics.length}}
+  <section class="gt-profession-mechanics">
+    <h3>Mechaniken</h3>
+    {{#each node.mechanics}}
+      <article>
+        <h4>{{title}}</h4>
+        <p>{{text}}</p>
+      </article>
+    {{/each}}
+  </section>
+  {{/if}}
+
+  {{#if node.tables.length}}
+  <section class="gt-profession-tables">
+    {{#each node.tables}}
+      <h3>{{title}}</h3>
+      <table>
+        <thead>
+          <tr>{{#each columns}}<th>{{this}}</th>{{/each}}</tr>
+        </thead>
+        <tbody>
+          {{#each rows}}
+          <tr>{{#each this}}<td>{{this}}</td>{{/each}}</tr>
+          {{/each}}
+        </tbody>
+      </table>
+    {{/each}}
+  </section>
+  {{/if}}
+
+  <footer class="gt-dialog-actions gt-profession-actions">
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+    <button type="button" class="gt-profession-roll"><i class="fas fa-dice-d20"></i> Würfeln</button>
+    <button type="button" class="gt-profession-learn {{#if learned}}danger{{/if}}"><i class="fas {{#if learned}}fa-rotate-left{{else}}fa-graduation-cap{{/if}}"></i> {{#if learned}}Verlernen{{else}}Lernen{{/if}}</button>
+  </footer>
+</div>

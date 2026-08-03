@@ -1,0 +1,47 @@
+<div class="gothic-tales gt-dialog gt-herbalism-player">
+  <header class="gt-profession-tools-header">
+    <div>
+      <div class="gt-talent-chat-kicker">Berufs-Minispiel</div>
+      <h2><i class="fas fa-seedling"></i> Kräuterkunde</h2>
+      <p>Kraut wählen, suchen und Fund automatisch ins Inventar übernehmen.</p>
+    </div>
+  </header>
+
+  {{#if note}}
+  <div class="gt-help-box">{{note}}</div>
+  {{/if}}
+
+  {{#if blocked}}
+  <div class="gt-help-box gt-warning-box">{{blockedReason}}</div>
+  {{/if}}
+
+  <div class="gt-state-grid">
+    <div><span>Grad</span><strong>{{rank.label}}</strong></div>
+    <div><span>Suchen</span><strong>{{successes}} / {{maxSearches}}</strong></div>
+    <div><span>Verbleibend</span><strong>{{remaining}}</strong></div>
+    <div><span>Timer</span><strong>{{cooldownText}}</strong></div>
+    <div><span>Ort</span><strong>{{#if outdoors}}freie Natur{{else}}ungeeignet{{/if}}</strong></div>
+    <div><span>Unterstützung</span><strong>nicht möglich</strong></div>
+  </div>
+
+  <label>Kraut wählen
+    <select class="gt-herbalism-herb">
+      {{#each herbs}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}} · SchwG {{difficulty}} · {{use}} · Wert {{valueText}}</option>{{/each}}
+    </select>
+  </label>
+
+  <div class="gt-herb-detail">
+    <h3>{{selectedHerb.label}}</h3>
+    <p>SchwG <strong>{{selectedHerb.difficulty}}</strong> · Nutzung: <strong>{{selectedHerb.use}}</strong> · Wert: <strong>{{selectedHerb.value}}</strong></p>
+    <p>Bei Heil- und Manakräutern entspricht die Menge dem Wurfergebnis. Bei kritischem Erfolg gibt es zusätzlich Kronstöckel.</p>
+  </div>
+
+  <footer class="gt-dialog-actions">
+    <button type="button" class="gt-herbalism-search" {{#if blocked}}disabled{{/if}}><i class="fas fa-dice-d20"></i> Kraut suchen</button>
+    {{#if isGM}}
+    <button type="button" class="gt-herbalism-reset-timer"><i class="fas fa-hourglass-start"></i> Timer zurücksetzen</button>
+    <button type="button" class="gt-herbalism-reset-session"><i class="fas fa-rotate-left"></i> Sitzung zurücksetzen</button>
+    {{/if}}
+    <button type="button" class="gt-dialog-cancel"><i class="fas fa-xmark"></i> Schließen</button>
+  </footer>
+</div>
